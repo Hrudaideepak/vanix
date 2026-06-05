@@ -489,7 +489,12 @@ export default function App() {
                         <td>⭐ {item.rating}</td>
                         <td>{item.releaseYear}</td>
                         <td style={{ padding: '14px 0', textAlign: 'right' }}>
-                          <button onClick={() => handleDeleteContent(item._id || item.id)} style={{ background: 'none', border: 'none', color: '#EF4444', cursor: 'pointer' }}>
+                          <button
+                            onClick={() => handleDeleteContent(item._id || item.id)}
+                            style={{ background: 'none', border: 'none', color: '#EF4444', cursor: 'pointer' }}
+                            aria-label="Delete content"
+                            title="Delete content"
+                          >
                             <Trash2 size={16} />
                           </button>
                         </td>
@@ -600,7 +605,13 @@ export default function App() {
                   placeholder="e.g. VANIX50" 
                   required 
                 />
-                <button className="btn-premium" type="submit" style={{ padding: '10px 14px' }}>
+                <button
+                  className="btn-premium"
+                  type="submit"
+                  style={{ padding: '10px 14px' }}
+                  aria-label="Add coupon"
+                  title="Add coupon"
+                >
                   <Plus size={16} />
                 </button>
               </form>
