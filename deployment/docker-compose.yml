@@ -1,0 +1,50 @@
+version: '3.8'
+
+services:
+  # Database Service
+  vanix-db:
+    image: mongo:latest
+    container_name: vanix-db
+    ports:
+      - "27017:27017"
+    volumes:
+      - vanix-db-data:/data/db
+    networks:
+      - vanix-network
+
+  # Backend API Service
+  vanix-backend:
+    build:
+      context: ../backend
+      dockerfile: ../deployment/Dockerfile.backend
+    container_name: vanix-backend
+    ports:
+      - "5000:5000"
+    environment:
+      - NODE_ENV=production
+      - MONGO_URI=mongodb://vanix-db:27017/vanix
+      - PORT=5000
+    depends_on:
+      - vanix-db
+    networks:
+      - vanix-network
+
+  # React Web Admin Service
+  vanix-admin:
+    build:
+      context: ../admin_panel
+      dockerfile: ../deployment/Dockerfile.admin
+    container_name: vanix-admin
+    ports:
+      - "3000:80"
+    depends_on:
+      - vanix-backend
+    networks:
+      - vanix-network
+
+volumes:
+  vanix-db-data:
+
+networks:
+  vanix-network:
+    driver: bridge
