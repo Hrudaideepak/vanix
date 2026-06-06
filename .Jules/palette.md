@@ -1,0 +1,3 @@
+## 2024-03-20 - Accessible Icon-Only Buttons
+**Learning:** Found an accessibility issue pattern specific to this app's components: Icon-only buttons (like the `Trash2` delete button and `Plus` add button) lacked descriptive labels, making them inaccessible to screen readers and difficult to identify without tooltips for standard users.
+**Action:** Add `aria-label` and `title` attributes to all icon-only buttons to ensure they are accessible to screen readers and provide helpful tooltips on hover.
