@@ -11,6 +11,79 @@ const getSafetyQuery = (profile, baseQuery = {}) => {
   return baseQuery;
 };
 
+const getBecauseYouWatched = async (profile, history, limit) => {
+  if (history.length > 0 && history[0].movie) {
+    const lastMovie = history[0].movie;
+    const genresToMatch = lastMovie.genres.slice(0, 2);
+
+    const matchQuery = getSafetyQuery(profile, {
+      genres: { $in: genresToMatch },
+      _id: { $ne: lastMovie._id },
+    });
+
+    const movies = await Movie.find(matchQuery).limit(limit);
+    return {
+      title: `Because you watched ${lastMovie.title}`,
+      data: movies,
+    };
+  } else {
+    const matchQuery = getSafetyQuery(profile, { genres: 'Sci-Fi' });
+    const movies = await Movie.find(matchQuery).sort({ rating: -1 }).limit(limit);
+    return {
+      title: 'Popular in Sci-Fi',
+      data: movies,
+    };
+  }
+};
+
+const getRecommendedForYou = async (profile, history, limit) => {
+  let recommendedQuery = getSafetyQuery(profile, {});
+  const watchedIds = history.map(h => h.movie?._id).filter(Boolean);
+
+  if (history.length > 0) {
+    const genreCounts = {};
+    history.forEach(h => {
+      if (h.movie) {
+        h.movie.genres.forEach(g => {
+          genreCounts[g] = (genreCounts[g] || 0) + 1;
+        });
+      }
+    });
+    const topGenres = Object.keys(genreCounts).sort((a, b) => genreCounts[b] - genreCounts[a]);
+    if (topGenres.length > 0) {
+      recommendedQuery.genres = { $in: topGenres.slice(0, 2) };
+    }
+  }
+
+  recommendedQuery._id = { $nin: watchedIds };
+
+  let recommendedForYou = await Movie.find(recommendedQuery).sort({ rating: -1 }).limit(limit);
+  if (recommendedForYou.length < limit) {
+    const fillLimit = limit - recommendedForYou.length;
+    const fillQuery = getSafetyQuery(profile, {
+      _id: { $nin: [...watchedIds, ...recommendedForYou.map(r => r._id)] }
+    });
+    const fillMovies = await Movie.find(fillQuery).sort({ rating: -1 }).limit(fillLimit);
+    recommendedForYou = [...recommendedForYou, ...fillMovies];
+  }
+
+  return recommendedForYou;
+};
+
+const getTrendingNearYou = async (profile, limit) => {
+  const trendingQuery = getSafetyQuery(profile, {});
+  return await Movie.find(trendingQuery).sort({ rating: -1, releaseYear: -1 }).limit(limit);
+};
+
+const getFeaturedMovies = async (profile) => {
+  const featuredQuery = getSafetyQuery(profile, { isFeatured: true });
+  let featured = await Movie.find(featuredQuery).limit(5);
+  if (featured.length === 0) {
+    featured = await Movie.find(getSafetyQuery(profile, {})).sort({ rating: -1 }).limit(5);
+  }
+  return featured;
+};
+
 exports.getHomeRecommendations = async (req, res, next) => {
   try {
     if (!req.profile) {
@@ -24,67 +97,10 @@ exports.getHomeRecommendations = async (req, res, next) => {
       .sort({ lastWatchedDate: -1 })
       .limit(5);
 
-    let becauseYouWatched = { title: '', data: [] };
-    if (history.length > 0 && history[0].movie) {
-      const lastMovie = history[0].movie;
-      const genresToMatch = lastMovie.genres.slice(0, 2);
-      
-      const matchQuery = getSafetyQuery(req.profile, {
-        genres: { $in: genresToMatch },
-        _id: { $ne: lastMovie._id },
-      });
-
-      const movies = await Movie.find(matchQuery).limit(limit);
-      becauseYouWatched = {
-        title: `Because you watched ${lastMovie.title}`,
-        data: movies,
-      };
-    } else {
-      const matchQuery = getSafetyQuery(req.profile, { genres: 'Sci-Fi' });
-      const movies = await Movie.find(matchQuery).sort({ rating: -1 }).limit(limit);
-      becauseYouWatched = {
-        title: 'Popular in Sci-Fi',
-        data: movies,
-      };
-    }
-
-    let recommendedQuery = getSafetyQuery(req.profile, {});
-    if (history.length > 0) {
-      const genreCounts = {};
-      history.forEach(h => {
-        if (h.movie) {
-          h.movie.genres.forEach(g => {
-            genreCounts[g] = (genreCounts[g] || 0) + 1;
-          });
-        }
-      });
-      const topGenres = Object.keys(genreCounts).sort((a, b) => genreCounts[b] - genreCounts[a]);
-      if (topGenres.length > 0) {
-        recommendedQuery.genres = { $in: topGenres.slice(0, 2) };
-      }
-    }
-    
-    const watchedIds = history.map(h => h.movie?._id).filter(Boolean);
-    recommendedQuery._id = { $nin: watchedIds };
-
-    let recommendedForYou = await Movie.find(recommendedQuery).sort({ rating: -1 }).limit(limit);
-    if (recommendedForYou.length < limit) {
-      const fillLimit = limit - recommendedForYou.length;
-      const fillQuery = getSafetyQuery(req.profile, {
-        _id: { $nin: [...watchedIds, ...recommendedForYou.map(r => r._id)] }
-      });
-      const fillMovies = await Movie.find(fillQuery).sort({ rating: -1 }).limit(fillLimit);
-      recommendedForYou = [...recommendedForYou, ...fillMovies];
-    }
-
-    const trendingQuery = getSafetyQuery(req.profile, {});
-    const trendingNearYou = await Movie.find(trendingQuery).sort({ rating: -1, releaseYear: -1 }).limit(limit);
-
-    const featuredQuery = getSafetyQuery(req.profile, { isFeatured: true });
-    let featured = await Movie.find(featuredQuery).limit(5);
-    if (featured.length === 0) {
-      featured = await Movie.find(getSafetyQuery(req.profile, {})).sort({ rating: -1 }).limit(5);
-    }
+    const becauseYouWatched = await getBecauseYouWatched(req.profile, history, limit);
+    const recommendedForYou = await getRecommendedForYou(req.profile, history, limit);
+    const trendingNearYou = await getTrendingNearYou(req.profile, limit);
+    const featured = await getFeaturedMovies(req.profile);
 
     res.status(200).json({
       success: true,
