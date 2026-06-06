@@ -42,6 +42,7 @@ export default function App() {
   const [newDuration, setNewDuration] = useState('2h 15m');
   const [newCast, setNewCast] = useState('Alexander Vance, Elena Rostova');
   const [newCrew, setNewCrew] = useState('Marcus Sterling (Director)');
+  const [isUploading, setIsUploading] = useState(false);
 
   // Coupon Generator State
   const [coupons, setCoupons] = useState(['WELCOME50', 'VANIXFREE']);
@@ -130,6 +131,7 @@ export default function App() {
     e.preventDefault();
     if (!newTitle.trim() || !newUrl.trim()) return;
 
+    setIsUploading(true);
     try {
       const endpoint = newType.toLowerCase() === 'series' ? '/uploadSeries' : '/uploadMovie';
       const res = await fetch(`${API_URL}${endpoint}`, {
@@ -166,6 +168,8 @@ export default function App() {
     } catch (err) {
       console.error(err);
       alert('Error connecting to upload pipeline server.');
+    } finally {
+      setIsUploading(false);
     }
   };
 
@@ -456,8 +460,17 @@ export default function App() {
                   </div>
                 </div>
 
-                <button className="btn-premium" type="submit" style={{ justifyContent: 'center' }}>
-                  Transcode & Register Video
+                <button
+                  className="btn-premium"
+                  type="submit"
+                  disabled={isUploading}
+                  style={{
+                    justifyContent: 'center',
+                    opacity: isUploading ? 0.7 : 1,
+                    cursor: isUploading ? 'not-allowed' : 'pointer'
+                  }}
+                >
+                  {isUploading ? 'Transcoding...' : 'Transcode & Register Video'}
                 </button>
               </form>
             </div>
