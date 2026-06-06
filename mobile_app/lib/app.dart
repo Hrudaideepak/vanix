@@ -25,7 +25,15 @@ class VanixApp extends StatelessWidget {
       builder: (context, child) {
         if (!kIsWeb) return child ?? const SizedBox.shrink();
 
-        // On Web, show the premium mobile app chassis
+        final size = MediaQuery.of(context).size;
+        final isMobileWeb = defaultTargetPlatform == TargetPlatform.iOS || defaultTargetPlatform == TargetPlatform.android;
+
+        // If it's a mobile web browser or a small window, don't show the chassis
+        if (isMobileWeb || size.width < 600) {
+          return child ?? const SizedBox.shrink();
+        }
+
+        // On Desktop Web, show the premium mobile app chassis
         return Scaffold(
           backgroundColor: const Color(0xFF07050E), // Outer space dark canvas background
           body: Container(
