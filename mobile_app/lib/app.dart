@@ -117,7 +117,12 @@ class VanixApp extends StatelessWidget {
                             Positioned.fill(
                               top: 36, // leave room for mockup status bar
                               bottom: 12, // leave room for virtual home indicator
-                              child: child ?? const SizedBox.shrink(),
+                              child: MediaQuery(
+                                data: MediaQuery.of(context).copyWith(
+                                  size: const Size(396, 788),
+                                ),
+                                child: child ?? const SizedBox.shrink(),
+                              ),
                             ),
 
                             // Mock Phone Status Bar at Top
