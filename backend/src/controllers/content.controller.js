@@ -25,7 +25,7 @@ exports.getMovies = async (req, res, next) => {
     if (recommendedFor && req.user) {
       movies = await getRecommendations(req.user.id, 6);
     } else {
-      movies = await Movie.find(query).sort({ createdAt: -1 });
+      movies = await Movie.find(query).sort({ createdAt: -1 }).lean();
     }
 
     res.status(200).json({
@@ -43,7 +43,7 @@ exports.getMovies = async (req, res, next) => {
 // @access  Public
 exports.getMovieById = async (req, res, next) => {
   try {
-    const movie = await Movie.findById(req.params.id);
+    const movie = await Movie.findById(req.params.id).lean();
 
     if (!movie) {
       return res.status(404).json({ success: false, message: 'Content not found' });
@@ -67,14 +67,12 @@ exports.getMovieById = async (req, res, next) => {
       }
     }
 
-    const movieObj = movie.toObject();
-    
     // Sign video url
-    movieObj.videoUrl = generateSignedStreamingUrl(movieObj.videoUrl);
+    movie.videoUrl = generateSignedStreamingUrl(movie.videoUrl);
 
     res.status(200).json({
       success: true,
-      data: movieObj,
+      data: movie,
     });
   } catch (error) {
     next(error);
@@ -119,7 +117,7 @@ exports.searchContent = async (req, res, next) => {
       query.type = type.toLowerCase();
     }
 
-    const results = await Movie.find(query).limit(20);
+    const results = await Movie.find(query).limit(20).lean();
 
     res.status(200).json({
       success: true,
