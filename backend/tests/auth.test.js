@@ -6,7 +6,10 @@ const Profile = require('../src/models/profile.model');
 
 // Mock Mongo connection for local test run if mongo isn't active
 beforeAll(async () => {
-  const MONGO_TEST_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/vanix_test';
+  const baseUri = process.env.MONGO_URI 
+    ? process.env.MONGO_URI.replace(/\/[^\/]+$/, '') 
+    : 'mongodb://localhost:27017';
+  const MONGO_TEST_URI = `${baseUri}/vanix_test`;
   await mongoose.connect(MONGO_TEST_URI);
 });
 

@@ -3,11 +3,7 @@ const router = express.Router();
 const { uploadMovie, uploadSeries } = require('../controllers/upload.controller');
 const { protect, authorize } = require('../middlewares/auth.middleware');
 
-// Secure all upload routes with JWT and Admin checks
-router.use(protect);
-router.use(authorize('admin', 'super-admin'));
-
-router.post('/uploadMovie', uploadMovie);
-router.post('/uploadSeries', uploadSeries);
+router.post('/uploadMovie', protect, authorize('admin', 'super-admin'), uploadMovie);
+router.post('/uploadSeries', protect, authorize('admin', 'super-admin'), uploadSeries);
 
 module.exports = router;
