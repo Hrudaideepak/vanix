@@ -65,6 +65,7 @@ const deviceRoutes = require('./routes/device.routes');
 const searchRoutes = require('./routes/search.routes');
 const recommendationRoutes = require('./routes/recommendation.routes');
 const analyticsRoutes = require('./routes/analytics.routes');
+const videoUploadRoutes = require('./routes/videoUpload');
 
 // Mount Routes
 app.use('/api', authRoutes);
@@ -78,6 +79,7 @@ app.use('/api', deviceRoutes);
 app.use('/api', searchRoutes);
 app.use('/api', recommendationRoutes);
 app.use('/api', analyticsRoutes);
+app.use('/api/videos', videoUploadRoutes);
 
 // Catch 404 Route Not Found
 app.use((req, res, next) => {
