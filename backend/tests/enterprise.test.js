@@ -1,5 +1,6 @@
 const request = require('supertest');
 const mongoose = require('mongoose');
+const jwt = require('jsonwebtoken');
 const app = require('../src/app');
 const User = require('../src/models/user.model');
 const Profile = require('../src/models/profile.model');
@@ -11,7 +12,7 @@ beforeAll(async () => {
   const baseUri = process.env.MONGO_URI 
     ? process.env.MONGO_URI.replace(/\/[^\/]+$/, '') 
     : 'mongodb://localhost:27017';
-  const MONGO_TEST_URI = `${baseUri}/vanix_test_ent`;
+  const MONGO_TEST_URI = `${baseUri}`;
   await mongoose.connect(MONGO_TEST_URI);
 });
 
@@ -29,12 +30,15 @@ beforeEach(async () => {
 describe('🌌 Enterprise OTT Features Integration Tests', () => {
   
   test('Profiles CRUD and header isolation', async () => {
+    // Manually register user first to have valid JWT
+    const email = 'test_ent@vanix.com';
+    const password = 'securePassword123';
+
     const regRes = await request(app)
       .post('/api/register')
-      .send({ email: 'test_ent@vanix.com', password: 'securePassword123' });
+      .send({ email, password });
     
     const token = regRes.body.accessToken;
-    const defaultProfileId = regRes.body.user.profiles[0]._id;
 
     const createRes = await request(app)
       .post('/api/profiles')
