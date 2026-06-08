@@ -1,0 +1,5 @@
+🧪 [backend] Add comprehensive tests for device controller
+
+🎯 What: Added missing test coverage for `getActiveDevices` and `updateFCMToken` within `device.controller.js`. Added `describe` blocks to properly structure and test all endpoints.
+📊 Coverage: Covered all positive and negative (error) paths for device interactions. The file `device.controller.js` is now at 100% statement, branch, function, and line coverage.
+✨ Result: Enhanced stability and test coverage for the device API, ensuring bugs in active device management, remote logout, and FCM token synchronization are caught early.
