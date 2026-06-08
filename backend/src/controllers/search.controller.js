@@ -29,7 +29,8 @@ exports.smartSearch = async (req, res, next) => {
     if (genre && genre !== 'All') filter.genres = genre;
     if (type && type !== 'All') filter.type = type.toLowerCase();
 
-    const regexQuery = new RegExp(q.trim(), 'i');
+    const escapeRegExp = (string) => string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const regexQuery = new RegExp(escapeRegExp(q.trim()), 'i');
     filter.$or = [
       { title: regexQuery },
       { description: regexQuery },
