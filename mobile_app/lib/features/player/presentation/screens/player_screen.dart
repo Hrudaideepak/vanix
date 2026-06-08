@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:video_player/video_player.dart';
@@ -114,7 +115,12 @@ class _PlayerScreenState extends State<PlayerScreen> {
 
   Future<void> _initializePlayer(int startAtSeconds) async {
     try {
-      _videoPlayerController = VideoPlayerController.networkUrl(Uri.parse(_activeUrl));
+      if (_activeUrl.startsWith('http')) {
+        _videoPlayerController = VideoPlayerController.networkUrl(Uri.parse(_activeUrl));
+      } else {
+        final cleanPath = _activeUrl.startsWith('file://') ? _activeUrl.substring(7) : _activeUrl;
+        _videoPlayerController = VideoPlayerController.file(File(cleanPath));
+      }
       await _videoPlayerController.initialize();
 
       _videoPlayerController.addListener(_subtitleListener);

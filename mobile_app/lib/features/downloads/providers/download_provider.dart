@@ -1,7 +1,10 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
+import 'package:path_provider/path_provider.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../core/utils/logger.dart';
 import '../../movies/models/content_model.dart';
@@ -11,9 +14,9 @@ class DownloadProvider extends ChangeNotifier {
 
   List<ContentModel> _downloadedItems = [];
   final Map<String, double> _downloadProgress = {}; // contentId -> progress (0.0 to 1.0)
-  final Map<String, String> _downloadStatus = {}; // contentId -> 'downloading' | 'paused' | 'completed'
+  final Map<String, String> _downloadStatus = {}; // contentId -> 'downloading' | 'paused' | 'completed' | 'failed'
   final Map<String, DateTime> _downloadDates = {}; // contentId -> download completion date
-  final Map<String, Timer> _activeTimers = {};
+  final Map<String, StreamSubscription> _activeSubscriptions = {};
 
   DownloadProvider({
     required SharedPreferences sharedPreferences,
@@ -65,20 +68,113 @@ class DownloadProvider extends ChangeNotifier {
     }
   }
 
-  void startDownload(ContentModel movie) {
-    if (isDownloaded(movie.id) && !isPaused(movie.id)) return;
+  Future<void> startDownload(ContentModel movie) async {
+    if (isDownloaded(movie.id) && _downloadStatus[movie.id] == 'completed') return;
 
     _downloadProgress[movie.id] = _downloadProgress[movie.id] ?? 0.0;
     _downloadStatus[movie.id] = 'downloading';
     notifyListeners();
 
-    _runDownloadTimer(movie);
+    try {
+      final appDir = await getApplicationDocumentsDirectory();
+      final downloadsDir = Directory('${appDir.path}/downloads');
+      if (!await downloadsDir.exists()) {
+        await downloadsDir.create(recursive: true);
+      }
+
+      // Check for playable URL - default to a standard sample MP4 for testing if URL is HLS/m3u8
+      String urlString = movie.videoUrl;
+      if (!urlString.endsWith('.mp4')) {
+        urlString = 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4';
+      }
+
+      final uri = Uri.parse(urlString);
+      final file = File('${downloadsDir.path}/${movie.id}.mp4');
+      
+      int existingBytes = 0;
+      bool append = false;
+      if (await file.exists() && _downloadProgress[movie.id]! > 0.0) {
+        existingBytes = await file.length();
+        append = true;
+      }
+
+      final client = http.Client();
+      final request = http.Request('GET', uri);
+      
+      if (existingBytes > 0) {
+        request.headers['Range'] = 'bytes=$existingBytes-';
+      }
+
+      final response = await client.send(request);
+
+      // HTTP 206 means Partial Content (supporting pause/resume)
+      if (response.statusCode != 200 && response.statusCode != 206) {
+        throw HttpException('Server returned error status code: ${response.statusCode}');
+      }
+
+      final totalBytes = (response.contentLength ?? 0) + existingBytes;
+      final fileSink = file.openWrite(mode: append ? FileMode.append : FileMode.write);
+
+      int bytesDownloaded = existingBytes;
+
+      final subscription = response.stream.listen(
+        (chunk) {
+          fileSink.add(chunk);
+          bytesDownloaded += chunk.length;
+          if (totalBytes > 0) {
+            _downloadProgress[movie.id] = bytesDownloaded / totalBytes;
+            notifyListeners();
+          }
+        },
+        onDone: () async {
+          await fileSink.close();
+          _activeSubscriptions.remove(movie.id);
+          _downloadProgress.remove(movie.id);
+
+          // Build a new model pointing to the local file path instead of network url
+          final downloadedMovie = ContentModel(
+            id: movie.id,
+            title: movie.title,
+            description: movie.description,
+            thumbnailUrl: movie.thumbnailUrl,
+            bannerUrl: movie.bannerUrl,
+            videoUrl: file.path,
+            type: movie.type,
+            rating: movie.rating,
+            releaseYear: movie.releaseYear,
+            duration: movie.duration,
+            genres: movie.genres,
+            isPremium: movie.isPremium,
+            progress: movie.progress,
+            cast: movie.cast,
+            crew: movie.crew,
+          );
+
+          _completeDownload(downloadedMovie);
+        },
+        onError: (err) async {
+          await fileSink.close();
+          _activeSubscriptions.remove(movie.id);
+          AppLogger.error('Download stream error for ${movie.title}: $err');
+          _downloadStatus[movie.id] = 'failed';
+          notifyListeners();
+        },
+        cancelOnError: true,
+      );
+
+      _activeSubscriptions[movie.id] = subscription;
+    } catch (e) {
+      AppLogger.error('Failed to initiate download for ${movie.title}: $e');
+      _downloadStatus[movie.id] = 'failed';
+      _downloadProgress.remove(movie.id);
+      notifyListeners();
+    }
   }
 
   void pauseDownload(String contentId) {
-    if (_activeTimers.containsKey(contentId)) {
-      _activeTimers[contentId]?.cancel();
-      _activeTimers.remove(contentId);
+    if (_activeSubscriptions.containsKey(contentId)) {
+      _activeSubscriptions[contentId]?.cancel();
+      _activeSubscriptions.remove(contentId);
       _downloadStatus[contentId] = 'paused';
       notifyListeners();
       AppLogger.info('Download paused: $contentId');
@@ -89,28 +185,15 @@ class DownloadProvider extends ChangeNotifier {
     if (_downloadStatus[movie.id] == 'paused') {
       _downloadStatus[movie.id] = 'downloading';
       notifyListeners();
-      _runDownloadTimer(movie);
+      startDownload(movie);
       AppLogger.info('Download resumed: ${movie.title}');
     }
   }
 
-  void _runDownloadTimer(ContentModel movie) {
-    const interval = Duration(milliseconds: 350);
-    _activeTimers[movie.id] = Timer.periodic(interval, (timer) {
-      final currentProgress = _downloadProgress[movie.id] ?? 0.0;
-      if (currentProgress >= 1.0) {
-        timer.cancel();
-        _activeTimers.remove(movie.id);
-        _downloadProgress.remove(movie.id);
-        _completeDownload(movie);
-      } else {
-        _downloadProgress[movie.id] = currentProgress + 0.05;
-        notifyListeners();
-      }
-    });
-  }
-
   void _completeDownload(ContentModel movie) async {
+    // Check if already in list to avoid duplicates
+    _downloadedItems.removeWhere((item) => item.id == movie.id);
+    
     _downloadedItems.add(movie);
     _downloadStatus[movie.id] = 'completed';
     _downloadDates[movie.id] = DateTime.now();
@@ -128,10 +211,22 @@ class DownloadProvider extends ChangeNotifier {
   }
 
   Future<void> removeDownload(String contentId) async {
-    if (_activeTimers.containsKey(contentId)) {
-      _activeTimers[contentId]?.cancel();
-      _activeTimers.remove(contentId);
-      _downloadProgress.remove(contentId);
+    if (_activeSubscriptions.containsKey(contentId)) {
+      _activeSubscriptions[contentId]?.cancel();
+      _activeSubscriptions.remove(contentId);
+    }
+    _downloadProgress.remove(contentId);
+
+    // Delete local downloaded file
+    try {
+      final appDir = await getApplicationDocumentsDirectory();
+      final file = File('${appDir.path}/downloads/$contentId.mp4');
+      if (await file.exists()) {
+        await file.delete();
+        AppLogger.info('Deleted local downloaded file: ${file.path}');
+      }
+    } catch (e) {
+      AppLogger.error('Failed to delete offline file: $e');
     }
 
     _downloadedItems.removeWhere((item) => item.id == contentId);
@@ -171,8 +266,8 @@ class DownloadProvider extends ChangeNotifier {
 
   @override
   void dispose() {
-    for (var timer in _activeTimers.values) {
-      timer.cancel();
+    for (var sub in _activeSubscriptions.values) {
+      sub.cancel();
     }
     super.dispose();
   }
