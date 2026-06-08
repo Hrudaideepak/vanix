@@ -1,6 +1,7 @@
 const Movie = require('../models/movie.model');
 const { getRecommendations } = require('../services/recommendation.service');
 const { generateSignedStreamingUrl } = require('../utils/security');
+const { escapeRegExp } = require('../utils/regex');
 
 // @desc    Get all movies/content
 // @route   GET /api/movies
@@ -105,9 +106,10 @@ exports.searchContent = async (req, res, next) => {
     let query = {};
 
     if (q) {
+      const safeQuery = escapeRegExp(q);
       query.$or = [
-        { title: { $regex: q, $options: 'i' } },
-        { description: { $regex: q, $options: 'i' } },
+        { title: { $regex: safeQuery, $options: 'i' } },
+        { description: { $regex: safeQuery, $options: 'i' } },
       ];
     }
     

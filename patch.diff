@@ -1,0 +1,42 @@
+<<<<<<< SEARCH
+const Movie = require('../models/movie.model');
+const { getRecommendations } = require('../services/recommendation.service');
+const { generateSignedStreamingUrl } = require('../utils/security');
+=======
+const Movie = require('../models/movie.model');
+const { getRecommendations } = require('../services/recommendation.service');
+const { generateSignedStreamingUrl } = require('../utils/security');
+const { escapeRegExp } = require('../utils/regex');
+>>>>>>> REPLACE
+<<<<<<< SEARCH
+// @desc    Real-time text query search
+// @route   GET /api/search
+// @access  Public
+exports.searchContent = async (req, res, next) => {
+  try {
+    const { q, genre, type } = req.query;
+    let query = {};
+
+    if (q) {
+      query.$or = [
+        { title: { $regex: q, $options: 'i' } },
+        { description: { $regex: q, $options: 'i' } },
+      ];
+    }
+=======
+// @desc    Real-time text query search
+// @route   GET /api/search
+// @access  Public
+exports.searchContent = async (req, res, next) => {
+  try {
+    const { q, genre, type } = req.query;
+    let query = {};
+
+    if (q) {
+      const safeQuery = escapeRegExp(q);
+      query.$or = [
+        { title: { $regex: safeQuery, $options: 'i' } },
+        { description: { $regex: safeQuery, $options: 'i' } },
+      ];
+    }
+>>>>>>> REPLACE

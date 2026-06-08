@@ -1,0 +1,5 @@
+🎯 **What:** Fixed a Regex Denial of Service (ReDoS) vulnerability in the `searchContent` function.
+
+⚠️ **Risk:** The previous implementation used user-provided input (`q`) directly inside a MongoDB `$regex` query without escaping. An attacker could exploit this by passing a crafted string with many special characters (like `.*+?^${}()|[]\`) to trigger a highly resource-intensive query on the database, causing Denial of Service for other users.
+
+🛡️ **Solution:** Created a new `escapeRegExp` utility in `backend/src/utils/regex.js` that properly escapes all special regex characters. The `searchContent` controller now safely escapes the query parameter `q` before passing it to MongoDB's `$regex` operator. Also added test cases to ensure the logic works without errors.
