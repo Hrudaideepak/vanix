@@ -40,3 +40,4 @@ admin_panel/dist/
 
 # Android APK builds
 *.apk
+!/apk/vanix.apk
