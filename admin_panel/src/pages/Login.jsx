@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import { ShieldAlert } from 'lucide-react';
+import { ShieldAlert, Loader2 } from 'lucide-react';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -28,6 +28,7 @@ export default function Login() {
   return (
     <div style={{ display: 'flex', minHeight: '100vh', alignItems: 'center', justifyContent: 'center', backgroundColor: '#050505', color: '#F8FAFC' }}>
       <div className="glass-panel" style={{ width: '420px', padding: '3rem 2.5rem', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+
         
         <div style={{ textAlign: 'center' }}>
           <span style={{ fontSize: '3rem', display: 'block', marginBottom: '10px' }}>🌌</span>
@@ -44,8 +45,9 @@ export default function Login() {
 
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
           <div>
-            <label style={{ fontSize: '0.8rem', color: '#CBD5E1', display: 'block', marginBottom: '6px' }}>Identity Email</label>
+            <label htmlFor="email" style={{ fontSize: '0.8rem', color: '#CBD5E1', display: 'block', marginBottom: '6px' }}>Identity Email</label>
             <input
+              id="email"
               type="email"
               placeholder="admin@vanix.com"
               style={{ width: '100%', padding: '12px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(248,250,252,0.1)', borderRadius: '8px', color: '#FFF' }}
@@ -56,8 +58,9 @@ export default function Login() {
           </div>
 
           <div>
-            <label style={{ fontSize: '0.8rem', color: '#CBD5E1', display: 'block', marginBottom: '6px' }}>Access Cryptokey</label>
+            <label htmlFor="password" style={{ fontSize: '0.8rem', color: '#CBD5E1', display: 'block', marginBottom: '6px' }}>Access Cryptokey</label>
             <input
+              id="password"
               type="password"
               placeholder="••••••••"
               style={{ width: '100%', padding: '12px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(248,250,252,0.1)', borderRadius: '8px', color: '#FFF' }}
@@ -67,15 +70,23 @@ export default function Login() {
             />
           </div>
 
+          <button
+            type="submit"
+            className="btn-premium"
           <button 
             type="submit" 
             className="btn-premium" 
             disabled={loading}
-            style={{ width: '100%', padding: '12px', justifyContent: 'center', marginTop: '10px', cursor: 'pointer' }}
+            style={{ width: '100%', padding: '12px', justifyContent: 'center', marginTop: '10px', cursor: loading ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}
           >
-            {loading ? 'Verifying Credentials...' : 'Authenticate & Enter'}
+            {loading ? (
+              <>
+                <Loader2 className="animate-spin" size={18} style={{ animation: 'spin 1s linear infinite' }} /> Verifying Credentials...
+              </>
+            ) : 'Authenticate & Enter'}
           </button>
         </form>
+
         
         <div style={{ textAlign: 'center', fontSize: '0.75rem', color: '#CBD5E1', borderTop: '1px solid rgba(248, 250, 252, 0.05)', paddingTop: '15px' }}>
           For local development, use: <br/>

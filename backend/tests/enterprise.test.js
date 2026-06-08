@@ -7,6 +7,8 @@ const Profile = require('../src/models/profile.model');
 const Movie = require('../src/models/movie.model');
 
 beforeAll(async () => {
+  const baseUri = process.env.MONGO_URI
+    ? process.env.MONGO_URI.replace(/\/[^\/]+$/, '')
   const baseUri = process.env.MONGO_URI 
     ? process.env.MONGO_URI.replace(/\/[^\/]+$/, '') 
     : 'mongodb://localhost:27017';

@@ -1,8 +1,8 @@
 import React from 'react';
 import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { 
-  TrendingUp, Video, Users, Ticket, BarChart3, LogOut, Shield 
+import {
+  TrendingUp, Video, Users, Ticket, BarChart3, LogOut, Shield
 } from 'lucide-react';
 
 const navigation = [
@@ -24,13 +24,13 @@ export default function Layout() {
   };
 
   return (
-    <div style={{ display: 'flex', minHeight: '100vh', backgroundColor: '#050505', color: '#F8FAFC' }}>
-      
+    <div style={{ display: 'flex', minHeight: '100vh', backgroundColor: '#000000', color: '#FFFFFF' }}>
+
       {/* Sidebar Command Console */}
-      <aside className="glass-panel" style={{ width: '280px', margin: '1rem', padding: '2rem', display: 'flex', flexDirection: 'column', gap: '1.5rem', borderRight: '1px solid rgba(248, 250, 252, 0.05)' }}>
+      <aside className="glass-panel" style={{ width: '280px', margin: '1rem', padding: '2rem', display: 'flex', flexDirection: 'column', gap: '1.5rem', borderRight: '1px solid rgba(255, 0, 0, 0.1)' }}>
         <div style={{ fontSize: '1.5rem', fontWeight: 800, letterSpacing: '2px', display: 'flex', alignItems: 'center', gap: '10px' }}>
           <span style={{ fontSize: '1.8rem' }}>🌌</span> VANIX
-          <span style={{ fontSize: '0.65rem', backgroundColor: '#7C3AED', padding: '3px 8px', borderRadius: '6px', fontWeight: 'bold' }}>HQ</span>
+          <span className="technical-tag" style={{ fontSize: '0.65rem', backgroundColor: '#FF0000', color: '#000000', padding: '3px 8px', fontWeight: 'bold' }}>HQ</span>
         </div>
 
         <nav style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginTop: '1.5rem' }}>
@@ -41,36 +41,36 @@ export default function Layout() {
                 key={item.name}
                 to={item.href}
                 className="btn-glass"
-                style={{ 
-                  display: 'flex', 
-                  alignItems: 'center', 
-                  gap: '12px', 
-                  textAlign: 'left', 
-                  width: '100%', 
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '12px',
+                  textAlign: 'left',
+                  width: '100%',
                   textDecoration: 'none',
-                  color: '#F8FAFC',
-                  background: isActive ? 'rgba(124, 58, 237, 0.15)' : '', 
-                  borderColor: isActive ? '#7C3AED' : '' 
+                  color: '#FFFFFF',
+                  background: isActive ? 'rgba(255, 0, 0, 0.15)' : '',
+                  borderColor: isActive ? '#FF0000' : ''
                 }}
               >
-                <item.icon size={18} color="#7C3AED" /> {item.name}
+                <item.icon size={18} color="#FF0000" /> {item.name}
               </Link>
             );
           })}
         </nav>
 
         <div style={{ marginTop: 'auto', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '10px', borderRadius: '12px', background: 'rgba(255, 255, 255, 0.02)' }}>
-            <Shield size={18} color="#2563EB" />
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '10px', background: 'rgba(255, 255, 255, 0.02)', border: '1px solid rgba(255, 0, 0, 0.1)' }}>
+            <Shield size={18} color="#CC0000" />
             <div>
               <p style={{ fontSize: '0.8rem', margin: 0, fontWeight: 'bold' }}>Secured Terminal</p>
-              <p style={{ fontSize: '0.65rem', margin: 0, color: '#CBD5E1' }}>Role: {(admin?.role || 'admin').toUpperCase()}</p>
+              <p style={{ fontSize: '0.65rem', margin: 0, color: '#E5E2E1' }}>Role: {(admin?.role || 'admin').toUpperCase()}</p>
             </div>
           </div>
-          <button 
+          <button
             onClick={handleLogout}
-            className="btn-glass" 
-            style={{ color: '#EF4444', display: 'flex', alignItems: 'center', gap: '8px', justifyContent: 'center', cursor: 'pointer', width: '100%' }}
+            className="btn-glass"
+            style={{ color: '#FFB4AB', display: 'flex', alignItems: 'center', gap: '8px', justifyContent: 'center', cursor: 'pointer', width: '100%' }}
           >
             <LogOut size={16} /> Exit Terminal
           </button>

@@ -26,6 +26,7 @@ void main() async {
   // } catch (e) {
   //   print("⚠️ Firebase initialization bypassed: $e");
   // }
+
   
   // Set preferred orientations to portrait first, player will handle landscape rotation
   await SystemChrome.setPreferredOrientations([

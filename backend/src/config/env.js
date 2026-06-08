@@ -1,5 +1,6 @@
 const dotenv = require('dotenv');
 const path = require('path');
+const crypto = require('crypto');
 
 // Load environment variables from .env file
 dotenv.config({ path: path.join(__dirname, '../../.env') });
@@ -14,6 +15,13 @@ if (NODE_ENV !== 'test') {
     throw new Error("FATAL ERROR: JWT_REFRESH_SECRET is not defined.");
   }
 }
+const requireEnv = (key) => {
+  if (process.env[key]) return process.env[key];
+  if (process.env.NODE_ENV === 'test') {
+      return crypto.createHash('sha256').update(key).digest('hex'); // consistent dummy secret for tests
+  }
+  throw new Error(`CRITICAL ERROR: Environment variable ${key} is not set in .env file! This is a severe security risk.`);
+};
 
 module.exports = {
   NODE_ENV,
@@ -21,6 +29,8 @@ module.exports = {
   MONGO_URI: process.env.MONGO_URI || 'mongodb://localhost:27017/vanix',
   JWT_SECRET: process.env.JWT_SECRET,
   JWT_REFRESH_SECRET: process.env.JWT_REFRESH_SECRET,
+  JWT_SECRET: requireEnv('JWT_SECRET'),
+  JWT_REFRESH_SECRET: requireEnv('JWT_REFRESH_SECRET'),
   JWT_EXPIRES_IN: process.env.JWT_EXPIRES_IN || '15m',
   JWT_REFRESH_EXPIRES_IN: process.env.JWT_REFRESH_EXPIRES_IN || '7d',
   CLOUDINARY_CLOUD_NAME: process.env.CLOUDINARY_CLOUD_NAME || 'vanix-cloud',
@@ -39,4 +49,5 @@ module.exports = {
   CLOUDFRONT_KEY_PAIR_ID: process.env.CLOUDFRONT_KEY_PAIR_ID,
   CLOUDFRONT_PRIVATE_KEY_PATH: process.env.CLOUDFRONT_PRIVATE_KEY_PATH,
   TEMP_VIDEO_PATH: process.env.TEMP_VIDEO_PATH || './temp/uploads',
+  GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID || 'google_client_id_placeholder',
 };

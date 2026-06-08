@@ -48,4 +48,12 @@ const HistorySchema = new mongoose.Schema({
   timestamps: true,
 });
 
+// ⚡ Bolt Performance Optimization: Added compound indexes
+// Why: History queries are run frequently (home page load, saving progress).
+// Impact: Reduces O(N) full collection scans to O(1) indexed lookups, significantly improving read times as the history collection grows.
+// Measure: Monitor query execution time for home recommendations and save progress endpoints.
+HistorySchema.index({ profile: 1, lastWatchedDate: -1 });
+HistorySchema.index({ profile: 1, movie: 1, episodeId: 1 });
+HistorySchema.index({ user: 1, updatedAt: -1 });
+
 module.exports = mongoose.model('History', HistorySchema);

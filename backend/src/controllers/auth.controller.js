@@ -198,10 +198,36 @@ exports.refreshToken = async (req, res, next) => {
 // @access  Public
 exports.googleLogin = async (req, res, next) => {
   try {
-    const { googleId, email, name, avatarUrl } = req.body;
+    let { googleId, email, name, avatarUrl, idToken } = req.body;
 
-    if (!googleId || !email) {
-      return res.status(400).json({ success: false, message: 'Google authentication details incomplete' });
+    // Secure Verification Mode if GOOGLE_CLIENT_ID is configured
+    if (env.GOOGLE_CLIENT_ID && env.GOOGLE_CLIENT_ID !== 'google_client_id_placeholder') {
+      if (!idToken) {
+        return res.status(400).json({ success: false, message: 'Google OAuth idToken is required' });
+      }
+      try {
+        const { OAuth2Client } = require('google-auth-library');
+        const client = new OAuth2Client(env.GOOGLE_CLIENT_ID);
+        const ticket = await client.verifyIdToken({
+          idToken,
+          audience: env.GOOGLE_CLIENT_ID,
+        });
+        const payload = ticket.getPayload();
+
+        
+        googleId = payload['sub'];
+        email = payload['email'];
+        name = payload['name'];
+        avatarUrl = payload['picture'];
+      } catch (verificationError) {
+        console.error('Google OAuth ID Token verification failed:', verificationError);
+        return res.status(401).json({ success: false, message: 'Google authentication failed. Invalid ID Token.' });
+      }
+    } else {
+      console.warn('⚠️ Google Client ID not configured. Running in Mock Google Login Mode.');
+      if (!googleId || !email) {
+        return res.status(400).json({ success: false, message: 'Google authentication details incomplete' });
+      }
     }
 
     let user = await User.findOne({ email }).populate('profiles');

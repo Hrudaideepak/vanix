@@ -91,6 +91,7 @@ class DownloadProvider extends ChangeNotifier {
 
       final uri = Uri.parse(urlString);
       final file = File('${downloadsDir.path}/${movie.id}.mp4');
+
       
       int existingBytes = 0;
       if (await file.exists() && _downloadProgress[movie.id]! > 0.0) {
@@ -99,6 +100,9 @@ class DownloadProvider extends ChangeNotifier {
 
       final client = http.Client();
       _activeClients[movie.id] = client;
+
+      final request = http.Request('GET', uri);
+
       
       final request = http.Request('GET', uri);
       
@@ -209,6 +213,7 @@ class DownloadProvider extends ChangeNotifier {
   void _completeDownload(ContentModel movie) async {
     // Check if already in list to avoid duplicates
     _downloadedItems.removeWhere((item) => item.id == movie.id);
+
     
     _downloadedItems.add(movie);
     _downloadStatus[movie.id] = 'completed';
