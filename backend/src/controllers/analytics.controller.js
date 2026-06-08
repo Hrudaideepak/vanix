@@ -23,7 +23,8 @@ exports.getAdminAnalytics = async (req, res, next) => {
     }));
 
     if (mostWatched.length === 0) {
-      const topMovies = await Movie.find().limit(3);
+      // ⚡ Bolt: Optimize topMovies fallback by using .lean() for read-only fetch
+      const topMovies = await Movie.find().limit(3).lean();
       topMovies.forEach((m, idx) => {
         mostWatched.push({
           movie: m.title,
