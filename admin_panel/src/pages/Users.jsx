@@ -33,6 +33,7 @@ export default function Users() {
     try {
       const res = await toggleUserBan(id);
       if (res.data.success) {
+        setUsers(prev =>
         setUsers(prev => 
           prev.map(u => (u._id || u.id) === id ? { ...u, isBanned: res.data.data.isBanned } : u)
         );
@@ -44,12 +45,14 @@ export default function Users() {
     }
   };
 
+  const filteredUsers = users.filter(user =>
   const filteredUsers = users.filter(user => 
     user.email.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   return (
     <div className="fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+
       
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div>
@@ -72,6 +75,8 @@ export default function Users() {
       {/* Control Console Search */}
       <div className="glass-panel" style={{ padding: '1.25rem 1.5rem', display: 'flex', alignItems: 'center', gap: '12px' }}>
         <Search size={20} color="#7C3AED" />
+        <input
+          type="text"
         <input 
           type="text" 
           value={searchQuery}
@@ -124,6 +129,13 @@ export default function Users() {
                       {user.role || 'user'}
                     </td>
                     <td>
+                      <span style={{
+                        padding: '3px 8px',
+                        borderRadius: '4px',
+                        fontSize: '0.75rem',
+                        fontWeight: 'bold',
+                        backgroundColor: (user.subscriptionPlan || user.plan) === 'premium' ? 'rgba(124, 58, 237, 0.2)' : 'rgba(255,255,255,0.05)',
+                        color: (user.subscriptionPlan || user.plan) === 'premium' ? '#7C3AED' : '#F8FAFC'
                       <span style={{ 
                         padding: '3px 8px', 
                         borderRadius: '4px', 
@@ -137,6 +149,12 @@ export default function Users() {
                     </td>
                     <td>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                        <span style={{
+                          width: '8px',
+                          height: '8px',
+                          borderRadius: '50%',
+                          backgroundColor: user.isBanned ? '#EF4444' : '#22C55E',
+                          boxShadow: user.isBanned ? '0 0 8px #EF4444' : '0 0 8px #22C55E'
                         <span style={{ 
                           width: '8px', 
                           height: '8px', 
@@ -153,6 +171,13 @@ export default function Users() {
                       {user.role === 'super-admin' ? (
                         <span style={{ fontSize: '0.75rem', color: '#CBD5E1', fontStyle: 'italic' }}>Protected System Account</span>
                       ) : (
+                        <button
+                          onClick={() => handleToggleBan(user._id || user.id, user.email)}
+                          className="btn-glass"
+                          style={{
+                            padding: '6px 14px',
+                            fontSize: '0.8rem',
+                            color: user.isBanned ? '#22C55E' : '#EF4444',
                         <button 
                           onClick={() => handleToggleBan(user._id || user.id, user.email)} 
                           className="btn-glass" 

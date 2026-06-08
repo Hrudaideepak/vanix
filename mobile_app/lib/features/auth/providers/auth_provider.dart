@@ -68,6 +68,10 @@ class AuthProvider extends ChangeNotifier {
   /// Determine platform device name
   String _getDeviceName() {
     if (kIsWeb) return 'Web Browser';
+    return Platform.isAndroid
+        ? 'Android Device'
+        : Platform.isIOS
+            ? 'iPhone/iPad'
     return Platform.isAndroid 
         ? 'Android Device' 
         : Platform.isIOS 

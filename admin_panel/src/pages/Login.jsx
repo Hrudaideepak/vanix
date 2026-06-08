@@ -28,6 +28,7 @@ export default function Login() {
   return (
     <div style={{ display: 'flex', minHeight: '100vh', alignItems: 'center', justifyContent: 'center', backgroundColor: '#050505', color: '#F8FAFC' }}>
       <div className="glass-panel" style={{ width: '420px', padding: '3rem 2.5rem', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+
         
         <div style={{ textAlign: 'center' }}>
           <span style={{ fontSize: '3rem', display: 'block', marginBottom: '10px' }}>🌌</span>
@@ -69,6 +70,9 @@ export default function Login() {
             />
           </div>
 
+          <button
+            type="submit"
+            className="btn-premium"
           <button 
             type="submit" 
             className="btn-premium" 
@@ -82,6 +86,7 @@ export default function Login() {
             ) : 'Authenticate & Enter'}
           </button>
         </form>
+
         
         <div style={{ textAlign: 'center', fontSize: '0.75rem', color: '#CBD5E1', borderTop: '1px solid rgba(248, 250, 252, 0.05)', paddingTop: '15px' }}>
           For local development, use: <br/>

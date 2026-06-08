@@ -38,6 +38,7 @@ exports.remoteLogout = async (req, res, next) => {
 exports.updateFCMToken = async (req, res, next) => {
   try {
     const { deviceId, fcmToken } = req.body;
+
     
     if (!deviceId || !fcmToken) {
       return res.status(400).json({ success: false, message: 'Please provide deviceId and fcmToken' });
@@ -50,6 +51,7 @@ exports.updateFCMToken = async (req, res, next) => {
       user.devices[deviceIdx].fcmToken = fcmToken;
       user.devices[deviceIdx].lastActive = new Date();
       await user.save();
+
       
       // Trigger a test welcome notification to verify the FCM integration
       const fcm = require('../services/fcm.service');
@@ -58,6 +60,7 @@ exports.updateFCMToken = async (req, res, next) => {
         body: 'Your device is now synchronized for cinematic push notifications.',
         data: { type: 'registration_confirm' }
       });
+
       
       return res.status(200).json({
         success: true,

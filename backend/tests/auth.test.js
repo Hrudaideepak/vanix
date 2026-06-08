@@ -6,6 +6,8 @@ const Profile = require('../src/models/profile.model');
 
 // Mock Mongo connection for local test run if mongo isnt active
 beforeAll(async () => {
+  const baseUri = process.env.MONGO_URI
+    ? process.env.MONGO_URI.replace(/\/[^\/]+$/, '')
   const baseUri = process.env.MONGO_URI 
     ? process.env.MONGO_URI.replace(/\/[^\/]+$/, '') 
     : 'mongodb://localhost:27017';

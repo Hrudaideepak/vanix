@@ -1,4 +1,11 @@
 import React, { useState, useEffect } from 'react';
+import {
+  Plus, Trash2, Upload, Loader2, CheckCircle2,
+  XCircle, Film, Tv, Play, AlertCircle, RefreshCw
+} from 'lucide-react';
+import {
+  getMovies, createMovie, createSeries, deleteMovie,
+  uploadVideo, getTranscodingStatus
 import { 
   Plus, Trash2, Upload, Loader2, CheckCircle2, 
   XCircle, Film, Tv, Play, AlertCircle, RefreshCw 
@@ -12,6 +19,12 @@ export default function Movies() {
   const [movies, setMovies] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+
+  // Modals / forms
+  const [modalOpen, setModalOpen] = useState(false);
+  const [editingMovie, setEditingMovie] = useState(null);
+  const [isDeploying, setIsDeploying] = useState(false);
+
   
   // Modals / forms
   const [modalOpen, setModalOpen] = useState(false);
@@ -122,6 +135,7 @@ export default function Movies() {
       return;
     }
 
+    setIsDeploying(true);
     try {
       const submissionData = {
         title: formData.title,
@@ -162,6 +176,8 @@ export default function Movies() {
     } catch (err) {
       console.error(err);
       alert('Failed to save title. Double-check required inputs.');
+    } finally {
+      setIsDeploying(false);
     }
   };
 
@@ -192,6 +208,7 @@ export default function Movies() {
           hlsUrl: '',
           error: ''
         };
+
         
         setTranscodingVideos(prev => [newVideoObj, ...prev]);
         pollTranscodingStatus(res.data.videoId);
@@ -211,6 +228,8 @@ export default function Movies() {
         const res = await getTranscodingStatus(videoId);
         if (res.data.success) {
           const { status, hlsPlaylistUrl, error } = res.data;
+
+          setTranscodingVideos(prev =>
           
           setTranscodingVideos(prev => 
             prev.map(v => v.id === videoId ? { ...v, status, hlsUrl: hlsPlaylistUrl, error } : v)
@@ -234,6 +253,7 @@ export default function Movies() {
 
   return (
     <div className="fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+
       
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div>
@@ -255,6 +275,7 @@ export default function Movies() {
 
       {/* Main Grid: Movies List & Transcoding Queue */}
       <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '2rem' }}>
+
         
         {/* Catalog Table */}
         <div className="glass-panel" style={{ padding: '2rem' }}>
@@ -331,6 +352,12 @@ export default function Movies() {
           <div style={{ padding: '1.5rem', borderRadius: '12px', border: '2px dashed rgba(248, 250, 252, 0.1)', textAlign: 'center', position: 'relative', background: 'rgba(255,255,255,0.01)' }}>
             <Upload size={32} color="#7C3AED" style={{ margin: '0 auto 10px auto' }} />
             <p style={{ fontSize: '0.85rem', color: '#CBD5E1', marginBottom: '10px' }}>Drag raw video files here or click to browse</p>
+            <input
+              type="file"
+              accept="video/*"
+              disabled={uploading}
+              onChange={handleVideoUpload}
+              style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', opacity: 0, cursor: uploading ? 'not-allowed' : 'pointer' }}
             <input 
               type="file" 
               accept="video/*" 
@@ -357,6 +384,12 @@ export default function Movies() {
                 <div key={video.id} style={{ padding: '12px', borderRadius: '10px', backgroundColor: 'rgba(255,255,255,0.02)', border: '1px solid rgba(248, 250, 252, 0.05)', display: 'flex', flexDirection: 'column', gap: '6px' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <span style={{ fontSize: '0.85rem', fontWeight: 'bold', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '160px' }}>{video.title}</span>
+                    <span style={{
+                      fontSize: '0.7rem',
+                      padding: '2px 6px',
+                      borderRadius: '4px',
+                      fontWeight: 'bold',
+                      backgroundColor:
                     <span style={{ 
                       fontSize: '0.7rem', 
                       padding: '2px 6px', 
@@ -373,6 +406,9 @@ export default function Movies() {
                     </span>
                   </div>
                   {video.status === 'completed' && video.hlsUrl && (
+                    <button
+                      onClick={() => handleApplyTranscodedUrl(video.hlsUrl)}
+                      className="btn-glass"
                     <button 
                       onClick={() => handleApplyTranscodedUrl(video.hlsUrl)} 
                       className="btn-glass" 
@@ -405,6 +441,18 @@ export default function Movies() {
             <h3 style={{ fontSize: '1.5rem', fontWeight: 800, margin: 0 }}>
               {editingMovie ? 'Modify Media Record' : 'Deploy Media Ingest'}
             </h3>
+
+            <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '1rem' }}>
+                <div>
+                  <label style={{ fontSize: '0.8rem', color: '#CBD5E1', display: 'block', marginBottom: '6px' }}>Cinematic Title *</label>
+                  <input
+                    type="text"
+                    value={formData.title}
+                    onChange={e => setFormData({ ...formData, title: e.target.value })}
+                    style={{ width: '100%', padding: '10px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(248,250,252,0.1)', borderRadius: '8px', color: '#FFF' }}
+                    required
             
             <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
               
@@ -421,6 +469,9 @@ export default function Movies() {
                 </div>
                 <div>
                   <label style={{ fontSize: '0.8rem', color: '#CBD5E1', display: 'block', marginBottom: '6px' }}>Type *</label>
+                  <select
+                    value={formData.type}
+                    onChange={e => setFormData({ ...formData, type: e.target.value })}
                   <select 
                     value={formData.type} 
                     onChange={e => setFormData({ ...formData, type: e.target.value })} 
@@ -434,6 +485,12 @@ export default function Movies() {
 
               <div>
                 <label style={{ fontSize: '0.8rem', color: '#CBD5E1', display: 'block', marginBottom: '6px' }}>Description *</label>
+                <textarea
+                  value={formData.description}
+                  onChange={e => setFormData({ ...formData, description: e.target.value })}
+                  rows={3}
+                  style={{ width: '100%', padding: '10px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(248,250,252,0.1)', borderRadius: '8px', color: '#FFF', resize: 'none' }}
+                  required
                 <textarea 
                   value={formData.description} 
                   onChange={e => setFormData({ ...formData, description: e.target.value })} 
@@ -446,6 +503,9 @@ export default function Movies() {
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                 <div>
                   <label style={{ fontSize: '0.8rem', color: '#CBD5E1', display: 'block', marginBottom: '6px' }}>Genre *</label>
+                  <select
+                    value={formData.genre}
+                    onChange={e => setFormData({ ...formData, genre: e.target.value })}
                   <select 
                     value={formData.genre} 
                     onChange={e => setFormData({ ...formData, genre: e.target.value })} 
@@ -461,6 +521,14 @@ export default function Movies() {
                 </div>
                 <div>
                   <label style={{ fontSize: '0.8rem', color: '#CBD5E1', display: 'block', marginBottom: '6px' }}>IMDb Rating</label>
+                  <input
+                    type="number"
+                    step="0.1"
+                    min="1"
+                    max="10"
+                    value={formData.rating}
+                    onChange={e => setFormData({ ...formData, rating: e.target.value })}
+                    style={{ width: '100%', padding: '10px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(248,250,252,0.1)', borderRadius: '8px', color: '#FFF' }}
                   <input 
                     type="number" 
                     step="0.1" 
@@ -476,6 +544,12 @@ export default function Movies() {
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                 <div>
                   <label style={{ fontSize: '0.8rem', color: '#CBD5E1', display: 'block', marginBottom: '6px' }}>Release Year *</label>
+                  <input
+                    type="number"
+                    value={formData.releaseYear}
+                    onChange={e => setFormData({ ...formData, releaseYear: e.target.value })}
+                    style={{ width: '100%', padding: '10px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(248,250,252,0.1)', borderRadius: '8px', color: '#FFF' }}
+                    required
                   <input 
                     type="number" 
                     value={formData.releaseYear} 
@@ -486,6 +560,13 @@ export default function Movies() {
                 </div>
                 <div>
                   <label style={{ fontSize: '0.8rem', color: '#CBD5E1', display: 'block', marginBottom: '6px' }}>Duration (or Episodes) *</label>
+                  <input
+                    type="text"
+                    value={formData.duration}
+                    onChange={e => setFormData({ ...formData, duration: e.target.value })}
+                    style={{ width: '100%', padding: '10px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(248,250,252,0.1)', borderRadius: '8px', color: '#FFF' }}
+                    placeholder="e.g. 2h 15m or 10 Episodes"
+                    required
                   <input 
                     type="text" 
                     value={formData.duration} 
@@ -499,6 +580,13 @@ export default function Movies() {
 
               <div>
                 <label style={{ fontSize: '0.8rem', color: '#CBD5E1', display: 'block', marginBottom: '6px' }}>Streaming HLS Video URL *</label>
+                <input
+                  type="url"
+                  value={formData.videoUrl}
+                  onChange={e => setFormData({ ...formData, videoUrl: e.target.value })}
+                  style={{ width: '100%', padding: '10px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(248,250,252,0.1)', borderRadius: '8px', color: '#FFF' }}
+                  placeholder="Insert HLS playlist link or select from transcoding queue"
+                  required
                 <input 
                   type="url" 
                   value={formData.videoUrl} 
@@ -511,6 +599,12 @@ export default function Movies() {
 
               <div>
                 <label style={{ fontSize: '0.8rem', color: '#CBD5E1', display: 'block', marginBottom: '6px' }}>Thumbnail Poster URL *</label>
+                <input
+                  type="text"
+                  value={formData.thumbnailUrl}
+                  onChange={e => setFormData({ ...formData, thumbnailUrl: e.target.value })}
+                  style={{ width: '100%', padding: '10px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(248,250,252,0.1)', borderRadius: '8px', color: '#FFF' }}
+                  required
                 <input 
                   type="text" 
                   value={formData.thumbnailUrl} 
@@ -522,6 +616,12 @@ export default function Movies() {
 
               <div>
                 <label style={{ fontSize: '0.8rem', color: '#CBD5E1', display: 'block', marginBottom: '6px' }}>Wide Banner URL *</label>
+                <input
+                  type="text"
+                  value={formData.bannerUrl}
+                  onChange={e => setFormData({ ...formData, bannerUrl: e.target.value })}
+                  style={{ width: '100%', padding: '10px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(248,250,252,0.1)', borderRadius: '8px', color: '#FFF' }}
+                  required
                 <input 
                   type="text" 
                   value={formData.bannerUrl} 
@@ -534,6 +634,11 @@ export default function Movies() {
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                 <div>
                   <label style={{ fontSize: '0.8rem', color: '#CBD5E1', display: 'block', marginBottom: '6px' }}>Cast (Comma Separated)</label>
+                  <input
+                    type="text"
+                    value={formData.cast}
+                    onChange={e => setFormData({ ...formData, cast: e.target.value })}
+                    style={{ width: '100%', padding: '10px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(248,250,252,0.1)', borderRadius: '8px', color: '#FFF' }}
                   <input 
                     type="text" 
                     value={formData.cast} 
@@ -544,6 +649,11 @@ export default function Movies() {
                 </div>
                 <div>
                   <label style={{ fontSize: '0.8rem', color: '#CBD5E1', display: 'block', marginBottom: '6px' }}>Crew (Comma Separated)</label>
+                  <input
+                    type="text"
+                    value={formData.crew}
+                    onChange={e => setFormData({ ...formData, crew: e.target.value })}
+                    style={{ width: '100%', padding: '10px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(248,250,252,0.1)', borderRadius: '8px', color: '#FFF' }}
                   <input 
                     type="text" 
                     value={formData.crew} 
@@ -556,6 +666,12 @@ export default function Movies() {
 
               <div style={{ display: 'flex', gap: '20px', padding: '5px 0' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <input
+                    type="checkbox"
+                    checked={formData.isPremium}
+                    onChange={e => setFormData({ ...formData, isPremium: e.target.checked })}
+                    id="modalPremCheck"
+                    style={{ width: '18px', height: '18px', cursor: 'pointer' }}
                   <input 
                     type="checkbox" 
                     checked={formData.isPremium} 
@@ -566,6 +682,12 @@ export default function Movies() {
                   <label htmlFor="modalPremCheck" style={{ fontSize: '0.85rem', color: '#CBD5E1', cursor: 'pointer' }}>Premium VIP Tier</label>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <input
+                    type="checkbox"
+                    checked={formData.isFeatured}
+                    onChange={e => setFormData({ ...formData, isFeatured: e.target.checked })}
+                    id="modalFeatCheck"
+                    style={{ width: '18px', height: '18px', cursor: 'pointer' }}
                   <input 
                     type="checkbox" 
                     checked={formData.isFeatured} 
@@ -581,6 +703,16 @@ export default function Movies() {
                 <button type="button" onClick={() => setModalOpen(false)} className="btn-glass">
                   Cancel
                 </button>
+                <button
+                  type="submit"
+                  className="btn-premium"
+                  disabled={isDeploying}
+                  style={{
+                    opacity: isDeploying ? 0.7 : 1,
+                    cursor: isDeploying ? 'not-allowed' : 'pointer'
+                  }}
+                >
+                  {isDeploying ? 'Deploying...' : 'Deploy to Catalogue'}
                 <button type="submit" className="btn-premium">
                   Deploy to Catalogue
                 </button>
