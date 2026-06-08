@@ -66,6 +66,24 @@ describe('Device Controller - remoteLogout', () => {
     });
   });
 
+
+  test('should return 404 if devices list is empty', async () => {
+    const mockUser = {
+      devices: [],
+      save: jest.fn()
+    };
+    User.findById.mockResolvedValue(mockUser);
+
+    await remoteLogout(req, res, next);
+
+    expect(User.findById).toHaveBeenCalledWith('user123');
+    expect(res.status).toHaveBeenCalledWith(404);
+    expect(res.json).toHaveBeenCalledWith({
+      success: false,
+      message: 'Device registration not found'
+    });
+  });
+
   test('should call next with error if something goes wrong', async () => {
     const error = new Error('Database error');
     User.findById.mockRejectedValue(error);
