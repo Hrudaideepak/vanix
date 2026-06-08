@@ -17,7 +17,7 @@ class AuthService {
       };
 
   /// Register user
-  Future<Map<String, dynamic>> register(String email, String password) async {
+  Future<Map<String, dynamic>> register(String email, String password, {String? deviceId, String? deviceName}) async {
     final url =
         Uri.parse('${AppConstants.apiBaseUrl}${AppConstants.pathRegister}');
     AppLogger.info('AuthService POST: $url');
@@ -27,7 +27,12 @@ class AuthService {
           .post(
             url,
             headers: _headers,
-            body: jsonEncode({'email': email, 'password': password}),
+            body: jsonEncode({
+              'email': email,
+              'password': password,
+              if (deviceId != null) 'deviceId': deviceId,
+              if (deviceName != null) 'deviceName': deviceName,
+            }),
           )
           .timeout(const Duration(seconds: 2));
 
@@ -45,7 +50,7 @@ class AuthService {
   }
 
   /// Login user
-  Future<Map<String, dynamic>> login(String email, String password) async {
+  Future<Map<String, dynamic>> login(String email, String password, {String? deviceId, String? deviceName}) async {
     final url =
         Uri.parse('${AppConstants.apiBaseUrl}${AppConstants.pathLogin}');
     AppLogger.info('AuthService POST: $url');
@@ -55,7 +60,12 @@ class AuthService {
           .post(
             url,
             headers: _headers,
-            body: jsonEncode({'email': email, 'password': password}),
+            body: jsonEncode({
+              'email': email,
+              'password': password,
+              if (deviceId != null) 'deviceId': deviceId,
+              if (deviceName != null) 'deviceName': deviceName,
+            }),
           )
           .timeout(const Duration(seconds: 2));
 
@@ -136,6 +146,36 @@ class AuthService {
         ]
       }
     };
+  }
+
+  Future<Map<String, dynamic>> registerFCMToken({
+    required String token,
+    required String deviceId,
+    required String fcmToken,
+  }) async {
+    final url = Uri.parse('${AppConstants.apiBaseUrl}/devices/fcm-token');
+    try {
+      final response = await _client.post(
+        url,
+        headers: {
+          ..._headers,
+          'Authorization': 'Bearer $token',
+        },
+        body: jsonEncode({
+          'deviceId': deviceId,
+          'fcmToken': fcmToken,
+        }),
+      ).timeout(const Duration(seconds: 3));
+
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        return jsonDecode(response.body);
+      } else {
+        throw HttpException(_parseError(response.body));
+      }
+    } catch (e) {
+      AppLogger.warning('Failed to register FCM token: $e');
+      return {'success': false, 'error': e.toString()};
+    }
   }
 
   String _parseError(String body) {

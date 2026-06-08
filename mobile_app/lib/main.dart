@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+// import 'package:firebase_core/firebase_core.dart'; // Re-enable with Firebase
 import 'app.dart';
 
 // Providers (will be implemented in subsequent files)
@@ -17,6 +18,14 @@ import 'features/subscription/providers/subscription_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  
+  // TODO: Re-enable Firebase initialization after adding google-services.json
+  // try {
+  //   await Firebase.initializeApp();
+  //   print("🔥 Firebase initialized successfully!");
+  // } catch (e) {
+  //   print("⚠️ Firebase initialization bypassed: $e");
+  // }
   
   // Set preferred orientations to portrait first, player will handle landscape rotation
   await SystemChrome.setPreferredOrientations([

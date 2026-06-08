@@ -47,6 +47,7 @@ const UserSchema = new mongoose.Schema({
     deviceId: { type: String, required: true },
     deviceName: { type: String, default: 'Unknown Device' },
     token: { type: String },
+    fcmToken: { type: String },
     lastActive: { type: Date, default: Date.now },
   }],
   isBanned: {
