@@ -22,10 +22,12 @@ void main() {
         providers: [
           Provider<SharedPreferences>.value(value: sharedPreferences),
           ChangeNotifierProvider(
-            create: (context) => AuthProvider(sharedPreferences: sharedPreferences),
+            create: (context) =>
+                AuthProvider(sharedPreferences: sharedPreferences),
           ),
           ChangeNotifierProxyProvider<AuthProvider, ProfileProvider>(
-            create: (context) => ProfileProvider(sharedPreferences: sharedPreferences),
+            create: (context) =>
+                ProfileProvider(sharedPreferences: sharedPreferences),
             update: (context, auth, previous) =>
                 previous!..updateAuth(auth.token, auth.currentUser),
           ),
@@ -50,7 +52,8 @@ void main() {
                 previous!..updateAuth(auth.token),
           ),
           ChangeNotifierProxyProvider<AuthProvider, DownloadProvider>(
-            create: (context) => DownloadProvider(sharedPreferences: sharedPreferences),
+            create: (context) =>
+                DownloadProvider(sharedPreferences: sharedPreferences),
             update: (context, auth, previous) =>
                 previous!..updateAuth(auth.token),
           ),

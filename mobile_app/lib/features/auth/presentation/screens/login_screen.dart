@@ -50,8 +50,9 @@ class _LoginScreenState extends State<LoginScreen> {
   void _handleGoogleLogin() async {
     final auth = Provider.of<AuthProvider>(context, listen: false);
     // Passing google-mock credentials to service
-    final success = await auth.login('google-demo@vanix.com', 'google-oauth-password');
-    
+    final success =
+        await auth.login('google-demo@vanix.com', 'google-oauth-password');
+
     if (success && mounted) {
       Navigator.pushReplacementNamed(context, '/profiles');
     } else if (mounted) {
@@ -94,7 +95,10 @@ class _LoginScreenState extends State<LoginScreen> {
                             const Rect.fromLTWH(0.0, 0.0, 300.0, 50.0),
                           ),
                       ),
-                ).animate().fadeIn(duration: 600.ms).slideY(begin: -0.2, end: 0.0),
+                )
+                    .animate()
+                    .fadeIn(duration: 600.ms)
+                    .slideY(begin: -0.2, end: 0.0),
                 const SizedBox(height: 8),
                 Text(
                   'Sign in to access your entertainment universe.',
@@ -124,7 +128,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                         ),
                         const SizedBox(height: 24),
-                        
+
                         // Email Field
                         TextFormField(
                           controller: _emailController,
@@ -141,7 +145,8 @@ class _LoginScreenState extends State<LoginScreen> {
                           },
                           decoration: const InputDecoration(
                             hintText: 'Email address',
-                            prefixIcon: Icon(Icons.email_outlined, color: AppTheme.silverAccent),
+                            prefixIcon: Icon(Icons.email_outlined,
+                                color: AppTheme.silverAccent),
                           ),
                         ),
                         const SizedBox(height: 16),
@@ -162,10 +167,13 @@ class _LoginScreenState extends State<LoginScreen> {
                           },
                           decoration: InputDecoration(
                             hintText: 'Password',
-                            prefixIcon: const Icon(Icons.lock_outline, color: AppTheme.silverAccent),
+                            prefixIcon: const Icon(Icons.lock_outline,
+                                color: AppTheme.silverAccent),
                             suffixIcon: IconButton(
                               icon: Icon(
-                                _obscurePassword ? Icons.visibility_off_outlined : Icons.visibility_outlined,
+                                _obscurePassword
+                                    ? Icons.visibility_off_outlined
+                                    : Icons.visibility_outlined,
                                 color: AppTheme.silverAccent,
                               ),
                               onPressed: () {
@@ -176,7 +184,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             ),
                           ),
                         ),
-                        
+
                         const SizedBox(height: 24),
 
                         // Login button
@@ -188,14 +196,19 @@ class _LoginScreenState extends State<LoginScreen> {
                       ],
                     ),
                   ),
-                ).animate().fadeIn(delay: 300.ms, duration: 600.ms).scaleXY(begin: 0.95, end: 1.0),
+                )
+                    .animate()
+                    .fadeIn(delay: 300.ms, duration: 600.ms)
+                    .scaleXY(begin: 0.95, end: 1.0),
 
                 const SizedBox(height: 24),
 
                 // Divider
                 Row(
                   children: [
-                    Expanded(child: Divider(color: AppTheme.softWhite.withValues(alpha: 0.08))),
+                    Expanded(
+                        child: Divider(
+                            color: AppTheme.softWhite.withValues(alpha: 0.08))),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 16),
                       child: Text(
@@ -208,7 +221,9 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ),
                     ),
-                    Expanded(child: Divider(color: AppTheme.softWhite.withValues(alpha: 0.08))),
+                    Expanded(
+                        child: Divider(
+                            color: AppTheme.softWhite.withValues(alpha: 0.08))),
                   ],
                 ).animate().fadeIn(delay: 500.ms, duration: 600.ms),
 
@@ -219,7 +234,8 @@ class _LoginScreenState extends State<LoginScreen> {
                   onTap: _handleGoogleLogin,
                   child: GlassCard(
                     borderRadius: 12,
-                    padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 24),
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 14, horizontal: 24),
                     opacity: 0.04,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -229,7 +245,9 @@ class _LoginScreenState extends State<LoginScreen> {
                           'https://api.dicebear.com/7.x/identicon/png?seed=GoogleLogo', // Mock graphic for Google icon
                           width: 20,
                           height: 20,
-                          errorBuilder: (c, e, s) => const Icon(Icons.g_mobiledata, color: AppTheme.softWhite),
+                          errorBuilder: (c, e, s) => const Icon(
+                              Icons.g_mobiledata,
+                              color: AppTheme.softWhite),
                         ),
                         const SizedBox(width: 12),
                         const Text(
@@ -253,7 +271,8 @@ class _LoginScreenState extends State<LoginScreen> {
                   children: [
                     Text(
                       "New to VANIX? ",
-                      style: TextStyle(color: AppTheme.silverAccent.withValues(alpha: 0.5)),
+                      style: TextStyle(
+                          color: AppTheme.silverAccent.withValues(alpha: 0.5)),
                     ),
                     GestureDetector(
                       onTap: () {

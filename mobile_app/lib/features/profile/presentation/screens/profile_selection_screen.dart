@@ -25,7 +25,8 @@ class _ProfileSelectionScreenState extends State<ProfileSelectionScreen> {
     super.dispose();
   }
 
-  void _handleProfileSelect(ProfileModel profile, ProfileProvider provider) async {
+  void _handleProfileSelect(
+      ProfileModel profile, ProfileProvider provider) async {
     if (profile.pin != null) {
       // Prompt for PIN
       _showPinDialog(profile, provider);
@@ -44,13 +45,15 @@ class _ProfileSelectionScreenState extends State<ProfileSelectionScreen> {
       builder: (context) {
         return AlertDialog(
           backgroundColor: AppTheme.cardGrey,
-          title: Text('Enter PIN for ${profile.name}', style: const TextStyle(color: AppTheme.softWhite)),
+          title: Text('Enter PIN for ${profile.name}',
+              style: const TextStyle(color: AppTheme.softWhite)),
           content: TextField(
             controller: _pinController,
             keyboardType: TextInputType.number,
             obscureText: true,
             maxLength: 4,
-            style: const TextStyle(color: AppTheme.softWhite, fontSize: 24, letterSpacing: 8),
+            style: const TextStyle(
+                color: AppTheme.softWhite, fontSize: 24, letterSpacing: 8),
             textAlign: TextAlign.center,
             decoration: const InputDecoration(
               counterText: '',
@@ -60,22 +63,27 @@ class _ProfileSelectionScreenState extends State<ProfileSelectionScreen> {
           ),
           actions: [
             TextButton(
-              child: const Text('Cancel', style: TextStyle(color: AppTheme.silverAccent)),
+              child: const Text('Cancel',
+                  style: TextStyle(color: AppTheme.silverAccent)),
               onPressed: () => Navigator.pop(context),
             ),
             ElevatedButton(
-              style: ElevatedButton.styleFrom(backgroundColor: AppTheme.royalPurple),
+              style: ElevatedButton.styleFrom(
+                  backgroundColor: AppTheme.royalPurple),
               child: const Text('Unlock'),
               onPressed: () async {
                 final dialogContext = context;
-                final success = await provider.selectProfile(profile, pinInput: _pinController.text);
+                final success = await provider.selectProfile(profile,
+                    pinInput: _pinController.text);
                 if (mounted && dialogContext.mounted) {
                   Navigator.pop(dialogContext);
                   if (success && mounted) {
                     Navigator.pushReplacementNamed(this.context, '/home');
                   } else if (mounted) {
                     ScaffoldMessenger.of(this.context).showSnackBar(
-                      const SnackBar(content: Text('Incorrect Profile PIN'), backgroundColor: AppTheme.errorRed),
+                      const SnackBar(
+                          content: Text('Incorrect Profile PIN'),
+                          backgroundColor: AppTheme.errorRed),
                     );
                   }
                 }
@@ -95,7 +103,8 @@ class _ProfileSelectionScreenState extends State<ProfileSelectionScreen> {
       context: context,
       isScrollControlled: true,
       backgroundColor: AppTheme.cardGrey,
-      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
+      shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
       builder: (context) {
         return StatefulBuilder(
           builder: (BuildContext context, StateSetter setModalState) {
@@ -110,7 +119,11 @@ class _ProfileSelectionScreenState extends State<ProfileSelectionScreen> {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text('Create Profile', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: AppTheme.softWhite)),
+                  const Text('Create Profile',
+                      style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: AppTheme.softWhite)),
                   const SizedBox(height: 20),
                   TextField(
                     controller: _nameController,
@@ -123,7 +136,8 @@ class _ProfileSelectionScreenState extends State<ProfileSelectionScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Text('Parental Control (Kids Space)', style: TextStyle(color: AppTheme.silverAccent)),
+                      const Text('Parental Control (Kids Space)',
+                          style: TextStyle(color: AppTheme.silverAccent)),
                       Switch(
                         value: _isKidsSelected,
                         activeThumbColor: AppTheme.royalPurple,
@@ -181,8 +195,11 @@ class _ProfileSelectionScreenState extends State<ProfileSelectionScreen> {
                       fontWeight: FontWeight.w800,
                       letterSpacing: 0.5,
                     ),
-              ).animate().fadeIn(duration: 600.ms).slideY(begin: -0.2, end: 0.0),
-              
+              )
+                  .animate()
+                  .fadeIn(duration: 600.ms)
+                  .slideY(begin: -0.2, end: 0.0),
+
               const SizedBox(height: 48),
 
               // Profiles Grid
@@ -209,16 +226,23 @@ class _ProfileSelectionScreenState extends State<ProfileSelectionScreen> {
                               width: 100,
                               height: 100,
                               decoration: BoxDecoration(
-                                color: AppTheme.softWhite.withValues(alpha: 0.04),
+                                color:
+                                    AppTheme.softWhite.withValues(alpha: 0.04),
                                 borderRadius: BorderRadius.circular(20),
-                                border: Border.all(color: AppTheme.softWhite.withValues(alpha: 0.08)),
+                                border: Border.all(
+                                    color: AppTheme.softWhite
+                                        .withValues(alpha: 0.08)),
                               ),
-                              child: const Icon(Icons.add, color: AppTheme.royalPurple, size: 40),
+                              child: const Icon(Icons.add,
+                                  color: AppTheme.royalPurple, size: 40),
                             ),
                             const SizedBox(height: 12),
                             const Text(
                               'Add Profile',
-                              style: TextStyle(color: AppTheme.silverAccent, fontSize: 13, fontWeight: FontWeight.bold),
+                              style: TextStyle(
+                                  color: AppTheme.silverAccent,
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.bold),
                             ),
                           ],
                         ),
@@ -227,7 +251,8 @@ class _ProfileSelectionScreenState extends State<ProfileSelectionScreen> {
 
                     final profile = profileProvider.profiles[index];
                     return GestureDetector(
-                      onTap: () => _handleProfileSelect(profile, profileProvider),
+                      onTap: () =>
+                          _handleProfileSelect(profile, profileProvider),
                       child: Column(
                         children: [
                           Stack(
@@ -237,7 +262,10 @@ class _ProfileSelectionScreenState extends State<ProfileSelectionScreen> {
                                 height: 100,
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(20),
-                                  border: Border.all(color: AppTheme.royalPurple.withValues(alpha: 0.4), width: 1.5),
+                                  border: Border.all(
+                                      color: AppTheme.royalPurple
+                                          .withValues(alpha: 0.4),
+                                      width: 1.5),
                                 ),
                                 child: ClipRRect(
                                   borderRadius: BorderRadius.circular(18),
@@ -257,7 +285,8 @@ class _ProfileSelectionScreenState extends State<ProfileSelectionScreen> {
                                       color: Colors.black54,
                                       shape: BoxShape.circle,
                                     ),
-                                    child: const Icon(Icons.lock, color: AppTheme.royalPurple, size: 12),
+                                    child: const Icon(Icons.lock,
+                                        color: AppTheme.royalPurple, size: 12),
                                   ),
                                 ),
                               if (profile.isKids)
@@ -265,12 +294,17 @@ class _ProfileSelectionScreenState extends State<ProfileSelectionScreen> {
                                   top: 6,
                                   left: 6,
                                   child: Container(
-                                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 6, vertical: 2),
                                     decoration: BoxDecoration(
                                       color: AppTheme.electricBlue,
                                       borderRadius: BorderRadius.circular(4),
                                     ),
-                                    child: const Text('KIDS', style: TextStyle(fontSize: 8, fontWeight: FontWeight.bold, color: Colors.white)),
+                                    child: const Text('KIDS',
+                                        style: TextStyle(
+                                            fontSize: 8,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.white)),
                                   ),
                                 ),
                             ],

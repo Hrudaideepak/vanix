@@ -44,7 +44,9 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(
-          gradient: isKids ? AppTheme.kidsBackgroundGradient : AppTheme.backgroundGradient,
+          gradient: isKids
+              ? AppTheme.kidsBackgroundGradient
+              : AppTheme.backgroundGradient,
         ),
         child: homeProvider.isLoading
             ? _buildLoader()
@@ -54,17 +56,18 @@ class _HomeScreenState extends State<HomeScreen> {
                 onRefresh: () => homeProvider.fetchHomeScreen(),
                 child: SingleChildScrollView(
                   physics: const BouncingScrollPhysics(),
-                  padding: const EdgeInsets.only(bottom: 110), // Room for bottom nav bar
+                  padding: const EdgeInsets.only(
+                      bottom: 110), // Room for bottom nav bar
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       // Header Brand Bar
                       _buildHeaderAppBar(activeProfile),
-                      
+
                       // Hero Banner Carousel
                       if (filteredBanners.isNotEmpty)
                         _buildHeroCarousel(filteredBanners),
-                      
+
                       const SizedBox(height: 28),
 
                       // Continue Watching Row
@@ -112,7 +115,8 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _buildHeaderAppBar(dynamic activeProfile) {
     final isKids = activeProfile?.isKids ?? false;
     final profileName = activeProfile?.name ?? 'Guest';
-    final avatarUrl = activeProfile?.avatarUrl ?? 'https://api.dicebear.com/7.x/bottts/png?seed=Primary';
+    final avatarUrl = activeProfile?.avatarUrl ??
+        'https://api.dicebear.com/7.x/bottts/png?seed=Primary';
 
     return SafeArea(
       bottom: false,
@@ -135,7 +139,10 @@ class _HomeScreenState extends State<HomeScreen> {
                             letterSpacing: 3.0,
                             foreground: Paint()
                               ..shader = (isKids
-                                      ? const LinearGradient(colors: [Colors.orangeAccent, Colors.pinkAccent])
+                                      ? const LinearGradient(colors: [
+                                          Colors.orangeAccent,
+                                          Colors.pinkAccent
+                                        ])
                                       : AppTheme.premiumGradient)
                                   .createShader(
                                 const Rect.fromLTWH(0.0, 0.0, 150.0, 30.0),
@@ -145,9 +152,11 @@ class _HomeScreenState extends State<HomeScreen> {
                     if (isKids) ...[
                       const SizedBox(width: 8),
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8, vertical: 2),
                         decoration: BoxDecoration(
-                          gradient: const LinearGradient(colors: [Colors.pinkAccent, Colors.orangeAccent]),
+                          gradient: const LinearGradient(
+                              colors: [Colors.pinkAccent, Colors.orangeAccent]),
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: const Text(
@@ -179,7 +188,8 @@ class _HomeScreenState extends State<HomeScreen> {
             Row(
               children: [
                 IconButton(
-                  icon: const Icon(Icons.notifications_outlined, color: AppTheme.softWhite),
+                  icon: const Icon(Icons.notifications_outlined,
+                      color: AppTheme.softWhite),
                   onPressed: () {},
                 ),
                 const SizedBox(width: 8),
@@ -192,7 +202,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       border: Border.all(
-                        color: isKids ? Colors.pinkAccent : AppTheme.royalPurple,
+                        color:
+                            isKids ? Colors.pinkAccent : AppTheme.royalPurple,
                         width: 1.5,
                       ),
                     ),
@@ -266,14 +277,19 @@ class _HomeScreenState extends State<HomeScreen> {
                             if (movie.isPremium)
                               Container(
                                 margin: const EdgeInsets.only(bottom: 8),
-                                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 10, vertical: 4),
                                 decoration: BoxDecoration(
-                                  gradient: const LinearGradient(colors: [Colors.amber, Colors.orange]),
+                                  gradient: const LinearGradient(
+                                      colors: [Colors.amber, Colors.orange]),
                                   borderRadius: BorderRadius.circular(6),
                                 ),
                                 child: const Text(
                                   'PREMIUM',
-                                  style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.black),
+                                  style: TextStyle(
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.black),
                                 ),
                               ),
                             Text(
@@ -290,7 +306,8 @@ class _HomeScreenState extends State<HomeScreen> {
                             Text(
                               movie.genres.join('  •  '),
                               style: TextStyle(
-                                color: AppTheme.silverAccent.withValues(alpha: 0.8),
+                                color: AppTheme.silverAccent
+                                    .withValues(alpha: 0.8),
                                 fontSize: 12,
                                 fontWeight: FontWeight.w500,
                               ),
@@ -304,12 +321,16 @@ class _HomeScreenState extends State<HomeScreen> {
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: AppTheme.softWhite,
                                     foregroundColor: AppTheme.deepBlack,
-                                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 20, vertical: 10),
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(8)),
                                     elevation: 0,
                                   ),
                                   icon: const Icon(Icons.play_arrow, size: 20),
-                                  label: const Text('Play Now', style: TextStyle(fontWeight: FontWeight.bold)),
+                                  label: const Text('Play Now',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold)),
                                   onPressed: () => Navigator.pushNamed(
                                     context,
                                     '/player',
@@ -325,7 +346,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                   borderRadius: 8,
                                   opacity: 0.15,
                                   padding: EdgeInsets.all(10),
-                                  child: Icon(Icons.info_outline, color: AppTheme.softWhite, size: 20),
+                                  child: Icon(Icons.info_outline,
+                                      color: AppTheme.softWhite, size: 20),
                                 ),
                               ],
                             ),
@@ -389,7 +411,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 'videoUrl': movie.videoUrl,
                 'title': movie.title,
                 'contentId': movie.id,
-                'startOffset': (movie.progress * 60 * 100).toInt(), // Simulated progress offset
+                'startOffset': (movie.progress * 60 * 100)
+                    .toInt(), // Simulated progress offset
               },
             ),
             child: Container(
@@ -409,7 +432,8 @@ class _HomeScreenState extends State<HomeScreen> {
                           shape: BoxShape.circle,
                           color: Colors.black.withValues(alpha: 0.5),
                         ),
-                        child: const Icon(Icons.play_arrow, color: AppTheme.softWhite, size: 24),
+                        child: const Icon(Icons.play_arrow,
+                            color: AppTheme.softWhite, size: 24),
                       ),
                     ),
                     // Bottom progress indicator
@@ -428,14 +452,18 @@ class _HomeScreenState extends State<HomeScreen> {
                               movie.title,
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.white),
+                              style: const TextStyle(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white),
                             ),
                             const SizedBox(height: 4),
                             LinearProgressIndicator(
                               value: movie.progress,
                               minHeight: 3,
                               backgroundColor: Colors.white24,
-                              valueColor: const AlwaysStoppedAnimation<Color>(AppTheme.royalPurple),
+                              valueColor: const AlwaysStoppedAnimation<Color>(
+                                  AppTheme.royalPurple),
                             ),
                           ],
                         ),
@@ -481,7 +509,8 @@ class _HomeScreenState extends State<HomeScreen> {
                       top: 8,
                       right: 8,
                       child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 6, vertical: 2),
                         decoration: BoxDecoration(
                           color: Colors.black.withValues(alpha: 0.7),
                           borderRadius: BorderRadius.circular(6),
@@ -489,11 +518,15 @@ class _HomeScreenState extends State<HomeScreen> {
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            const Icon(Icons.star, color: Colors.amber, size: 10),
+                            const Icon(Icons.star,
+                                color: Colors.amber, size: 10),
                             const SizedBox(width: 2),
                             Text(
                               movie.rating.toString(),
-                              style: const TextStyle(fontSize: 9, fontWeight: FontWeight.bold, color: Colors.white),
+                              style: const TextStyle(
+                                  fontSize: 9,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white),
                             ),
                           ],
                         ),
@@ -509,7 +542,8 @@ class _HomeScreenState extends State<HomeScreen> {
                             color: Colors.amber,
                             shape: BoxShape.circle,
                           ),
-                          child: const Icon(Icons.workspace_premium, size: 10, color: Colors.black),
+                          child: const Icon(Icons.workspace_premium,
+                              size: 10, color: Colors.black),
                         ),
                       ),
                     // Title details container
@@ -522,7 +556,10 @@ class _HomeScreenState extends State<HomeScreen> {
                           gradient: LinearGradient(
                             begin: Alignment.bottomCenter,
                             end: Alignment.topCenter,
-                            colors: [Colors.black.withValues(alpha: 0.9), Colors.transparent],
+                            colors: [
+                              Colors.black.withValues(alpha: 0.9),
+                              Colors.transparent
+                            ],
                           ),
                         ),
                         padding: const EdgeInsets.all(8),
@@ -530,16 +567,22 @@ class _HomeScreenState extends State<HomeScreen> {
                           movie.title,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.white),
+                          style: const TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white),
                         ),
                       ),
                     ),
                   ],
                 ),
               ),
-            ).animate(
-              onPlay: (controller) => controller.reverse(), // Simple micro-hover scale effect on click trigger
-            ).scaleXY(
+            )
+                .animate(
+                  onPlay: (controller) => controller
+                      .reverse(), // Simple micro-hover scale effect on click trigger
+                )
+                .scaleXY(
                   begin: 1.0,
                   end: 1.05,
                   duration: 200.ms,
@@ -574,7 +617,10 @@ class _HomeScreenState extends State<HomeScreen> {
         const SizedBox(height: 24),
         const Padding(
           padding: EdgeInsets.symmetric(horizontal: 20),
-          child: ShimmerLoading(width: double.infinity, height: 320, borderRadius: BorderRadius.all(Radius.circular(20))),
+          child: ShimmerLoading(
+              width: double.infinity,
+              height: 320,
+              borderRadius: BorderRadius.all(Radius.circular(20))),
         ),
         const SizedBox(height: 40),
         const Padding(
@@ -596,7 +642,10 @@ class _HomeScreenState extends State<HomeScreen> {
             itemCount: 4,
             itemBuilder: (c, i) => const Padding(
               padding: EdgeInsets.symmetric(horizontal: 6),
-              child: ShimmerLoading(width: 130, height: 180, borderRadius: BorderRadius.all(Radius.circular(14))),
+              child: ShimmerLoading(
+                  width: 130,
+                  height: 180,
+                  borderRadius: BorderRadius.all(Radius.circular(14))),
             ),
           ),
         ),

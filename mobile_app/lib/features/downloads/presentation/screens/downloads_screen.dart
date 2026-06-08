@@ -30,7 +30,10 @@ class DownloadsScreen extends StatelessWidget {
                 padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                 child: Text(
                   'Offline Downloads',
-                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.w800, color: AppTheme.softWhite),
+                  style: TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.w800,
+                      color: AppTheme.softWhite),
                 ),
               ),
 
@@ -42,7 +45,8 @@ class DownloadsScreen extends StatelessWidget {
                     ? _buildEmptyState()
                     : ListView(
                         physics: const BouncingScrollPhysics(),
-                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 20, vertical: 10),
                         children: [
                           // Active In-Progress Downloads
                           if (progressMap.isNotEmpty) ...[
@@ -50,17 +54,22 @@ class DownloadsScreen extends StatelessWidget {
                               padding: EdgeInsets.symmetric(vertical: 8),
                               child: Text(
                                 'Downloading...',
-                                style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: AppTheme.silverAccent),
+                                style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                    color: AppTheme.silverAccent),
                               ),
                             ),
                             ...progressMap.entries.map((entry) {
                               final contentId = entry.key;
                               final progress = entry.value;
-                              
+
                               // Simulated speed and remaining time for v2 polish
-                              final speed = (4.8 + (contentId.hashCode % 4) * 0.6).toStringAsFixed(1);
-                              final remaining = progress > 0.95 
-                                  ? 'Finishing...' 
+                              final speed =
+                                  (4.8 + (contentId.hashCode % 4) * 0.6)
+                                      .toStringAsFixed(1);
+                              final remaining = progress > 0.95
+                                  ? 'Finishing...'
                                   : '${((1.0 - progress) * 45).toInt() + 3}s left';
 
                               return Container(
@@ -70,27 +79,45 @@ class DownloadsScreen extends StatelessWidget {
                                   opacity: 0.08,
                                   child: Row(
                                     children: [
-                                      const Icon(Icons.downloading, color: AppTheme.royalPurple, size: 24),
+                                      const Icon(Icons.downloading,
+                                          color: AppTheme.royalPurple,
+                                          size: 24),
                                       const SizedBox(width: 16),
                                       Expanded(
                                         child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
                                           children: [
                                             Text(
                                               'Item: $contentId',
-                                              style: const TextStyle(fontWeight: FontWeight.bold, color: AppTheme.softWhite, fontSize: 13),
+                                              style: const TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  color: AppTheme.softWhite,
+                                                  fontSize: 13),
                                             ),
                                             const SizedBox(height: 4),
                                             Row(
-                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
                                               children: [
                                                 Text(
                                                   '$speed MB/s • $remaining',
-                                                  style: TextStyle(fontSize: 10, color: AppTheme.silverAccent.withValues(alpha: 0.5)),
+                                                  style: TextStyle(
+                                                      fontSize: 10,
+                                                      color: AppTheme
+                                                          .silverAccent
+                                                          .withValues(
+                                                              alpha: 0.5)),
                                                 ),
                                                 Text(
                                                   '${(progress * 100).toInt()}%',
-                                                  style: const TextStyle(color: AppTheme.royalPurple, fontWeight: FontWeight.bold, fontSize: 10),
+                                                  style: const TextStyle(
+                                                      color:
+                                                          AppTheme.royalPurple,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      fontSize: 10),
                                                 ),
                                               ],
                                             ),
@@ -99,15 +126,20 @@ class DownloadsScreen extends StatelessWidget {
                                               value: progress,
                                               minHeight: 4,
                                               backgroundColor: Colors.white12,
-                                              valueColor: const AlwaysStoppedAnimation<Color>(AppTheme.royalPurple),
+                                              valueColor:
+                                                  const AlwaysStoppedAnimation<
+                                                          Color>(
+                                                      AppTheme.royalPurple),
                                             ),
                                           ],
                                         ),
                                       ),
                                       const SizedBox(width: 12),
                                       IconButton(
-                                        icon: const Icon(Icons.cancel_outlined, color: AppTheme.errorRed, size: 20),
-                                        onPressed: () => downloadProvider.removeDownload(contentId),
+                                        icon: const Icon(Icons.cancel_outlined,
+                                            color: AppTheme.errorRed, size: 20),
+                                        onPressed: () => downloadProvider
+                                            .removeDownload(contentId),
                                       ),
                                     ],
                                   ),
@@ -123,7 +155,10 @@ class DownloadsScreen extends StatelessWidget {
                               padding: EdgeInsets.symmetric(vertical: 8),
                               child: Text(
                                 'Completed',
-                                style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: AppTheme.silverAccent),
+                                style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                    color: AppTheme.silverAccent),
                               ),
                             ),
                             ...completedList.map((movie) {
@@ -139,36 +174,49 @@ class DownloadsScreen extends StatelessWidget {
                                         child: SizedBox(
                                           width: 60,
                                           height: 85,
-                                          child: VanixImage(imageUrl: movie.thumbnailUrl),
+                                          child: VanixImage(
+                                              imageUrl: movie.thumbnailUrl),
                                         ),
                                       ),
                                       const SizedBox(width: 16),
                                       Expanded(
                                         child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
                                           children: [
                                             Text(
                                               movie.title,
                                               maxLines: 1,
                                               overflow: TextOverflow.ellipsis,
-                                              style: const TextStyle(fontWeight: FontWeight.bold, color: AppTheme.softWhite, fontSize: 14),
+                                              style: const TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  color: AppTheme.softWhite,
+                                                  fontSize: 14),
                                             ),
                                             const SizedBox(height: 4),
                                             Text(
                                               movie.duration,
-                                              style: TextStyle(fontSize: 11, color: AppTheme.silverAccent.withValues(alpha: 0.6)),
+                                              style: TextStyle(
+                                                  fontSize: 11,
+                                                  color: AppTheme.silverAccent
+                                                      .withValues(alpha: 0.6)),
                                             ),
                                             const SizedBox(height: 4),
                                             const Text(
                                               'Available Offline',
-                                              style: TextStyle(fontSize: 10, color: Colors.green, fontWeight: FontWeight.w600),
+                                              style: TextStyle(
+                                                  fontSize: 10,
+                                                  color: Colors.green,
+                                                  fontWeight: FontWeight.w600),
                                             ),
                                           ],
                                         ),
                                       ),
                                       // Play Offline Button
                                       IconButton(
-                                        icon: const Icon(Icons.play_arrow_outlined, color: AppTheme.softWhite),
+                                        icon: const Icon(
+                                            Icons.play_arrow_outlined,
+                                            color: AppTheme.softWhite),
                                         onPressed: () => Navigator.pushNamed(
                                           context,
                                           '/player',
@@ -180,8 +228,10 @@ class DownloadsScreen extends StatelessWidget {
                                         ),
                                       ),
                                       IconButton(
-                                        icon: const Icon(Icons.delete_outline, color: AppTheme.errorRed, size: 20),
-                                        onPressed: () => downloadProvider.removeDownload(movie.id),
+                                        icon: const Icon(Icons.delete_outline,
+                                            color: AppTheme.errorRed, size: 20),
+                                        onPressed: () => downloadProvider
+                                            .removeDownload(movie.id),
                                       ),
                                     ],
                                   ),
@@ -204,11 +254,14 @@ class DownloadsScreen extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.download_done, size: 64, color: AppTheme.silverAccent.withValues(alpha: 0.15)),
+          Icon(Icons.download_done,
+              size: 64, color: AppTheme.silverAccent.withValues(alpha: 0.15)),
           const SizedBox(height: 16),
           Text(
             'No movies or shows downloaded yet.',
-            style: TextStyle(color: AppTheme.silverAccent.withValues(alpha: 0.5), fontSize: 15),
+            style: TextStyle(
+                color: AppTheme.silverAccent.withValues(alpha: 0.5),
+                fontSize: 15),
           ),
         ],
       ),
@@ -295,7 +348,10 @@ class DownloadsScreen extends StatelessWidget {
         const SizedBox(width: 6),
         Text(
           text,
-          style: const TextStyle(color: AppTheme.silverAccent, fontSize: 10, fontWeight: FontWeight.w500),
+          style: const TextStyle(
+              color: AppTheme.silverAccent,
+              fontSize: 10,
+              fontWeight: FontWeight.w500),
         ),
       ],
     );

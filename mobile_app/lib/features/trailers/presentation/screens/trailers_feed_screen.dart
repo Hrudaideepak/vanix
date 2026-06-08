@@ -315,10 +315,9 @@ class _TrailerReelPageState extends State<_TrailerReelPage>
   Timer? _muteIconTimer;
   late AnimationController _muteAnim;
 
-  String get _videoUrl =>
-      widget.content.trailerUrl.isNotEmpty
-          ? widget.content.trailerUrl
-          : widget.content.videoUrl;
+  String get _videoUrl => widget.content.trailerUrl.isNotEmpty
+      ? widget.content.trailerUrl
+      : widget.content.videoUrl;
 
   @override
   void initState() {
@@ -460,8 +459,8 @@ class _TrailerReelPageState extends State<_TrailerReelPage>
                     padding: const EdgeInsets.all(18),
                     decoration: BoxDecoration(
                       color: Colors.black.withValues(alpha: 0.65),
-                      border: Border.all(
-                          color: const Color(0x33FF0000), width: 1),
+                      border:
+                          Border.all(color: const Color(0x33FF0000), width: 1),
                     ),
                     child: Icon(
                       _isMuted ? Icons.volume_off : Icons.volume_up,
@@ -598,18 +597,17 @@ class _ContentInfo extends StatelessWidget {
             );
           },
           child: Container(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
             decoration: const BoxDecoration(
               color: Color(0xFFFF0000), // DESIGN.md primary red
               // borderRadius: BorderRadius.zero — sharp (0px) per DESIGN.md
             ),
-            child: Row(
+            child: const Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Icon(Icons.play_arrow, color: Colors.black, size: 16),
-                const SizedBox(width: 6),
-                const Text(
+                Icon(Icons.play_arrow, color: Colors.black, size: 16),
+                SizedBox(width: 6),
+                Text(
                   'WATCH FULL',
                   style: TextStyle(
                     fontFamily: 'SpaceMono',
@@ -647,8 +645,7 @@ class _ActionSidebarState extends State<_ActionSidebar> {
   Widget build(BuildContext context) {
     final watchlistProvider =
         Provider.of<WatchlistProvider>(context, listen: false);
-    final isInWatchlist =
-        watchlistProvider.isInWatchlist(widget.content.id);
+    final isInWatchlist = watchlistProvider.isInWatchlist(widget.content.id);
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -834,9 +831,9 @@ class _BottomVignette extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Positioned.fill(
+    return const Positioned.fill(
       child: DecoratedBox(
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,

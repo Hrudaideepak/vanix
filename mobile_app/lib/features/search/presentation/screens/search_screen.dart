@@ -18,7 +18,15 @@ class _SearchScreenState extends State<SearchScreen> {
   final _searchController = TextEditingController();
   Timer? _debounceTimer;
 
-  final List<String> _genres = ['All', 'Sci-Fi', 'Cyberpunk', 'Action', 'Thriller', 'Adventure', 'Fantasy'];
+  final List<String> _genres = [
+    'All',
+    'Sci-Fi',
+    'Cyberpunk',
+    'Action',
+    'Thriller',
+    'Adventure',
+    'Fantasy'
+  ];
   final List<String> _types = ['All', 'Movies', 'Series'];
 
   @override
@@ -30,7 +38,7 @@ class _SearchScreenState extends State<SearchScreen> {
 
   void _onSearchChanged(String query, SearchProvider provider) {
     if (_debounceTimer?.isActive ?? false) _debounceTimer!.cancel();
-    
+
     _debounceTimer = Timer(const Duration(milliseconds: 500), () {
       provider.search(query);
     });
@@ -41,7 +49,8 @@ class _SearchScreenState extends State<SearchScreen> {
     showModalBottomSheet(
       context: context,
       backgroundColor: AppTheme.cardGrey,
-      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
+      shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
       builder: (context) {
         return Container(
           padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 24),
@@ -50,7 +59,9 @@ class _SearchScreenState extends State<SearchScreen> {
             children: [
               Text(
                 'Listening for search...',
-                style: TextStyle(color: AppTheme.silverAccent.withValues(alpha: 0.7), fontSize: 16),
+                style: TextStyle(
+                    color: AppTheme.silverAccent.withValues(alpha: 0.7),
+                    fontSize: 16),
               ),
               const SizedBox(height: 30),
               Container(
@@ -59,18 +70,29 @@ class _SearchScreenState extends State<SearchScreen> {
                   shape: BoxShape.circle,
                   color: AppTheme.royalPurple.withValues(alpha: 0.15),
                 ),
-                child: const Icon(Icons.mic, color: AppTheme.royalPurple, size: 48)
-                    .animate(onPlay: (controller) => controller.repeat(reverse: true))
-                    .scaleXY(begin: 1.0, end: 1.25, duration: 800.ms, curve: Curves.easeInOut),
+                child:
+                    const Icon(Icons.mic, color: AppTheme.royalPurple, size: 48)
+                        .animate(
+                            onPlay: (controller) =>
+                                controller.repeat(reverse: true))
+                        .scaleXY(
+                            begin: 1.0,
+                            end: 1.25,
+                            duration: 800.ms,
+                            curve: Curves.easeInOut),
               ),
               const SizedBox(height: 30),
               const Text(
                 '"Nebula Genesis"',
-                style: TextStyle(color: AppTheme.softWhite, fontSize: 20, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                    color: AppTheme.softWhite,
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 12),
               ElevatedButton(
-                style: ElevatedButton.styleFrom(backgroundColor: AppTheme.royalPurple),
+                style: ElevatedButton.styleFrom(
+                    backgroundColor: AppTheme.royalPurple),
                 child: const Text('Search Voice Input'),
                 onPressed: () {
                   _searchController.text = 'Nebula';
@@ -102,20 +124,25 @@ class _SearchScreenState extends State<SearchScreen> {
             children: [
               // Search Input Row
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                 child: Row(
                   children: [
                     Expanded(
                       child: TextField(
                         controller: _searchController,
                         style: const TextStyle(color: AppTheme.softWhite),
-                        onChanged: (val) => _onSearchChanged(val, searchProvider),
+                        onChanged: (val) =>
+                            _onSearchChanged(val, searchProvider),
                         decoration: InputDecoration(
-                          hintText: 'Search movies, TV shows, and web series...',
-                          prefixIcon: const Icon(Icons.search, color: AppTheme.silverAccent),
+                          hintText:
+                              'Search movies, TV shows, and web series...',
+                          prefixIcon: const Icon(Icons.search,
+                              color: AppTheme.silverAccent),
                           suffixIcon: _searchController.text.isNotEmpty
                               ? IconButton(
-                                  icon: const Icon(Icons.clear, color: AppTheme.silverAccent),
+                                  icon: const Icon(Icons.clear,
+                                      color: AppTheme.silverAccent),
                                   onPressed: () {
                                     _searchController.clear();
                                     searchProvider.search('');
@@ -132,7 +159,8 @@ class _SearchScreenState extends State<SearchScreen> {
                         borderRadius: 12,
                         opacity: 0.08,
                         padding: EdgeInsets.all(15),
-                        child: Icon(Icons.mic, color: AppTheme.royalPurple, size: 24),
+                        child: Icon(Icons.mic,
+                            color: AppTheme.royalPurple, size: 24),
                       ),
                     ),
                   ],
@@ -177,13 +205,18 @@ class _SearchScreenState extends State<SearchScreen> {
                 },
                 child: Container(
                   margin: const EdgeInsets.symmetric(horizontal: 4),
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10),
                     gradient: isSelected ? AppTheme.premiumGradient : null,
-                    color: isSelected ? null : AppTheme.softWhite.withValues(alpha: 0.04),
+                    color: isSelected
+                        ? null
+                        : AppTheme.softWhite.withValues(alpha: 0.04),
                     border: Border.all(
-                      color: isSelected ? Colors.transparent : AppTheme.softWhite.withValues(alpha: 0.08),
+                      color: isSelected
+                          ? Colors.transparent
+                          : AppTheme.softWhite.withValues(alpha: 0.08),
                     ),
                   ),
                   child: Text(
@@ -191,7 +224,9 @@ class _SearchScreenState extends State<SearchScreen> {
                     style: TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.bold,
-                      color: isSelected ? AppTheme.softWhite : AppTheme.silverAccent.withValues(alpha: 0.8),
+                      color: isSelected
+                          ? AppTheme.softWhite
+                          : AppTheme.silverAccent.withValues(alpha: 0.8),
                     ),
                   ),
                 ),
@@ -217,20 +252,28 @@ class _SearchScreenState extends State<SearchScreen> {
                 },
                 child: Container(
                   margin: const EdgeInsets.symmetric(horizontal: 4),
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10),
                     border: Border.all(
-                      color: isSelected ? AppTheme.royalPurple : AppTheme.softWhite.withValues(alpha: 0.08),
+                      color: isSelected
+                          ? AppTheme.royalPurple
+                          : AppTheme.softWhite.withValues(alpha: 0.08),
                     ),
-                    color: isSelected ? AppTheme.royalPurple.withValues(alpha: 0.15) : AppTheme.softWhite.withValues(alpha: 0.02),
+                    color: isSelected
+                        ? AppTheme.royalPurple.withValues(alpha: 0.15)
+                        : AppTheme.softWhite.withValues(alpha: 0.02),
                   ),
                   child: Text(
                     genre,
                     style: TextStyle(
                       fontSize: 12,
-                      fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                      color: isSelected ? AppTheme.royalPurple : AppTheme.silverAccent.withValues(alpha: 0.6),
+                      fontWeight:
+                          isSelected ? FontWeight.bold : FontWeight.normal,
+                      color: isSelected
+                          ? AppTheme.royalPurple
+                          : AppTheme.silverAccent.withValues(alpha: 0.6),
                     ),
                   ),
                 ),
@@ -248,11 +291,15 @@ class _SearchScreenState extends State<SearchScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.search, size: 64, color: AppTheme.silverAccent.withValues(alpha: 0.2)),
+            Icon(Icons.search,
+                size: 64, color: AppTheme.silverAccent.withValues(alpha: 0.2)),
             const SizedBox(height: 16),
             Text(
               'Explore VANIX Universe',
-              style: TextStyle(color: AppTheme.silverAccent.withValues(alpha: 0.5), fontSize: 16, fontWeight: FontWeight.w600),
+              style: TextStyle(
+                  color: AppTheme.silverAccent.withValues(alpha: 0.5),
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600),
             ),
           ],
         ),
@@ -270,13 +317,19 @@ class _SearchScreenState extends State<SearchScreen> {
             children: [
               const Text(
                 'Recent Searches',
-                style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: AppTheme.softWhite),
+                style: TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.bold,
+                    color: AppTheme.softWhite),
               ),
               GestureDetector(
                 onTap: () => provider.clearRecentSearches(),
                 child: Text(
                   'Clear All',
-                  style: TextStyle(fontSize: 13, color: AppTheme.royalPurple.withValues(alpha: 0.8), fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                      fontSize: 13,
+                      color: AppTheme.royalPurple.withValues(alpha: 0.8),
+                      fontWeight: FontWeight.bold),
                 ),
               ),
             ],
@@ -294,13 +347,17 @@ class _SearchScreenState extends State<SearchScreen> {
                 child: GlassCard(
                   borderRadius: 8,
                   opacity: 0.05,
-                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Icon(Icons.history, color: AppTheme.silverAccent, size: 14),
+                      const Icon(Icons.history,
+                          color: AppTheme.silverAccent, size: 14),
                       const SizedBox(width: 8),
-                      Text(keyword, style: const TextStyle(color: AppTheme.silverAccent, fontSize: 13)),
+                      Text(keyword,
+                          style: const TextStyle(
+                              color: AppTheme.silverAccent, fontSize: 13)),
                     ],
                   ),
                 ),
@@ -314,7 +371,8 @@ class _SearchScreenState extends State<SearchScreen> {
 
   Widget _buildSearchResultsGrid(SearchProvider provider) {
     if (provider.isLoading) {
-      return const Center(child: CircularProgressIndicator(color: AppTheme.royalPurple));
+      return const Center(
+          child: CircularProgressIndicator(color: AppTheme.royalPurple));
     }
 
     if (provider.searchResults.isEmpty) {
@@ -322,7 +380,8 @@ class _SearchScreenState extends State<SearchScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.search_off_outlined, size: 64, color: AppTheme.silverAccent.withValues(alpha: 0.2)),
+            Icon(Icons.search_off_outlined,
+                size: 64, color: AppTheme.silverAccent.withValues(alpha: 0.2)),
             const SizedBox(height: 16),
             const Text(
               'No matches found in this sector.',
@@ -367,7 +426,8 @@ class _SearchScreenState extends State<SearchScreen> {
                         color: Colors.amber,
                         shape: BoxShape.circle,
                       ),
-                      child: const Icon(Icons.workspace_premium, size: 10, color: Colors.black),
+                      child: const Icon(Icons.workspace_premium,
+                          size: 10, color: Colors.black),
                     ),
                   ),
               ],

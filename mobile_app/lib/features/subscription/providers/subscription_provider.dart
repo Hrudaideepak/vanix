@@ -17,7 +17,8 @@ class SubscriptionProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      final response = await ApiClient.instance.post('/checkout', body: {'planId': planId});
+      final response =
+          await ApiClient.instance.post('/checkout', body: {'planId': planId});
 
       if (response.statusCode == 200) {
         return jsonDecode(response.body);
