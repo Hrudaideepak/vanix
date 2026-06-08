@@ -30,6 +30,10 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final homeProvider = Provider.of<HomeProvider>(context);
+    final profileProvider = Provider.of<ProfileProvider>(context);
+    final activeProfile = profileProvider.activeProfile;
+    final isKids = activeProfile?.isKids ?? false;
+
     final filteredBanners = widget.filterType == null
         ? homeProvider.featuredBanners
         : homeProvider.featuredBanners
@@ -38,8 +42,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return Scaffold(
       body: Container(
-        decoration: const BoxDecoration(
-          gradient: AppTheme.backgroundGradient,
+        decoration: BoxDecoration(
+          gradient: isKids ? AppTheme.kidsBackgroundGradient : AppTheme.backgroundGradient,
         ),
         child: homeProvider.isLoading
             ? _buildLoader()
@@ -54,7 +58,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       // Header Brand Bar
-                      _buildHeaderAppBar(),
+                      _buildHeaderAppBar(activeProfile),
                       
                       // Hero Banner Carousel
                       if (filteredBanners.isNotEmpty)
@@ -71,7 +75,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
                       // Trending Now Row
                       _buildFilteredShelf(
-                        title: 'Trending Now',
+                        title: isKids ? 'Fun & Trending' : 'Trending Now',
                         items: homeProvider.trendingNow,
                         builder: _buildMovieRow,
                       ),
@@ -104,7 +108,11 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildHeaderAppBar() {
+  Widget _buildHeaderAppBar(dynamic activeProfile) {
+    final isKids = activeProfile?.isKids ?? false;
+    final profileName = activeProfile?.name ?? 'Guest';
+    final avatarUrl = activeProfile?.avatarUrl ?? 'https://api.dicebear.com/7.x/bottts/png?seed=Primary';
+
     return SafeArea(
       bottom: false,
       child: Padding(
@@ -112,17 +120,60 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(
-              'VANIX',
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    fontSize: 24,
-                    fontWeight: FontWeight.w900,
-                    letterSpacing: 3.0,
-                    foreground: Paint()
-                      ..shader = AppTheme.premiumGradient.createShader(
-                        const Rect.fromLTWH(0.0, 0.0, 150.0, 30.0),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Row(
+                  children: [
+                    Text(
+                      'VANIX',
+                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                            fontSize: 24,
+                            fontWeight: FontWeight.w900,
+                            letterSpacing: 3.0,
+                            foreground: Paint()
+                              ..shader = (isKids
+                                      ? const LinearGradient(colors: [Colors.orangeAccent, Colors.pinkAccent])
+                                      : AppTheme.premiumGradient)
+                                  .createShader(
+                                const Rect.fromLTWH(0.0, 0.0, 150.0, 30.0),
+                              ),
+                          ),
+                    ),
+                    if (isKids) ...[
+                      const SizedBox(width: 8),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                        decoration: BoxDecoration(
+                          gradient: const LinearGradient(colors: [Colors.pinkAccent, Colors.orangeAccent]),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: const Text(
+                          'KIDS',
+                          style: TextStyle(
+                            fontSize: 10,
+                            fontWeight: FontWeight.w900,
+                            color: Colors.white,
+                            letterSpacing: 1.0,
+                          ),
+                        ),
                       ),
+                    ],
+                  ],
+                ),
+                if (isKids) ...[
+                  const SizedBox(height: 2),
+                  Text(
+                    'Hey $profileName! Ready for fun?',
+                    style: TextStyle(
+                      color: Colors.white.withValues(alpha: 0.7),
+                      fontSize: 11,
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
+                ],
+              ],
             ),
             Row(
               children: [
@@ -133,16 +184,20 @@ class _HomeScreenState extends State<HomeScreen> {
                 const SizedBox(width: 8),
                 GestureDetector(
                   onTap: () {
-                    // Navigate to profile tab
+                    // Switch profile helper
+                    Navigator.pushNamed(context, '/profiles');
                   },
                   child: Container(
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      border: Border.all(color: AppTheme.royalPurple, width: 1.5),
+                      border: Border.all(
+                        color: isKids ? Colors.pinkAccent : AppTheme.royalPurple,
+                        width: 1.5,
+                      ),
                     ),
-                    child: const CircleAvatar(
+                    child: CircleAvatar(
                       radius: 16,
-                      backgroundImage: NetworkImage('https://api.dicebear.com/7.x/bottts/png?seed=Primary'),
+                      backgroundImage: NetworkImage(avatarUrl),
                     ),
                   ),
                 ),

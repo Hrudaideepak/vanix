@@ -34,6 +34,8 @@ class DownloadsScreen extends StatelessWidget {
                 ),
               ),
 
+              _buildStorageBreakdown(context),
+
               // Downloads Body
               Expanded(
                 child: completedList.isEmpty && progressMap.isEmpty
@@ -54,6 +56,13 @@ class DownloadsScreen extends StatelessWidget {
                             ...progressMap.entries.map((entry) {
                               final contentId = entry.key;
                               final progress = entry.value;
+                              
+                              // Simulated speed and remaining time for v2 polish
+                              final speed = (4.8 + (contentId.hashCode % 4) * 0.6).toStringAsFixed(1);
+                              final remaining = progress > 0.95 
+                                  ? 'Finishing...' 
+                                  : '${((1.0 - progress) * 45).toInt() + 3}s left';
+
                               return Container(
                                 margin: const EdgeInsets.symmetric(vertical: 8),
                                 child: GlassCard(
@@ -69,9 +78,23 @@ class DownloadsScreen extends StatelessWidget {
                                           children: [
                                             Text(
                                               'Item: $contentId',
-                                              style: const TextStyle(fontWeight: FontWeight.bold, color: AppTheme.softWhite),
+                                              style: const TextStyle(fontWeight: FontWeight.bold, color: AppTheme.softWhite, fontSize: 13),
                                             ),
-                                            const SizedBox(height: 8),
+                                            const SizedBox(height: 4),
+                                            Row(
+                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                              children: [
+                                                Text(
+                                                  '$speed MB/s • $remaining',
+                                                  style: TextStyle(fontSize: 10, color: AppTheme.silverAccent.withValues(alpha: 0.5)),
+                                                ),
+                                                Text(
+                                                  '${(progress * 100).toInt()}%',
+                                                  style: const TextStyle(color: AppTheme.royalPurple, fontWeight: FontWeight.bold, fontSize: 10),
+                                                ),
+                                              ],
+                                            ),
+                                            const SizedBox(height: 6),
                                             LinearProgressIndicator(
                                               value: progress,
                                               minHeight: 4,
@@ -82,7 +105,6 @@ class DownloadsScreen extends StatelessWidget {
                                         ),
                                       ),
                                       const SizedBox(width: 12),
-                                      Text('${(progress * 100).toInt()}%', style: const TextStyle(color: AppTheme.royalPurple, fontWeight: FontWeight.bold, fontSize: 12)),
                                       IconButton(
                                         icon: const Icon(Icons.cancel_outlined, color: AppTheme.errorRed, size: 20),
                                         onPressed: () => downloadProvider.removeDownload(contentId),
@@ -190,6 +212,92 @@ class DownloadsScreen extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildStorageBreakdown(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Device Storage',
+                style: TextStyle(
+                  color: AppTheme.softWhite.withValues(alpha: 0.8),
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const Text(
+                '45.8 GB Free of 64 GB',
+                style: TextStyle(
+                  color: AppTheme.silverAccent,
+                  fontSize: 11,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(4),
+            child: SizedBox(
+              height: 8,
+              child: Row(
+                children: [
+                  Expanded(
+                    flex: 12, // 1.2 GB (Vanix)
+                    child: Container(color: AppTheme.royalPurple),
+                  ),
+                  Expanded(
+                    flex: 124, // 12.4 GB (Other)
+                    child: Container(color: Colors.white24),
+                  ),
+                  Expanded(
+                    flex: 458, // 45.8 GB (Free)
+                    child: Container(color: Colors.green),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: 10),
+          Row(
+            children: [
+              _buildLegendItem(AppTheme.royalPurple, 'Vanix (1.2 GB)'),
+              const SizedBox(width: 16),
+              _buildLegendItem(Colors.white24, 'Other (12.4 GB)'),
+              const SizedBox(width: 16),
+              _buildLegendItem(Colors.green, 'Free (45.8 GB)'),
+            ],
+          ),
+          const Divider(color: Colors.white10, height: 28),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildLegendItem(Color color, String text) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Container(
+          width: 8,
+          height: 8,
+          decoration: BoxDecoration(
+            color: color,
+            shape: BoxShape.circle,
+          ),
+        ),
+        const SizedBox(width: 6),
+        Text(
+          text,
+          style: const TextStyle(color: AppTheme.silverAccent, fontSize: 10, fontWeight: FontWeight.w500),
+        ),
+      ],
     );
   }
 }
