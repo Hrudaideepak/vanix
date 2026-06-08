@@ -39,6 +39,16 @@ exports.protect = async (req, res, next) => {
     // Resolve active profile if profile ID header is supplied
     const profileId = req.headers['x-profile-id'];
     if (profileId && mongoose.Types.ObjectId.isValid(profileId)) {
+      // Prevent IDOR by ensuring the profile belongs to the authenticated user
+      const isProfileOwnedByUser = req.user.profiles.some(p => p.toString() === profileId);
+
+      if (!isProfileOwnedByUser) {
+        return res.status(403).json({
+          success: false,
+          message: 'Access denied. You do not have permission to access this profile.',
+        });
+      }
+
       const Profile = require('../models/profile.model');
       req.profile = await Profile.findById(profileId);
     }
