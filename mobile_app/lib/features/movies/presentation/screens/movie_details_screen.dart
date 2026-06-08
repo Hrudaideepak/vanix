@@ -63,7 +63,8 @@ class _MovieDetailsScreenState extends State<MovieDetailsScreen> {
                         shape: BoxShape.circle,
                       ),
                       child: IconButton(
-                        icon: const Icon(Icons.arrow_back, color: AppTheme.softWhite),
+                        icon: const Icon(Icons.arrow_back,
+                            color: AppTheme.softWhite),
                         onPressed: () => Navigator.pop(context),
                       ),
                     ),
@@ -99,7 +100,8 @@ class _MovieDetailsScreenState extends State<MovieDetailsScreen> {
                   // Detail Body
                   SliverToBoxAdapter(
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 20, vertical: 10),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -120,12 +122,15 @@ class _MovieDetailsScreenState extends State<MovieDetailsScreen> {
                               ),
                               if (movie.isPremium)
                                 Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 8, vertical: 4),
                                   decoration: BoxDecoration(
-                                    gradient: const LinearGradient(colors: [Colors.amber, Colors.orange]),
+                                    gradient: const LinearGradient(
+                                        colors: [Colors.amber, Colors.orange]),
                                     borderRadius: BorderRadius.circular(6),
                                   ),
-                                  child: const Icon(Icons.workspace_premium, color: Colors.black, size: 16),
+                                  child: const Icon(Icons.workspace_premium,
+                                      color: Colors.black, size: 16),
                                 ),
                             ],
                           ).animate().fadeIn(duration: 400.ms),
@@ -136,18 +141,23 @@ class _MovieDetailsScreenState extends State<MovieDetailsScreen> {
                           Row(
                             children: [
                               Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 6, vertical: 2),
                                 decoration: BoxDecoration(
                                   color: Colors.amber,
                                   borderRadius: BorderRadius.circular(4),
                                 ),
                                 child: Row(
                                   children: [
-                                    const Icon(Icons.star, color: Colors.black, size: 12),
+                                    const Icon(Icons.star,
+                                        color: Colors.black, size: 12),
                                     const SizedBox(width: 2),
                                     Text(
                                       movie.rating.toString(),
-                                      style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.black),
+                                      style: const TextStyle(
+                                          fontSize: 10,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.black),
                                     ),
                                   ],
                                 ),
@@ -155,23 +165,35 @@ class _MovieDetailsScreenState extends State<MovieDetailsScreen> {
                               const SizedBox(width: 14),
                               Text(
                                 '${movie.releaseYear}',
-                                style: const TextStyle(color: AppTheme.silverAccent, fontSize: 13, fontWeight: FontWeight.w500),
+                                style: const TextStyle(
+                                    color: AppTheme.silverAccent,
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.w500),
                               ),
                               const SizedBox(width: 14),
                               Text(
                                 movie.duration,
-                                style: const TextStyle(color: AppTheme.silverAccent, fontSize: 13, fontWeight: FontWeight.w500),
+                                style: const TextStyle(
+                                    color: AppTheme.silverAccent,
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.w500),
                               ),
                               const SizedBox(width: 14),
                               Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 6, vertical: 2),
                                 decoration: BoxDecoration(
-                                  border: Border.all(color: AppTheme.silverAccent.withValues(alpha: 0.5)),
+                                  border: Border.all(
+                                      color: AppTheme.silverAccent
+                                          .withValues(alpha: 0.5)),
                                   borderRadius: BorderRadius.circular(4),
                                 ),
                                 child: const Text(
                                   'Ultra 4K',
-                                  style: TextStyle(color: AppTheme.silverAccent, fontSize: 9, fontWeight: FontWeight.bold),
+                                  style: TextStyle(
+                                      color: AppTheme.silverAccent,
+                                      fontSize: 9,
+                                      fontWeight: FontWeight.bold),
                                 ),
                               ),
                             ],
@@ -189,13 +211,20 @@ class _MovieDetailsScreenState extends State<MovieDetailsScreen> {
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: AppTheme.royalPurple,
                                     foregroundColor: AppTheme.softWhite,
-                                    padding: const EdgeInsets.symmetric(vertical: 14),
-                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 14),
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(10)),
                                     elevation: 8,
-                                    shadowColor: AppTheme.royalPurple.withValues(alpha: 0.3),
+                                    shadowColor: AppTheme.royalPurple
+                                        .withValues(alpha: 0.3),
                                   ),
                                   icon: const Icon(Icons.play_arrow, size: 24),
-                                  label: const Text('Play Stream', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
+                                  label: const Text('Play Stream',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 15)),
                                   onPressed: () => Navigator.pushNamed(
                                     context,
                                     '/player',
@@ -211,11 +240,19 @@ class _MovieDetailsScreenState extends State<MovieDetailsScreen> {
                               // Watchlist Toggle
                               Expanded(
                                 child: _buildActionButton(
-                                  icon: watchlistProvider.isInWatchlist(movie.id) ? Icons.bookmark : Icons.bookmark_border,
-                                  color: watchlistProvider.isInWatchlist(movie.id) ? AppTheme.royalPurple : AppTheme.softWhite,
+                                  icon:
+                                      watchlistProvider.isInWatchlist(movie.id)
+                                          ? Icons.bookmark
+                                          : Icons.bookmark_border,
+                                  color:
+                                      watchlistProvider.isInWatchlist(movie.id)
+                                          ? AppTheme.royalPurple
+                                          : AppTheme.softWhite,
                                   onTap: () {
-                                    if (watchlistProvider.isInWatchlist(movie.id)) {
-                                      watchlistProvider.removeFromWatchlist(movie.id);
+                                    if (watchlistProvider
+                                        .isInWatchlist(movie.id)) {
+                                      watchlistProvider
+                                          .removeFromWatchlist(movie.id);
                                     } else {
                                       watchlistProvider.addToWatchlist(movie);
                                     }
@@ -228,10 +265,16 @@ class _MovieDetailsScreenState extends State<MovieDetailsScreen> {
                                 child: _buildActionButton(
                                   icon: downloadProvider.isDownloaded(movie.id)
                                       ? Icons.download_done
-                                      : (downloadProvider.isDownloading(movie.id) ? Icons.downloading : Icons.download),
-                                  color: downloadProvider.isDownloaded(movie.id) ? AppTheme.electricBlue : AppTheme.softWhite,
+                                      : (downloadProvider
+                                              .isDownloading(movie.id)
+                                          ? Icons.downloading
+                                          : Icons.download),
+                                  color: downloadProvider.isDownloaded(movie.id)
+                                      ? AppTheme.electricBlue
+                                      : AppTheme.softWhite,
                                   onTap: () {
-                                    if (downloadProvider.isDownloaded(movie.id)) {
+                                    if (downloadProvider
+                                        .isDownloaded(movie.id)) {
                                       downloadProvider.removeDownload(movie.id);
                                     } else {
                                       downloadProvider.startDownload(movie);
@@ -247,13 +290,17 @@ class _MovieDetailsScreenState extends State<MovieDetailsScreen> {
                           // Description Synopsis
                           const Text(
                             'Synopsis',
-                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800, color: AppTheme.softWhite),
+                            style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w800,
+                                color: AppTheme.softWhite),
                           ),
                           const SizedBox(height: 8),
                           Text(
                             movie.description,
                             style: TextStyle(
-                              color: AppTheme.silverAccent.withValues(alpha: 0.8),
+                              color:
+                                  AppTheme.silverAccent.withValues(alpha: 0.8),
                               fontSize: 14,
                               height: 1.5,
                             ),
@@ -265,7 +312,10 @@ class _MovieDetailsScreenState extends State<MovieDetailsScreen> {
                           if (movie.cast.isNotEmpty) ...[
                             const Text(
                               'Cast',
-                              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800, color: AppTheme.softWhite),
+                              style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w800,
+                                  color: AppTheme.softWhite),
                             ),
                             const SizedBox(height: 12),
                             SizedBox(
@@ -283,14 +333,17 @@ class _MovieDetailsScreenState extends State<MovieDetailsScreen> {
                                       children: [
                                         CircleAvatar(
                                           radius: 26,
-                                          backgroundImage: NetworkImage('https://api.dicebear.com/7.x/adventurer/png?seed=$actor'),
+                                          backgroundImage: NetworkImage(
+                                              'https://api.dicebear.com/7.x/adventurer/png?seed=$actor'),
                                         ),
                                         const SizedBox(height: 6),
                                         Text(
                                           actor,
                                           maxLines: 1,
                                           overflow: TextOverflow.ellipsis,
-                                          style: const TextStyle(fontSize: 10, color: AppTheme.silverAccent),
+                                          style: const TextStyle(
+                                              fontSize: 10,
+                                              color: AppTheme.silverAccent),
                                         ),
                                       ],
                                     ),
@@ -305,13 +358,17 @@ class _MovieDetailsScreenState extends State<MovieDetailsScreen> {
                           if (movieProvider.suggestedContent.isNotEmpty) ...[
                             const Text(
                               'Suggested Content',
-                              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800, color: AppTheme.softWhite),
+                              style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w800,
+                                  color: AppTheme.softWhite),
                             ),
                             const SizedBox(height: 16),
                             GridView.builder(
                               shrinkWrap: true,
                               physics: const NeverScrollableScrollPhysics(),
-                              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                              gridDelegate:
+                                  const SliverGridDelegateWithFixedCrossAxisCount(
                                 crossAxisCount: 3,
                                 childAspectRatio: 0.68,
                                 crossAxisSpacing: 12,
@@ -319,16 +376,21 @@ class _MovieDetailsScreenState extends State<MovieDetailsScreen> {
                               ),
                               itemCount: movieProvider.suggestedContent.length,
                               itemBuilder: (context, index) {
-                                final suggested = movieProvider.suggestedContent[index];
+                                final suggested =
+                                    movieProvider.suggestedContent[index];
                                 return GestureDetector(
                                   onTap: () => Navigator.pushReplacementNamed(
                                     context,
                                     '/movie-details',
-                                    arguments: {'id': suggested.id, 'type': suggested.type},
+                                    arguments: {
+                                      'id': suggested.id,
+                                      'type': suggested.type
+                                    },
                                   ),
                                   child: ClipRRect(
                                     borderRadius: BorderRadius.circular(10),
-                                    child: VanixImage(imageUrl: suggested.thumbnailUrl),
+                                    child: VanixImage(
+                                        imageUrl: suggested.thumbnailUrl),
                                   ),
                                 );
                               },
@@ -344,7 +406,10 @@ class _MovieDetailsScreenState extends State<MovieDetailsScreen> {
     );
   }
 
-  Widget _buildActionButton({required IconData icon, required Color color, required VoidCallback onTap}) {
+  Widget _buildActionButton(
+      {required IconData icon,
+      required Color color,
+      required VoidCallback onTap}) {
     return GestureDetector(
       onTap: onTap,
       child: GlassCard(

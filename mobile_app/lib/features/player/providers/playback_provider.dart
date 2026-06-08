@@ -14,8 +14,10 @@ class PlaybackProvider extends ChangeNotifier {
     required int durationSeconds,
     String? episodeId,
   }) async {
-    final progressPercentage = durationSeconds > 0 ? (progressSeconds / durationSeconds) : 0.0;
-    AppLogger.debug('Sync progress: $contentId -> $progressSeconds / $durationSeconds sec (${(progressPercentage * 100).toStringAsFixed(1)}%)');
+    final progressPercentage =
+        durationSeconds > 0 ? (progressSeconds / durationSeconds) : 0.0;
+    AppLogger.debug(
+        'Sync progress: $contentId -> $progressSeconds / $durationSeconds sec (${(progressPercentage * 100).toStringAsFixed(1)}%)');
 
     try {
       final response = await ApiClient.instance.post('/history', body: {
@@ -35,7 +37,8 @@ class PlaybackProvider extends ChangeNotifier {
 
   Future<int> getSavedWatchOffset(String contentId, {String? episodeId}) async {
     try {
-      final response = await ApiClient.instance.get('/history?movieId=$contentId');
+      final response =
+          await ApiClient.instance.get('/history?movieId=$contentId');
       if (response.statusCode == 200) {
         final decoded = jsonDecode(response.body);
         final historyItem = decoded['data'];

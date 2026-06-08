@@ -22,14 +22,38 @@ class _NavigationHolderState extends State<NavigationHolder> {
 
   // Sidebar Items list
   final List<Map<String, dynamic>> _sidebarItems = [
-    {'label': 'Home', 'icon': Icons.home_filled, 'inactiveIcon': Icons.home_outlined},
+    {
+      'label': 'Home',
+      'icon': Icons.home_filled,
+      'inactiveIcon': Icons.home_outlined
+    },
     {'label': 'Search', 'icon': Icons.search, 'inactiveIcon': Icons.search},
     {'label': 'TV Shows', 'icon': Icons.tv, 'inactiveIcon': Icons.tv_outlined},
-    {'label': 'Movies', 'icon': Icons.movie_creation, 'inactiveIcon': Icons.movie_creation_outlined},
-    {'label': 'Trailers', 'icon': Icons.video_library, 'inactiveIcon': Icons.video_library_outlined},
-    {'label': 'My List', 'icon': Icons.playlist_add_check, 'inactiveIcon': Icons.playlist_add_check_outlined},
-    {'label': 'Downloads', 'icon': Icons.download, 'inactiveIcon': Icons.download_outlined},
-    {'label': 'Settings', 'icon': Icons.settings, 'inactiveIcon': Icons.settings_outlined},
+    {
+      'label': 'Movies',
+      'icon': Icons.movie_creation,
+      'inactiveIcon': Icons.movie_creation_outlined
+    },
+    {
+      'label': 'Trailers',
+      'icon': Icons.video_library,
+      'inactiveIcon': Icons.video_library_outlined
+    },
+    {
+      'label': 'My List',
+      'icon': Icons.playlist_add_check,
+      'inactiveIcon': Icons.playlist_add_check_outlined
+    },
+    {
+      'label': 'Downloads',
+      'icon': Icons.download,
+      'inactiveIcon': Icons.download_outlined
+    },
+    {
+      'label': 'Settings',
+      'icon': Icons.settings,
+      'inactiveIcon': Icons.settings_outlined
+    },
   ];
 
   Widget _getSelectedScreen(int index) {
@@ -68,17 +92,17 @@ class _NavigationHolderState extends State<NavigationHolder> {
           children: [
             // Left Sidebar
             _buildSidebar(isDesktop),
-            
+
             // Vertical divider line
             Container(width: 1, color: Colors.white.withValues(alpha: 0.06)),
-            
+
             // Main Content Area
             Expanded(
               child: Column(
                 children: [
                   // Top Navigation Bar
                   _buildTopNav(),
-                  
+
                   // Screen content
                   Expanded(
                     child: _getSelectedScreen(_currentIndex),
@@ -117,11 +141,16 @@ class _NavigationHolderState extends State<NavigationHolder> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              _buildMobileNavItem(0, mobileToGlobalMap[0], Icons.home_filled, Icons.home_outlined, 'Home'),
-              _buildMobileNavItem(1, mobileToGlobalMap[1], Icons.search, Icons.search, 'Search'),
-              _buildMobileNavItem(2, mobileToGlobalMap[2], Icons.video_library, Icons.video_library_outlined, 'Trailers'),
-              _buildMobileNavItem(3, mobileToGlobalMap[3], Icons.bookmark, Icons.bookmark_outline, 'Watchlist'),
-              _buildMobileNavItem(4, mobileToGlobalMap[4], Icons.person, Icons.person_outline, 'Profile'),
+              _buildMobileNavItem(0, mobileToGlobalMap[0], Icons.home_filled,
+                  Icons.home_outlined, 'Home'),
+              _buildMobileNavItem(1, mobileToGlobalMap[1], Icons.search,
+                  Icons.search, 'Search'),
+              _buildMobileNavItem(2, mobileToGlobalMap[2], Icons.video_library,
+                  Icons.video_library_outlined, 'Trailers'),
+              _buildMobileNavItem(3, mobileToGlobalMap[3], Icons.bookmark,
+                  Icons.bookmark_outline, 'Watchlist'),
+              _buildMobileNavItem(4, mobileToGlobalMap[4], Icons.person,
+                  Icons.person_outline, 'Profile'),
             ],
           ),
         ),
@@ -135,11 +164,13 @@ class _NavigationHolderState extends State<NavigationHolder> {
       color: AppTheme.cardGrey.withValues(alpha: 0.4),
       padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
       child: Column(
-        crossAxisAlignment: isDesktop ? CrossAxisAlignment.start : CrossAxisAlignment.center,
+        crossAxisAlignment:
+            isDesktop ? CrossAxisAlignment.start : CrossAxisAlignment.center,
         children: [
           // Logo Header
           Padding(
-            padding: EdgeInsets.symmetric(horizontal: isDesktop ? 12 : 0, vertical: 12),
+            padding: EdgeInsets.symmetric(
+                horizontal: isDesktop ? 12 : 0, vertical: 12),
             child: isDesktop
                 ? Text(
                     'VANIX',
@@ -178,20 +209,29 @@ class _NavigationHolderState extends State<NavigationHolder> {
                   },
                   child: Container(
                     margin: const EdgeInsets.symmetric(vertical: 6),
-                    padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 14),
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 12, horizontal: 14),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(12),
-                      color: isSelected ? AppTheme.royalPurple.withValues(alpha: 0.12) : Colors.transparent,
+                      color: isSelected
+                          ? AppTheme.royalPurple.withValues(alpha: 0.12)
+                          : Colors.transparent,
                       border: Border.all(
-                        color: isSelected ? AppTheme.royalPurple.withValues(alpha: 0.2) : Colors.transparent,
+                        color: isSelected
+                            ? AppTheme.royalPurple.withValues(alpha: 0.2)
+                            : Colors.transparent,
                       ),
                     ),
                     child: Row(
-                      mainAxisAlignment: isDesktop ? MainAxisAlignment.start : MainAxisAlignment.center,
+                      mainAxisAlignment: isDesktop
+                          ? MainAxisAlignment.start
+                          : MainAxisAlignment.center,
                       children: [
                         Icon(
                           isSelected ? item['icon'] : item['inactiveIcon'],
-                          color: isSelected ? AppTheme.royalPurple : AppTheme.silverAccent.withValues(alpha: 0.6),
+                          color: isSelected
+                              ? AppTheme.royalPurple
+                              : AppTheme.silverAccent.withValues(alpha: 0.6),
                           size: 22,
                         ),
                         if (isDesktop) ...[
@@ -200,8 +240,13 @@ class _NavigationHolderState extends State<NavigationHolder> {
                             item['label'],
                             style: TextStyle(
                               fontSize: 14,
-                              fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-                              color: isSelected ? AppTheme.softWhite : AppTheme.silverAccent.withValues(alpha: 0.8),
+                              fontWeight: isSelected
+                                  ? FontWeight.bold
+                                  : FontWeight.w500,
+                              color: isSelected
+                                  ? AppTheme.softWhite
+                                  : AppTheme.silverAccent
+                                      .withValues(alpha: 0.8),
                             ),
                           ),
                         ],
@@ -224,18 +269,24 @@ class _NavigationHolderState extends State<NavigationHolder> {
                 children: [
                   const Row(
                     children: [
-                      Icon(Icons.workspace_premium, color: AppTheme.electricBlue, size: 16),
+                      Icon(Icons.workspace_premium,
+                          color: AppTheme.electricBlue, size: 16),
                       SizedBox(width: 6),
                       Text(
                         'VANIX Premium',
-                        style: TextStyle(fontSize: 12, fontWeight: FontWeight.w900, color: Colors.white),
+                        style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w900,
+                            color: Colors.white),
                       ),
                     ],
                   ),
                   const SizedBox(height: 6),
                   Text(
                     'Upgrade plan to unlock ultra 4K HDR streaming.',
-                    style: TextStyle(fontSize: 10, color: AppTheme.silverAccent.withValues(alpha: 0.7)),
+                    style: TextStyle(
+                        fontSize: 10,
+                        color: AppTheme.silverAccent.withValues(alpha: 0.7)),
                   ),
                   const SizedBox(height: 12),
                   GestureDetector(
@@ -254,7 +305,10 @@ class _NavigationHolderState extends State<NavigationHolder> {
                       ),
                       child: const Text(
                         'Upgrade Plan',
-                        style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.white),
+                        style: TextStyle(
+                            fontSize: 11,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white),
                       ),
                     ),
                   ),
@@ -291,11 +345,15 @@ class _NavigationHolderState extends State<NavigationHolder> {
               ),
               child: Row(
                 children: [
-                  Icon(Icons.search, color: AppTheme.silverAccent.withValues(alpha: 0.5), size: 18),
+                  Icon(Icons.search,
+                      color: AppTheme.silverAccent.withValues(alpha: 0.5),
+                      size: 18),
                   const SizedBox(width: 10),
                   Text(
                     'Search titles, genres, creators...',
-                    style: TextStyle(color: AppTheme.silverAccent.withValues(alpha: 0.5), fontSize: 13),
+                    style: TextStyle(
+                        color: AppTheme.silverAccent.withValues(alpha: 0.5),
+                        fontSize: 13),
                   ),
                 ],
               ),
@@ -306,7 +364,8 @@ class _NavigationHolderState extends State<NavigationHolder> {
           Row(
             children: [
               IconButton(
-                icon: const Icon(Icons.notifications_outlined, color: AppTheme.softWhite, size: 22),
+                icon: const Icon(Icons.notifications_outlined,
+                    color: AppTheme.softWhite, size: 22),
                 onPressed: () {},
               ),
               const SizedBox(width: 14),
@@ -323,7 +382,8 @@ class _NavigationHolderState extends State<NavigationHolder> {
                   ),
                   child: const CircleAvatar(
                     radius: 16,
-                    backgroundImage: NetworkImage('https://api.dicebear.com/7.x/bottts/png?seed=Primary'),
+                    backgroundImage: NetworkImage(
+                        'https://api.dicebear.com/7.x/bottts/png?seed=Primary'),
                   ),
                 ),
               ),
@@ -334,7 +394,8 @@ class _NavigationHolderState extends State<NavigationHolder> {
     );
   }
 
-  Widget _buildMobileNavItem(int navIndex, int globalIndex, IconData activeIcon, IconData inactiveIcon, String label) {
+  Widget _buildMobileNavItem(int navIndex, int globalIndex, IconData activeIcon,
+      IconData inactiveIcon, String label) {
     final isSelected = _currentIndex == globalIndex;
 
     return GestureDetector(
@@ -359,7 +420,9 @@ class _NavigationHolderState extends State<NavigationHolder> {
               ),
               child: Icon(
                 isSelected ? activeIcon : inactiveIcon,
-                color: isSelected ? Colors.white : AppTheme.silverAccent.withValues(alpha: 0.6),
+                color: isSelected
+                    ? Colors.white
+                    : AppTheme.silverAccent.withValues(alpha: 0.6),
                 size: 22,
               ),
             ),
@@ -369,7 +432,9 @@ class _NavigationHolderState extends State<NavigationHolder> {
               style: TextStyle(
                 fontSize: 9,
                 fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-                color: isSelected ? AppTheme.softWhite : AppTheme.silverAccent.withValues(alpha: 0.5),
+                color: isSelected
+                    ? AppTheme.softWhite
+                    : AppTheme.silverAccent.withValues(alpha: 0.5),
               ),
             ),
           ],

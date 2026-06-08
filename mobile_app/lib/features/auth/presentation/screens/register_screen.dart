@@ -71,7 +71,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 Align(
                   alignment: Alignment.centerLeft,
                   child: IconButton(
-                    icon: const Icon(Icons.arrow_back, color: AppTheme.softWhite),
+                    icon:
+                        const Icon(Icons.arrow_back, color: AppTheme.softWhite),
                     onPressed: () => Navigator.pop(context),
                   ),
                 ),
@@ -135,7 +136,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           },
                           decoration: const InputDecoration(
                             hintText: 'Email address',
-                            prefixIcon: Icon(Icons.email_outlined, color: AppTheme.silverAccent),
+                            prefixIcon: Icon(Icons.email_outlined,
+                                color: AppTheme.silverAccent),
                           ),
                         ),
                         const SizedBox(height: 16),
@@ -156,10 +158,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           },
                           decoration: InputDecoration(
                             hintText: 'Password',
-                            prefixIcon: const Icon(Icons.lock_outline, color: AppTheme.silverAccent),
+                            prefixIcon: const Icon(Icons.lock_outline,
+                                color: AppTheme.silverAccent),
                             suffixIcon: IconButton(
                               icon: Icon(
-                                _obscurePassword ? Icons.visibility_off_outlined : Icons.visibility_outlined,
+                                _obscurePassword
+                                    ? Icons.visibility_off_outlined
+                                    : Icons.visibility_outlined,
                                 color: AppTheme.silverAccent,
                               ),
                               onPressed: () {
@@ -188,7 +193,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           },
                           decoration: const InputDecoration(
                             hintText: 'Confirm password',
-                            prefixIcon: Icon(Icons.lock_clock_outlined, color: AppTheme.silverAccent),
+                            prefixIcon: Icon(Icons.lock_clock_outlined,
+                                color: AppTheme.silverAccent),
                           ),
                         ),
                         const SizedBox(height: 28),
@@ -202,7 +208,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       ],
                     ),
                   ),
-                ).animate().fadeIn(delay: 200.ms, duration: 600.ms).scaleXY(begin: 0.95, end: 1.0),
+                )
+                    .animate()
+                    .fadeIn(delay: 200.ms, duration: 600.ms)
+                    .scaleXY(begin: 0.95, end: 1.0),
 
                 const SizedBox(height: 40),
 
@@ -212,7 +221,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   children: [
                     Text(
                       "Already have an account? ",
-                      style: TextStyle(color: AppTheme.silverAccent.withValues(alpha: 0.5)),
+                      style: TextStyle(
+                          color: AppTheme.silverAccent.withValues(alpha: 0.5)),
                     ),
                     GestureDetector(
                       onTap: () {

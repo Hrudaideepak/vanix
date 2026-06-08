@@ -42,19 +42,25 @@ class _WatchlistScreenState extends State<WatchlistScreen> {
                 padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                 child: Text(
                   'My Watchlist',
-                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.w800, color: AppTheme.softWhite),
+                  style: TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.w800,
+                      color: AppTheme.softWhite),
                 ),
               ),
 
               // Watchlist List
               Expanded(
                 child: watchlistProvider.isLoading
-                    ? const Center(child: CircularProgressIndicator(color: AppTheme.royalPurple))
+                    ? const Center(
+                        child: CircularProgressIndicator(
+                            color: AppTheme.royalPurple))
                     : items.isEmpty
                         ? _buildEmptyState()
                         : ListView.builder(
                             physics: const BouncingScrollPhysics(),
-                            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 20, vertical: 10),
                             itemCount: items.length,
                             itemBuilder: (context, index) {
                               final movie = items[index];
@@ -64,63 +70,92 @@ class _WatchlistScreenState extends State<WatchlistScreen> {
                                 background: Container(
                                   alignment: Alignment.centerRight,
                                   padding: const EdgeInsets.only(right: 20),
-                                  margin: const EdgeInsets.symmetric(vertical: 8),
+                                  margin:
+                                      const EdgeInsets.symmetric(vertical: 8),
                                   decoration: BoxDecoration(
-                                    color: AppTheme.errorRed.withValues(alpha: 0.8),
+                                    color: AppTheme.errorRed
+                                        .withValues(alpha: 0.8),
                                     borderRadius: BorderRadius.circular(16),
                                   ),
-                                  child: const Icon(Icons.delete_outline, color: Colors.white),
+                                  child: const Icon(Icons.delete_outline,
+                                      color: Colors.white),
                                 ),
                                 onDismissed: (direction) {
-                                  watchlistProvider.removeFromWatchlist(movie.id);
+                                  watchlistProvider
+                                      .removeFromWatchlist(movie.id);
                                 },
                                 child: GestureDetector(
                                   onTap: () => Navigator.pushNamed(
                                     context,
                                     '/movie-details',
-                                    arguments: {'id': movie.id, 'type': movie.type},
+                                    arguments: {
+                                      'id': movie.id,
+                                      'type': movie.type
+                                    },
                                   ),
                                   child: Container(
-                                    margin: const EdgeInsets.symmetric(vertical: 8),
+                                    margin:
+                                        const EdgeInsets.symmetric(vertical: 8),
                                     child: GlassCard(
                                       padding: const EdgeInsets.all(12),
                                       opacity: 0.05,
                                       child: Row(
                                         children: [
                                           ClipRRect(
-                                            borderRadius: BorderRadius.circular(10),
+                                            borderRadius:
+                                                BorderRadius.circular(10),
                                             child: SizedBox(
                                               width: 70,
                                               height: 100,
-                                              child: VanixImage(imageUrl: movie.thumbnailUrl),
+                                              child: VanixImage(
+                                                  imageUrl: movie.thumbnailUrl),
                                             ),
                                           ),
                                           const SizedBox(width: 16),
                                           Expanded(
                                             child: Column(
-                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
                                               children: [
                                                 Text(
                                                   movie.title,
                                                   maxLines: 1,
-                                                  overflow: TextOverflow.ellipsis,
-                                                  style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: AppTheme.softWhite),
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  style: const TextStyle(
+                                                      fontSize: 15,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color:
+                                                          AppTheme.softWhite),
                                                 ),
                                                 const SizedBox(height: 6),
                                                 Text(
                                                   movie.genres.join(' • '),
                                                   maxLines: 1,
-                                                  overflow: TextOverflow.ellipsis,
-                                                  style: TextStyle(fontSize: 11, color: AppTheme.silverAccent.withValues(alpha: 0.6)),
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  style: TextStyle(
+                                                      fontSize: 11,
+                                                      color: AppTheme
+                                                          .silverAccent
+                                                          .withValues(
+                                                              alpha: 0.6)),
                                                 ),
                                                 const SizedBox(height: 8),
                                                 Row(
                                                   children: [
-                                                    const Icon(Icons.star, color: Colors.amber, size: 12),
+                                                    const Icon(Icons.star,
+                                                        color: Colors.amber,
+                                                        size: 12),
                                                     const SizedBox(width: 4),
                                                     Text(
                                                       movie.rating.toString(),
-                                                      style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.amber),
+                                                      style: const TextStyle(
+                                                          fontSize: 11,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          color: Colors.amber),
                                                     ),
                                                   ],
                                                 ),
@@ -129,8 +164,12 @@ class _WatchlistScreenState extends State<WatchlistScreen> {
                                           ),
                                           // Play Action icon
                                           IconButton(
-                                            icon: const Icon(Icons.play_circle_fill, color: AppTheme.royalPurple, size: 36),
-                                            onPressed: () => Navigator.pushNamed(
+                                            icon: const Icon(
+                                                Icons.play_circle_fill,
+                                                color: AppTheme.royalPurple,
+                                                size: 36),
+                                            onPressed: () =>
+                                                Navigator.pushNamed(
                                               context,
                                               '/player',
                                               arguments: {
@@ -161,11 +200,14 @@ class _WatchlistScreenState extends State<WatchlistScreen> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.bookmark_outline, size: 64, color: AppTheme.silverAccent.withValues(alpha: 0.15)),
+          Icon(Icons.bookmark_outline,
+              size: 64, color: AppTheme.silverAccent.withValues(alpha: 0.15)),
           const SizedBox(height: 16),
           Text(
             'Your watchlist is empty.',
-            style: TextStyle(color: AppTheme.silverAccent.withValues(alpha: 0.5), fontSize: 15),
+            style: TextStyle(
+                color: AppTheme.silverAccent.withValues(alpha: 0.5),
+                fontSize: 15),
           ),
         ],
       ),

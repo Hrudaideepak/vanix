@@ -13,9 +13,12 @@ class DownloadProvider extends ChangeNotifier {
   final SharedPreferences _prefs;
 
   List<ContentModel> _downloadedItems = [];
-  final Map<String, double> _downloadProgress = {}; // contentId -> progress (0.0 to 1.0)
-  final Map<String, String> _downloadStatus = {}; // contentId -> 'downloading' | 'paused' | 'completed' | 'failed'
-  final Map<String, DateTime> _downloadDates = {}; // contentId -> download completion date
+  final Map<String, double> _downloadProgress =
+      {}; // contentId -> progress (0.0 to 1.0)
+  final Map<String, String> _downloadStatus =
+      {}; // contentId -> 'downloading' | 'paused' | 'completed' | 'failed'
+  final Map<String, DateTime> _downloadDates =
+      {}; // contentId -> download completion date
   final Map<String, StreamSubscription> _activeSubscriptions = {};
   final Map<String, http.Client> _activeClients = {};
 
@@ -30,8 +33,7 @@ class DownloadProvider extends ChangeNotifier {
   Map<String, double> get downloadProgress => _downloadProgress;
   Map<String, String> get downloadStatus => _downloadStatus;
 
-  void updateAuth(String? token) {
-  }
+  void updateAuth(String? token) {}
 
   bool isDownloaded(String contentId) {
     return _downloadedItems.any((item) => item.id == contentId);
@@ -52,12 +54,13 @@ class DownloadProvider extends ChangeNotifier {
   void _loadDownloadedItems() {
     final list = _prefs.getStringList(AppConstants.keyOfflineDownloads) ?? [];
     final datesJson = _prefs.getString('download_dates_meta') ?? '{}';
-    
+
     try {
       _downloadedItems = list
-          .map((item) => ContentModel.fromJson(jsonDecode(item) as Map<String, dynamic>))
+          .map((item) =>
+              ContentModel.fromJson(jsonDecode(item) as Map<String, dynamic>))
           .toList();
-          
+
       final Map<String, dynamic> decodedDates = jsonDecode(datesJson);
       decodedDates.forEach((key, val) {
         _downloadDates[key] = DateTime.parse(val);
@@ -70,7 +73,9 @@ class DownloadProvider extends ChangeNotifier {
   }
 
   Future<void> startDownload(ContentModel movie) async {
-    if (isDownloaded(movie.id) && _downloadStatus[movie.id] == 'completed') return;
+    if (isDownloaded(movie.id) && _downloadStatus[movie.id] == 'completed') {
+      return;
+    }
 
     _downloadProgress[movie.id] = _downloadProgress[movie.id] ?? 0.0;
     _downloadStatus[movie.id] = 'downloading';
@@ -86,13 +91,13 @@ class DownloadProvider extends ChangeNotifier {
       // Check for playable URL - default to a standard sample MP4 for testing if URL is HLS/m3u8
       String urlString = movie.videoUrl;
       if (!urlString.endsWith('.mp4')) {
-        urlString = 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4';
+        urlString =
+            'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4';
       }
 
       final uri = Uri.parse(urlString);
       final file = File('${downloadsDir.path}/${movie.id}.mp4');
 
-      
       int existingBytes = 0;
       if (await file.exists() && _downloadProgress[movie.id]! > 0.0) {
         existingBytes = await file.length();
@@ -102,7 +107,7 @@ class DownloadProvider extends ChangeNotifier {
       _activeClients[movie.id] = client;
 
       final request = http.Request('GET', uri);
-      
+
       if (existingBytes > 0) {
         request.headers['Range'] = 'bytes=$existingBytes-';
       }
@@ -116,11 +121,13 @@ class DownloadProvider extends ChangeNotifier {
       final int startBytes = append ? existingBytes : 0;
 
       if (response.statusCode != 200 && response.statusCode != 206) {
-        throw HttpException('Server returned error status code: ${response.statusCode}');
+        throw HttpException(
+            'Server returned error status code: ${response.statusCode}');
       }
 
       final totalBytes = (response.contentLength ?? 0) + startBytes;
-      final fileSink = file.openWrite(mode: append ? FileMode.append : FileMode.write);
+      final fileSink =
+          file.openWrite(mode: append ? FileMode.append : FileMode.write);
 
       int bytesDownloaded = startBytes;
 
@@ -220,20 +227,20 @@ class DownloadProvider extends ChangeNotifier {
     // Check if already in list to avoid duplicates
     _downloadedItems.removeWhere((item) => item.id == movie.id);
 
-    
     _downloadedItems.add(movie);
     _downloadStatus[movie.id] = 'completed';
     _downloadDates[movie.id] = DateTime.now();
     notifyListeners();
- 
-    final stringList = _downloadedItems.map((item) => jsonEncode(item.toJson())).toList();
+
+    final stringList =
+        _downloadedItems.map((item) => jsonEncode(item.toJson())).toList();
     await _prefs.setStringList(AppConstants.keyOfflineDownloads, stringList);
-    
+
     // Save dates metadata
     final Map<String, String> datesMap = {};
     _downloadDates.forEach((key, val) => datesMap[key] = val.toIso8601String());
     await _prefs.setString('download_dates_meta', jsonEncode(datesMap));
-    
+
     AppLogger.info('Download complete: ${movie.title}');
   }
 
@@ -265,13 +272,14 @@ class DownloadProvider extends ChangeNotifier {
     _downloadDates.remove(contentId);
     notifyListeners();
 
-    final stringList = _downloadedItems.map((item) => jsonEncode(item.toJson())).toList();
+    final stringList =
+        _downloadedItems.map((item) => jsonEncode(item.toJson())).toList();
     await _prefs.setStringList(AppConstants.keyOfflineDownloads, stringList);
-    
+
     final Map<String, String> datesMap = {};
     _downloadDates.forEach((key, val) => datesMap[key] = val.toIso8601String());
     await _prefs.setString('download_dates_meta', jsonEncode(datesMap));
-    
+
     AppLogger.info('Deleted download: $contentId');
   }
 
@@ -288,7 +296,8 @@ class DownloadProvider extends ChangeNotifier {
     });
 
     if (expiredIds.isNotEmpty) {
-      AppLogger.info('Removing ${expiredIds.length} expired offline downloads.');
+      AppLogger.info(
+          'Removing ${expiredIds.length} expired offline downloads.');
       for (var id in expiredIds) {
         await removeDownload(id);
       }

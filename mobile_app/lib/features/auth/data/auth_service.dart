@@ -17,7 +17,8 @@ class AuthService {
       };
 
   /// Register user
-  Future<Map<String, dynamic>> register(String email, String password, {String? deviceId, String? deviceName}) async {
+  Future<Map<String, dynamic>> register(String email, String password,
+      {String? deviceId, String? deviceName}) async {
     final url =
         Uri.parse('${AppConstants.apiBaseUrl}${AppConstants.pathRegister}');
     AppLogger.info('AuthService POST: $url');
@@ -50,7 +51,8 @@ class AuthService {
   }
 
   /// Login user
-  Future<Map<String, dynamic>> login(String email, String password, {String? deviceId, String? deviceName}) async {
+  Future<Map<String, dynamic>> login(String email, String password,
+      {String? deviceId, String? deviceName}) async {
     final url =
         Uri.parse('${AppConstants.apiBaseUrl}${AppConstants.pathLogin}');
     AppLogger.info('AuthService POST: $url');
@@ -155,17 +157,19 @@ class AuthService {
   }) async {
     final url = Uri.parse('${AppConstants.apiBaseUrl}/devices/fcm-token');
     try {
-      final response = await _client.post(
-        url,
-        headers: {
-          ..._headers,
-          'Authorization': 'Bearer $token',
-        },
-        body: jsonEncode({
-          'deviceId': deviceId,
-          'fcmToken': fcmToken,
-        }),
-      ).timeout(const Duration(seconds: 3));
+      final response = await _client
+          .post(
+            url,
+            headers: {
+              ..._headers,
+              'Authorization': 'Bearer $token',
+            },
+            body: jsonEncode({
+              'deviceId': deviceId,
+              'fcmToken': fcmToken,
+            }),
+          )
+          .timeout(const Duration(seconds: 3));
 
       if (response.statusCode >= 200 && response.statusCode < 300) {
         return jsonDecode(response.body);

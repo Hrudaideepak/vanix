@@ -23,7 +23,8 @@ class ApiClient {
 
   void updateToken(String? token, {String? refreshToken}) {
     _authToken = token;
-    AppLogger.debug('ApiClient Token updated: ${token != null ? "Token set (len: ${token.length})" : "Token cleared"}');
+    AppLogger.debug(
+        'ApiClient Token updated: ${token != null ? "Token set (len: ${token.length})" : "Token cleared"}');
   }
 
   void updateActiveProfile(String? profileId) {
@@ -60,17 +61,22 @@ class ApiClient {
     await _checkConnectivity();
     final url = Uri.parse('${AppConstants.apiBaseUrl}$endpoint');
     AppLogger.debug('GET Request: $url');
-    
+
     try {
-      var response = await _client.get(url, headers: _getHeaders()).timeout(const Duration(seconds: 3));
-      
+      var response = await _client
+          .get(url, headers: _getHeaders())
+          .timeout(const Duration(seconds: 3));
+
       // Auto-retry once on 401 if token refresh logic is registered
       if (response.statusCode == 401 && _onTokenExpired != null) {
-        AppLogger.warning('Unauthorized response (401) on GET. Refreshing token...');
+        AppLogger.warning(
+            'Unauthorized response (401) on GET. Refreshing token...');
         final refreshed = await _onTokenExpired!();
         if (refreshed) {
           AppLogger.debug('Token refreshed. Retrying GET Request: $url');
-          response = await _client.get(url, headers: _getHeaders()).timeout(const Duration(seconds: 3));
+          response = await _client
+              .get(url, headers: _getHeaders())
+              .timeout(const Duration(seconds: 3));
         }
       }
       return _processResponse(response);
@@ -80,29 +86,35 @@ class ApiClient {
     }
   }
 
-  Future<http.Response> post(String endpoint, {Map<String, dynamic>? body}) async {
+  Future<http.Response> post(String endpoint,
+      {Map<String, dynamic>? body}) async {
     await _checkConnectivity();
     final url = Uri.parse('${AppConstants.apiBaseUrl}$endpoint');
     final stringBody = body != null ? jsonEncode(body) : null;
     AppLogger.debug('POST Request: $url | Body: $stringBody');
-    
-    try {
-      var response = await _client.post(
-        url,
-        headers: _getHeaders(),
-        body: stringBody,
-      ).timeout(const Duration(seconds: 3));
 
-      if (response.statusCode == 401 && _onTokenExpired != null) {
-        AppLogger.warning('Unauthorized response (401) on POST. Refreshing token...');
-        final refreshed = await _onTokenExpired!();
-        if (refreshed) {
-          AppLogger.debug('Token refreshed. Retrying POST Request: $url');
-          response = await _client.post(
+    try {
+      var response = await _client
+          .post(
             url,
             headers: _getHeaders(),
             body: stringBody,
-          ).timeout(const Duration(seconds: 3));
+          )
+          .timeout(const Duration(seconds: 3));
+
+      if (response.statusCode == 401 && _onTokenExpired != null) {
+        AppLogger.warning(
+            'Unauthorized response (401) on POST. Refreshing token...');
+        final refreshed = await _onTokenExpired!();
+        if (refreshed) {
+          AppLogger.debug('Token refreshed. Retrying POST Request: $url');
+          response = await _client
+              .post(
+                url,
+                headers: _getHeaders(),
+                body: stringBody,
+              )
+              .timeout(const Duration(seconds: 3));
         }
       }
       return _processResponse(response);
@@ -116,16 +128,21 @@ class ApiClient {
     await _checkConnectivity();
     final url = Uri.parse('${AppConstants.apiBaseUrl}$endpoint');
     AppLogger.debug('DELETE Request: $url');
-    
+
     try {
-      var response = await _client.delete(url, headers: _getHeaders()).timeout(const Duration(seconds: 3));
+      var response = await _client
+          .delete(url, headers: _getHeaders())
+          .timeout(const Duration(seconds: 3));
 
       if (response.statusCode == 401 && _onTokenExpired != null) {
-        AppLogger.warning('Unauthorized response (401) on DELETE. Refreshing token...');
+        AppLogger.warning(
+            'Unauthorized response (401) on DELETE. Refreshing token...');
         final refreshed = await _onTokenExpired!();
         if (refreshed) {
           AppLogger.debug('Token refreshed. Retrying DELETE Request: $url');
-          response = await _client.delete(url, headers: _getHeaders()).timeout(const Duration(seconds: 3));
+          response = await _client
+              .delete(url, headers: _getHeaders())
+              .timeout(const Duration(seconds: 3));
         }
       }
       return _processResponse(response);

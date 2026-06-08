@@ -20,13 +20,15 @@ class VanixApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       themeMode: ThemeMode.dark, // Vanix is cinematic, dark theme first
       darkTheme: AppTheme.darkTheme,
-      theme: AppTheme.lightTheme, // Support light mode settings optionally, but styled elegantly
+      theme: AppTheme
+          .lightTheme, // Support light mode settings optionally, but styled elegantly
       initialRoute: '/',
       builder: (context, child) {
         if (!kIsWeb) return child ?? const SizedBox.shrink();
 
         final size = MediaQuery.of(context).size;
-        final isMobileWeb = defaultTargetPlatform == TargetPlatform.iOS || defaultTargetPlatform == TargetPlatform.android;
+        final isMobileWeb = defaultTargetPlatform == TargetPlatform.iOS ||
+            defaultTargetPlatform == TargetPlatform.android;
 
         // If it's a mobile web browser or a small window, don't show the chassis
         if (isMobileWeb || size.width < 600) {
@@ -35,7 +37,8 @@ class VanixApp extends StatelessWidget {
 
         // On Desktop Web, show the premium mobile app chassis
         return Scaffold(
-          backgroundColor: const Color(0xFF07050E), // Outer space dark canvas background
+          backgroundColor:
+              const Color(0xFF07050E), // Outer space dark canvas background
           body: Container(
             decoration: const BoxDecoration(
               gradient: LinearGradient(
@@ -75,7 +78,7 @@ class VanixApp extends StatelessWidget {
                     ),
                   ),
                 ),
-                
+
                 // Centered Device Chassis Container
                 Center(
                   child: Container(
@@ -90,7 +93,8 @@ class VanixApp extends StatelessWidget {
                           offset: const Offset(0, 16),
                         ),
                         BoxShadow(
-                          color: const Color(0xFF7C3AED).withValues(alpha: 0.15),
+                          color:
+                              const Color(0xFF7C3AED).withValues(alpha: 0.15),
                           blurRadius: 30,
                           spreadRadius: -2,
                           offset: const Offset(0, 8),
@@ -105,7 +109,8 @@ class VanixApp extends StatelessWidget {
                         color: const Color(0xFF16151A), // Matte obsidian bezel
                         borderRadius: BorderRadius.circular(40),
                         border: Border.all(
-                          color: const Color(0xFF2E2C33), // Metallic outer ring highlight
+                          color: const Color(
+                              0xFF2E2C33), // Metallic outer ring highlight
                           width: 12,
                         ),
                       ),
@@ -116,7 +121,8 @@ class VanixApp extends StatelessWidget {
                             // Main Application View
                             Positioned.fill(
                               top: 36, // leave room for mockup status bar
-                              bottom: 12, // leave room for virtual home indicator
+                              bottom:
+                                  12, // leave room for virtual home indicator
                               child: MediaQuery(
                                 data: MediaQuery.of(context).copyWith(
                                   size: const Size(396, 788),
@@ -132,10 +138,13 @@ class VanixApp extends StatelessWidget {
                               right: 0,
                               height: 36,
                               child: Container(
-                                color: const Color(0xFF050505), // Matches app top bar
-                                padding: const EdgeInsets.symmetric(horizontal: 18),
+                                color: const Color(
+                                    0xFF050505), // Matches app top bar
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 18),
                                 child: const Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text(
                                       '09:41',
@@ -148,11 +157,14 @@ class VanixApp extends StatelessWidget {
                                     ),
                                     Row(
                                       children: [
-                                        Icon(Icons.signal_cellular_4_bar, color: Colors.white, size: 12),
+                                        Icon(Icons.signal_cellular_4_bar,
+                                            color: Colors.white, size: 12),
                                         SizedBox(width: 4),
-                                        Icon(Icons.wifi, color: Colors.white, size: 12),
+                                        Icon(Icons.wifi,
+                                            color: Colors.white, size: 12),
                                         SizedBox(width: 4),
-                                        Icon(Icons.battery_5_bar, color: Colors.white, size: 14),
+                                        Icon(Icons.battery_5_bar,
+                                            color: Colors.white, size: 14),
                                       ],
                                     ),
                                   ],
@@ -236,7 +248,8 @@ class VanixApp extends StatelessWidget {
           case '/register':
             return MaterialPageRoute(builder: (_) => const RegisterScreen());
           case '/profiles':
-            return MaterialPageRoute(builder: (_) => const ProfileSelectionScreen());
+            return MaterialPageRoute(
+                builder: (_) => const ProfileSelectionScreen());
           case '/home':
             return MaterialPageRoute(builder: (_) => const NavigationHolder());
           case '/movie-details':
@@ -259,7 +272,8 @@ class VanixApp extends StatelessWidget {
               ),
             );
           case '/subscription':
-            return MaterialPageRoute(builder: (_) => const SubscriptionScreen());
+            return MaterialPageRoute(
+                builder: (_) => const SubscriptionScreen());
           default:
             return MaterialPageRoute(
               builder: (_) => Scaffold(

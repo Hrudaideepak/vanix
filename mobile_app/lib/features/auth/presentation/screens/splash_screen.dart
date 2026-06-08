@@ -21,9 +21,9 @@ class _SplashScreenState extends State<SplashScreen> {
   void _navigateToNext() async {
     // Wait for 3 seconds of beautiful animation
     await Future.delayed(const Duration(milliseconds: 2800));
-    
+
     if (!mounted) return;
-    
+
     final auth = Provider.of<AuthProvider>(context, listen: false);
     if (auth.isAuthenticated) {
       Navigator.pushReplacementNamed(context, '/profiles');
@@ -80,11 +80,16 @@ class _SplashScreenState extends State<SplashScreen> {
                 )
                     .animate()
                     .fadeIn(duration: 1000.ms)
-                    .scaleXY(begin: 0.8, end: 1.0, curve: Curves.easeOutBack, duration: 1000.ms)
-                    .shimmer(delay: 1100.ms, duration: 1000.ms, color: Colors.white30),
-                
+                    .scaleXY(
+                        begin: 0.8,
+                        end: 1.0,
+                        curve: Curves.easeOutBack,
+                        duration: 1000.ms)
+                    .shimmer(
+                        delay: 1100.ms,
+                        duration: 1000.ms,
+                        color: Colors.white30),
                 const SizedBox(height: 14),
-                
                 Text(
                   'Unlimited Entertainment. One Universe.',
                   style: Theme.of(context).textTheme.bodyLarge?.copyWith(
@@ -93,10 +98,11 @@ class _SplashScreenState extends State<SplashScreen> {
                         letterSpacing: 2.0,
                         fontWeight: FontWeight.w500,
                       ),
-                )
-                    .animate()
-                    .fadeIn(delay: 800.ms, duration: 800.ms)
-                    .slideY(begin: 0.2, end: 0.0, curve: Curves.easeOut, duration: 800.ms),
+                ).animate().fadeIn(delay: 800.ms, duration: 800.ms).slideY(
+                    begin: 0.2,
+                    end: 0.0,
+                    curve: Curves.easeOut,
+                    duration: 800.ms),
               ],
             ),
 
