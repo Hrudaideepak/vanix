@@ -5,11 +5,13 @@ let privateKey = null;
 
 function getPrivateKey() {
   if (privateKey !== null) return privateKey;
+
   
   const keyPath = process.env.CLOUDFRONT_PRIVATE_KEY_PATH;
   if (!keyPath) {
     return null;
   }
+
   
   try {
     privateKey = fs.readFileSync(keyPath, 'utf8');
@@ -24,11 +26,13 @@ function generateSignedUrl(s3Key) {
   const domain = process.env.CLOUDFRONT_DOMAIN;
   const keyPairId = process.env.CLOUDFRONT_KEY_PAIR_ID;
   const keyString = getPrivateKey();
+
   
   if (!domain || !keyPairId || !keyString) {
     const bucketName = process.env.S3_BUCKET_NAME || 'vanix-videos';
     return domain ? `${domain}/${s3Key}` : `https://${bucketName}.s3.amazonaws.com/${s3Key}`;
   }
+
   
   const url = `${domain}/${s3Key}`;
   const options = {
@@ -36,6 +40,7 @@ function generateSignedUrl(s3Key) {
     privateKeyString: keyString,
     expireTime: Math.floor(Date.now() / 1000) + 3600, // 1 hour expiry
   };
+
   
   try {
     return AWS.getSignedUrl(url, options);

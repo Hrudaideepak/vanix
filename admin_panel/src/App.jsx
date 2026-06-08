@@ -17,8 +17,8 @@ function App() {
         <Routes>
           <Route path="/login" element={<Login />} />
           
-          <Route 
-            path="/" 
+          <Route
+            path="/"
             element={
               <ProtectedRoute>
                 <Layout />

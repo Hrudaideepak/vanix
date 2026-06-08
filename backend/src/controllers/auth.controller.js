@@ -213,6 +213,7 @@ exports.googleLogin = async (req, res, next) => {
           audience: env.GOOGLE_CLIENT_ID,
         });
         const payload = ticket.getPayload();
+
         
         googleId = payload['sub'];
         email = payload['email'];

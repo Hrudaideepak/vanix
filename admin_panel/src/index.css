@@ -28,6 +28,7 @@ body {
   min-height: 100vh;
   position: relative;
   overflow-x: hidden;
+
   
   /* Technical structure grid overlay (rgba(255, 0, 0, 0.03)) */
   background-image: 
@@ -42,6 +43,9 @@ body::after {
   content: " ";
   display: block;
   position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
   top: 0; 
   left: 0; 
   bottom: 0; 

@@ -1,8 +1,8 @@
 import React from 'react';
 import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { 
-  TrendingUp, Video, Users, Ticket, BarChart3, LogOut, Shield 
+import {
+  TrendingUp, Video, Users, Ticket, BarChart3, LogOut, Shield
 } from 'lucide-react';
 
 const navigation = [
@@ -25,7 +25,7 @@ export default function Layout() {
 
   return (
     <div style={{ display: 'flex', minHeight: '100vh', backgroundColor: '#000000', color: '#FFFFFF' }}>
-      
+
       {/* Sidebar Command Console */}
       <aside className="glass-panel" style={{ width: '280px', margin: '1rem', padding: '2rem', display: 'flex', flexDirection: 'column', gap: '1.5rem', borderRight: '1px solid rgba(255, 0, 0, 0.1)' }}>
         <div style={{ fontSize: '1.5rem', fontWeight: 800, letterSpacing: '2px', display: 'flex', alignItems: 'center', gap: '10px' }}>
@@ -41,16 +41,16 @@ export default function Layout() {
                 key={item.name}
                 to={item.href}
                 className="btn-glass"
-                style={{ 
-                  display: 'flex', 
-                  alignItems: 'center', 
-                  gap: '12px', 
-                  textAlign: 'left', 
-                  width: '100%', 
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '12px',
+                  textAlign: 'left',
+                  width: '100%',
                   textDecoration: 'none',
                   color: '#FFFFFF',
-                  background: isActive ? 'rgba(255, 0, 0, 0.15)' : '', 
-                  borderColor: isActive ? '#FF0000' : '' 
+                  background: isActive ? 'rgba(255, 0, 0, 0.15)' : '',
+                  borderColor: isActive ? '#FF0000' : ''
                 }}
               >
                 <item.icon size={18} color="#FF0000" /> {item.name}
@@ -67,9 +67,9 @@ export default function Layout() {
               <p style={{ fontSize: '0.65rem', margin: 0, color: '#E5E2E1' }}>Role: {(admin?.role || 'admin').toUpperCase()}</p>
             </div>
           </div>
-          <button 
+          <button
             onClick={handleLogout}
-            className="btn-glass" 
+            className="btn-glass"
             style={{ color: '#FFB4AB', display: 'flex', alignItems: 'center', gap: '8px', justifyContent: 'center', cursor: 'pointer', width: '100%' }}
           >
             <LogOut size={16} /> Exit Terminal

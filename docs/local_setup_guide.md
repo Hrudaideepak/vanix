@@ -1,5 +1,6 @@
 # VANIX OTT Streaming Platform - Phase 0 Local Setup Guide
 
+Welcome to the local development setup guide for **VANIX**, a premium OTT streaming platform containing an Express backend, a React admin panel, and a Flutter mobile application.
 Welcome to the local development setup guide for **VANIX**, a premium OTT streaming platform containing an Express backend, a React admin panel, and a Flutter mobile application. 
 
 This document serves as a day-by-day playbook to get all components of the system cloned, configured, tested, and integrated locally on Windows (using PowerShell or CMD).
@@ -307,6 +308,10 @@ Check the codebase to identify the platform's architectural maturity:
 1. **Video Transcoding / Processing Pipeline**:
    - Locate [ffmpeg.service.js](file:///c:/Users/PC/Desktop/vanix/vanix/backend/src/services/ffmpeg.service.js).
    - *Observation*: The backend contains a local subprocess exec pipeline utilizing raw `ffmpeg` CLI calls. It does NOT use a background task manager (like BullMQ, Celery, or AWS Elastic Transcoder). Video transcoding blockages block the event loop or node subprocess limits.
+
+2. **Adaptive Bitrate Streaming (HLS)**:
+   - *Observation*: The transcoding script outputs multiple resolutions (240p, 360p, 480p, 720p, 1080p) and links them inside a `master.m3u8` manifest file. The mobile player (`video_player`) consumes HLS.
+
    
 2. **Adaptive Bitrate Streaming (HLS)**:
    - *Observation*: The transcoding script outputs multiple resolutions (240p, 360p, 480p, 720p, 1080p) and links them inside a `master.m3u8` manifest file. The mobile player (`video_player`) consumes HLS.
