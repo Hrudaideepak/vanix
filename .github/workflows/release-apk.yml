@@ -13,6 +13,8 @@ on:
         description: 'Custom release notes (optional)'
         required: false
         default: ''
+permissions:
+  contents: write
 
 jobs:
   build-and-release:
