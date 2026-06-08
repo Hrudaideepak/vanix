@@ -17,6 +17,7 @@ class DownloadProvider extends ChangeNotifier {
   final Map<String, String> _downloadStatus = {}; // contentId -> 'downloading' | 'paused' | 'completed' | 'failed'
   final Map<String, DateTime> _downloadDates = {}; // contentId -> download completion date
   final Map<String, StreamSubscription> _activeSubscriptions = {};
+  final Map<String, http.Client> _activeClients = {};
 
   DownloadProvider({
     required SharedPreferences sharedPreferences,
@@ -92,13 +93,13 @@ class DownloadProvider extends ChangeNotifier {
       final file = File('${downloadsDir.path}/${movie.id}.mp4');
       
       int existingBytes = 0;
-      bool append = false;
       if (await file.exists() && _downloadProgress[movie.id]! > 0.0) {
         existingBytes = await file.length();
-        append = true;
       }
 
       final client = http.Client();
+      _activeClients[movie.id] = client;
+      
       final request = http.Request('GET', uri);
       
       if (existingBytes > 0) {
@@ -108,14 +109,19 @@ class DownloadProvider extends ChangeNotifier {
       final response = await client.send(request);
 
       // HTTP 206 means Partial Content (supporting pause/resume)
+      // If server doesn't support Range and sends 200, we overwrite instead of append
+      final bool isPartial = response.statusCode == 206;
+      final bool append = isPartial && existingBytes > 0;
+      final int startBytes = append ? existingBytes : 0;
+
       if (response.statusCode != 200 && response.statusCode != 206) {
         throw HttpException('Server returned error status code: ${response.statusCode}');
       }
 
-      final totalBytes = (response.contentLength ?? 0) + existingBytes;
+      final totalBytes = (response.contentLength ?? 0) + startBytes;
       final fileSink = file.openWrite(mode: append ? FileMode.append : FileMode.write);
 
-      int bytesDownloaded = existingBytes;
+      int bytesDownloaded = startBytes;
 
       final subscription = response.stream.listen(
         (chunk) {
@@ -129,6 +135,8 @@ class DownloadProvider extends ChangeNotifier {
         onDone: () async {
           await fileSink.close();
           _activeSubscriptions.remove(movie.id);
+          _activeClients.remove(movie.id);
+          client.close();
           _downloadProgress.remove(movie.id);
 
           // Build a new model pointing to the local file path instead of network url
@@ -155,6 +163,8 @@ class DownloadProvider extends ChangeNotifier {
         onError: (err) async {
           await fileSink.close();
           _activeSubscriptions.remove(movie.id);
+          _activeClients.remove(movie.id);
+          client.close();
           AppLogger.error('Download stream error for ${movie.title}: $err');
           _downloadStatus[movie.id] = 'failed';
           notifyListeners();
@@ -167,6 +177,8 @@ class DownloadProvider extends ChangeNotifier {
       AppLogger.error('Failed to initiate download for ${movie.title}: $e');
       _downloadStatus[movie.id] = 'failed';
       _downloadProgress.remove(movie.id);
+      _activeClients[movie.id]?.close();
+      _activeClients.remove(movie.id);
       notifyListeners();
     }
   }
@@ -175,10 +187,14 @@ class DownloadProvider extends ChangeNotifier {
     if (_activeSubscriptions.containsKey(contentId)) {
       _activeSubscriptions[contentId]?.cancel();
       _activeSubscriptions.remove(contentId);
-      _downloadStatus[contentId] = 'paused';
-      notifyListeners();
-      AppLogger.info('Download paused: $contentId');
     }
+    if (_activeClients.containsKey(contentId)) {
+      _activeClients[contentId]?.close();
+      _activeClients.remove(contentId);
+    }
+    _downloadStatus[contentId] = 'paused';
+    notifyListeners();
+    AppLogger.info('Download paused: $contentId');
   }
 
   void resumeDownload(ContentModel movie) {
@@ -198,7 +214,7 @@ class DownloadProvider extends ChangeNotifier {
     _downloadStatus[movie.id] = 'completed';
     _downloadDates[movie.id] = DateTime.now();
     notifyListeners();
-
+ 
     final stringList = _downloadedItems.map((item) => jsonEncode(item.toJson())).toList();
     await _prefs.setStringList(AppConstants.keyOfflineDownloads, stringList);
     
@@ -214,6 +230,10 @@ class DownloadProvider extends ChangeNotifier {
     if (_activeSubscriptions.containsKey(contentId)) {
       _activeSubscriptions[contentId]?.cancel();
       _activeSubscriptions.remove(contentId);
+    }
+    if (_activeClients.containsKey(contentId)) {
+      _activeClients[contentId]?.close();
+      _activeClients.remove(contentId);
     }
     _downloadProgress.remove(contentId);
 
@@ -268,6 +288,9 @@ class DownloadProvider extends ChangeNotifier {
   void dispose() {
     for (var sub in _activeSubscriptions.values) {
       sub.cancel();
+    }
+    for (var client in _activeClients.values) {
+      client.close();
     }
     super.dispose();
   }

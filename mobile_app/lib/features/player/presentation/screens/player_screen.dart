@@ -118,7 +118,7 @@ class _PlayerScreenState extends State<PlayerScreen> {
       if (_activeUrl.startsWith('http')) {
         _videoPlayerController = VideoPlayerController.networkUrl(Uri.parse(_activeUrl));
       } else {
-        final cleanPath = _activeUrl.startsWith('file://') ? _activeUrl.substring(7) : _activeUrl;
+        final cleanPath = Uri.parse(_activeUrl).toFilePath();
         _videoPlayerController = VideoPlayerController.file(File(cleanPath));
       }
       await _videoPlayerController.initialize();
