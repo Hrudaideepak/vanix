@@ -72,11 +72,7 @@ class AuthProvider extends ChangeNotifier {
         ? 'Android Device'
         : Platform.isIOS
             ? 'iPhone/iPad'
-    return Platform.isAndroid 
-        ? 'Android Device' 
-        : Platform.isIOS 
-            ? 'iPhone/iPad' 
-            : 'Desktop App';
+            : 'Desktop/Other App';
   }
 
   /// Register User

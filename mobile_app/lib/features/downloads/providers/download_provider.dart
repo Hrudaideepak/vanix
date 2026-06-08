@@ -102,9 +102,6 @@ class DownloadProvider extends ChangeNotifier {
       _activeClients[movie.id] = client;
 
       final request = http.Request('GET', uri);
-
-      
-      final request = http.Request('GET', uri);
       
       if (existingBytes > 0) {
         request.headers['Range'] = 'bytes=$existingBytes-';
