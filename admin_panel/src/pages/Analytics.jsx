@@ -70,6 +70,7 @@ export default function Analytics() {
   return (
     <div className="fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
 
+      
       <div>
         <h2 style={{ fontSize: '2.2rem', fontWeight: 800, marginBottom: '0.5rem', background: 'linear-gradient(to right, #F8FAFC, #CBD5E1)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
           Deep-Dive Data Analytics
@@ -86,6 +87,7 @@ export default function Analytics() {
       {/* Analytics KPI Row */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1.5rem' }}>
 
+        
         <div className="glass-panel" style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '8px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <span style={{ fontSize: '0.85rem', color: '#CBD5E1' }}>Avg. Session Duration</span>
@@ -135,6 +137,7 @@ export default function Analytics() {
       {/* Main Analytics Graphs Grid */}
       <div style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr', gap: '2rem' }}>
 
+        
         {/* Subscriber Growth - Recharts Line Chart */}
         <div className="glass-panel" style={{ padding: '2rem', minHeight: '380px', display: 'flex', flexDirection: 'column' }}>
           <h3 style={{ fontSize: '1.2rem', fontWeight: 700, marginBottom: '1.5rem' }}>Subscriber Retention & Growth</h3>
@@ -194,6 +197,7 @@ export default function Analytics() {
       {/* Secondary Graphs Row */}
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem' }}>
 
+        
         {/* CDN Server Load Line Chart */}
         <div className="glass-panel" style={{ padding: '2rem', display: 'flex', flexDirection: 'column' }}>
           <h3 style={{ fontSize: '1.2rem', fontWeight: 700, marginBottom: '1.5rem' }}>CDN Gateway Load (Gbps)</h3>

@@ -3,6 +3,9 @@ import { getPlans, createPlan, updatePlan, deletePlan } from '../services/api';
 import {
   Ticket, Plus, Trash2, Shield, CreditCard, DollarSign,
   Percent, Calendar, Key, AlertCircle, CheckCircle, RefreshCw
+import { 
+  Ticket, Plus, Trash2, Shield, CreditCard, DollarSign, 
+  Percent, Calendar, Key, AlertCircle, CheckCircle, RefreshCw 
 } from 'lucide-react';
 
 const mockTransactions = [
@@ -18,6 +21,7 @@ export default function Plans() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
+  
   // Promo / Coupon Manager
   const [coupons, setCoupons] = useState([
     { code: 'VANIXHQ50', discount: 50, expiry: '2026-12-31', status: 'Active' },
@@ -117,6 +121,7 @@ export default function Plans() {
     e.preventDefault();
     if (!newCoupon.code) return;
 
+    
     const uppercaseCode = newCoupon.code.toUpperCase().replace(/\s+/g, '');
     const newCouponObj = {
       code: uppercaseCode,
@@ -137,6 +142,7 @@ export default function Plans() {
   return (
     <div className="fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
 
+      
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div>
           <h2 style={{ fontSize: '2.2rem', fontWeight: 800, marginBottom: '0.5rem', background: 'linear-gradient(to right, #F8FAFC, #CBD5E1)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
@@ -170,6 +176,7 @@ export default function Plans() {
                 </span>
               )}
 
+              
               <div>
                 <h3 style={{ fontSize: '1.25rem', fontWeight: 800, margin: 0 }}>{plan.name}</h3>
                 <p style={{ fontSize: '0.75rem', color: '#CBD5E1', marginTop: '4px' }}>Valid for {plan.durationDays} days</p>
@@ -202,6 +209,7 @@ export default function Plans() {
       {/* Main Grid: Promo Center & Audit Log */}
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.5fr', gap: '2rem' }}>
 
+        
         {/* Promotion Center */}
         <div className="glass-panel" style={{ padding: '2rem', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
           <h3 style={{ fontSize: '1.25rem', fontWeight: 700, margin: 0, display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -213,11 +221,14 @@ export default function Plans() {
               <label style={{ fontSize: '0.75rem', color: '#CBD5E1', display: 'block', marginBottom: '6px' }}>Promo Code *</label>
               <input
                 type="text"
+              <input 
+                type="text" 
                 value={newCoupon.code}
                 onChange={e => setNewCoupon({ ...newCoupon, code: e.target.value })}
                 placeholder="e.g. VANIX50"
                 style={{ width: '100%', padding: '10px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(248,250,252,0.1)', borderRadius: '8px', color: '#FFF', textTransform: 'uppercase' }}
                 required
+                required 
               />
             </div>
 
@@ -228,11 +239,15 @@ export default function Plans() {
                   <input
                     type="number"
                     min="1"
+                  <input 
+                    type="number" 
+                    min="1" 
                     max="100"
                     value={newCoupon.discount}
                     onChange={e => setNewCoupon({ ...newCoupon, discount: e.target.value })}
                     style={{ width: '100%', padding: '10px', background: 'transparent', border: 'none', color: '#FFF', outline: 'none' }}
                     required
+                    required 
                   />
                   <Percent size={14} color="#CBD5E1" />
                 </div>
@@ -245,6 +260,12 @@ export default function Plans() {
                   onChange={e => setNewCoupon({ ...newCoupon, expiry: e.target.value })}
                   style={{ width: '100%', padding: '9px 10px', background: '#121214', border: '1px solid rgba(248,250,252,0.1)', borderRadius: '8px', color: '#FFF' }}
                   required
+                <input 
+                  type="date" 
+                  value={newCoupon.expiry}
+                  onChange={e => setNewCoupon({ ...newCoupon, expiry: e.target.value })}
+                  style={{ width: '100%', padding: '9px 10px', background: '#121214', border: '1px solid rgba(248,250,252,0.1)', borderRadius: '8px', color: '#FFF' }}
+                  required 
                 />
               </div>
             </div>
@@ -317,6 +338,13 @@ export default function Plans() {
                         fontWeight: 'bold',
                         backgroundColor: tx.status === 'Success' ? 'rgba(34,197,94,0.15)' : 'rgba(239,68,68,0.15)',
                         color: tx.status === 'Success' ? '#22C55E' : '#EF4444'
+                      <span style={{ 
+                        fontSize: '0.75rem', 
+                        padding: '3px 8px', 
+                        borderRadius: '4px', 
+                        fontWeight: 'bold',
+                        backgroundColor: tx.status === 'Success' ? 'rgba(34,197,94,0.15)' : 'rgba(239,68,68,0.15)', 
+                        color: tx.status === 'Success' ? '#22C55E' : '#EF4444' 
                       }}>
                         {tx.status}
                       </span>
@@ -348,6 +376,17 @@ export default function Plans() {
                   style={{ width: '100%', padding: '10px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(248,250,252,0.1)', borderRadius: '8px', color: '#FFF' }}
                   placeholder="e.g. Diamond Special"
                   required
+            
+            <form onSubmit={handleSubmitPlan} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+              <div>
+                <label style={{ fontSize: '0.8rem', color: '#CBD5E1', display: 'block', marginBottom: '6px' }}>Plan Name *</label>
+                <input 
+                  type="text" 
+                  value={formData.name} 
+                  onChange={e => setFormData({ ...formData, name: e.target.value })} 
+                  style={{ width: '100%', padding: '10px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(248,250,252,0.1)', borderRadius: '8px', color: '#FFF' }}
+                  placeholder="e.g. Diamond Special"
+                  required 
                 />
               </div>
 
@@ -362,6 +401,14 @@ export default function Plans() {
                     style={{ width: '100%', padding: '10px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(248,250,252,0.1)', borderRadius: '8px', color: '#FFF' }}
                     placeholder="e.g. 299"
                     required
+                  <input 
+                    type="number" 
+                    step="0.01"
+                    value={formData.price} 
+                    onChange={e => setFormData({ ...formData, price: e.target.value })} 
+                    style={{ width: '100%', padding: '10px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(248,250,252,0.1)', borderRadius: '8px', color: '#FFF' }}
+                    placeholder="e.g. 299"
+                    required 
                   />
                 </div>
                 <div>
@@ -372,6 +419,12 @@ export default function Plans() {
                     onChange={e => setFormData({ ...formData, durationDays: e.target.value })}
                     style={{ width: '100%', padding: '10px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(248,250,252,0.1)', borderRadius: '8px', color: '#FFF' }}
                     required
+                  <input 
+                    type="number" 
+                    value={formData.durationDays} 
+                    onChange={e => setFormData({ ...formData, durationDays: e.target.value })} 
+                    style={{ width: '100%', padding: '10px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(248,250,252,0.1)', borderRadius: '8px', color: '#FFF' }}
+                    required 
                   />
                 </div>
               </div>
@@ -381,6 +434,9 @@ export default function Plans() {
                 <textarea
                   value={formData.description}
                   onChange={e => setFormData({ ...formData, description: e.target.value })}
+                <textarea 
+                  value={formData.description} 
+                  onChange={e => setFormData({ ...formData, description: e.target.value })} 
                   rows={3}
                   placeholder="Enter details about plan benefits and restrictions..."
                   style={{ width: '100%', padding: '10px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(248,250,252,0.1)', borderRadius: '8px', color: '#FFF', resize: 'none' }}

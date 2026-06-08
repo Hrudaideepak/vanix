@@ -34,6 +34,7 @@ export default function Users() {
       const res = await toggleUserBan(id);
       if (res.data.success) {
         setUsers(prev =>
+        setUsers(prev => 
           prev.map(u => (u._id || u.id) === id ? { ...u, isBanned: res.data.data.isBanned } : u)
         );
         alert(`Successfully toggled account status for ${email}`);
@@ -45,12 +46,14 @@ export default function Users() {
   };
 
   const filteredUsers = users.filter(user =>
+  const filteredUsers = users.filter(user => 
     user.email.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   return (
     <div className="fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
 
+      
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div>
           <h2 style={{ fontSize: '2.2rem', fontWeight: 800, marginBottom: '0.5rem', background: 'linear-gradient(to right, #F8FAFC, #CBD5E1)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
@@ -74,6 +77,8 @@ export default function Users() {
         <Search size={20} color="#7C3AED" />
         <input
           type="text"
+        <input 
+          type="text" 
           value={searchQuery}
           onChange={e => setSearchQuery(e.target.value)}
           placeholder="Filter terminal directory by user identity email..."
@@ -131,6 +136,13 @@ export default function Users() {
                         fontWeight: 'bold',
                         backgroundColor: (user.subscriptionPlan || user.plan) === 'premium' ? 'rgba(124, 58, 237, 0.2)' : 'rgba(255,255,255,0.05)',
                         color: (user.subscriptionPlan || user.plan) === 'premium' ? '#7C3AED' : '#F8FAFC'
+                      <span style={{ 
+                        padding: '3px 8px', 
+                        borderRadius: '4px', 
+                        fontSize: '0.75rem', 
+                        fontWeight: 'bold',
+                        backgroundColor: (user.subscriptionPlan || user.plan) === 'premium' ? 'rgba(124, 58, 237, 0.2)' : 'rgba(255,255,255,0.05)', 
+                        color: (user.subscriptionPlan || user.plan) === 'premium' ? '#7C3AED' : '#F8FAFC' 
                       }}>
                         {(user.subscriptionPlan || user.plan || 'free').toUpperCase()}
                       </span>
@@ -143,6 +155,12 @@ export default function Users() {
                           borderRadius: '50%',
                           backgroundColor: user.isBanned ? '#EF4444' : '#22C55E',
                           boxShadow: user.isBanned ? '0 0 8px #EF4444' : '0 0 8px #22C55E'
+                        <span style={{ 
+                          width: '8px', 
+                          height: '8px', 
+                          borderRadius: '50%', 
+                          backgroundColor: user.isBanned ? '#EF4444' : '#22C55E', 
+                          boxShadow: user.isBanned ? '0 0 8px #EF4444' : '0 0 8px #22C55E' 
                         }}></span>
                         <span style={{ color: user.isBanned ? '#EF4444' : '#22C55E', fontWeight: 'bold', fontSize: '0.8rem' }}>
                           {user.isBanned ? 'RESTRICTED' : 'OPERATIONAL'}
@@ -160,6 +178,13 @@ export default function Users() {
                             padding: '6px 14px',
                             fontSize: '0.8rem',
                             color: user.isBanned ? '#22C55E' : '#EF4444',
+                        <button 
+                          onClick={() => handleToggleBan(user._id || user.id, user.email)} 
+                          className="btn-glass" 
+                          style={{ 
+                            padding: '6px 14px', 
+                            fontSize: '0.8rem', 
+                            color: user.isBanned ? '#22C55E' : '#EF4444', 
                             borderColor: user.isBanned ? 'rgba(34,197,94,0.2)' : 'rgba(239,68,68,0.2)',
                             display: 'inline-flex',
                             alignItems: 'center',

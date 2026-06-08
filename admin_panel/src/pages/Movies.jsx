@@ -6,6 +6,13 @@ import {
 import {
   getMovies, createMovie, createSeries, deleteMovie,
   uploadVideo, getTranscodingStatus
+import { 
+  Plus, Trash2, Upload, Loader2, CheckCircle2, 
+  XCircle, Film, Tv, Play, AlertCircle, RefreshCw 
+} from 'lucide-react';
+import { 
+  getMovies, createMovie, createSeries, deleteMovie, 
+  uploadVideo, getTranscodingStatus 
 } from '../services/api';
 
 export default function Movies() {
@@ -18,6 +25,11 @@ export default function Movies() {
   const [editingMovie, setEditingMovie] = useState(null);
   const [isDeploying, setIsDeploying] = useState(false);
 
+  
+  // Modals / forms
+  const [modalOpen, setModalOpen] = useState(false);
+  const [editingMovie, setEditingMovie] = useState(null);
+  
   // Form states
   const [formData, setFormData] = useState({
     title: '',
@@ -197,6 +209,7 @@ export default function Movies() {
           error: ''
         };
 
+        
         setTranscodingVideos(prev => [newVideoObj, ...prev]);
         pollTranscodingStatus(res.data.videoId);
       }
@@ -217,6 +230,8 @@ export default function Movies() {
           const { status, hlsPlaylistUrl, error } = res.data;
 
           setTranscodingVideos(prev =>
+          
+          setTranscodingVideos(prev => 
             prev.map(v => v.id === videoId ? { ...v, status, hlsUrl: hlsPlaylistUrl, error } : v)
           );
 
@@ -239,6 +254,7 @@ export default function Movies() {
   return (
     <div className="fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
 
+      
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div>
           <h2 style={{ fontSize: '2.2rem', fontWeight: 800, marginBottom: '0.5rem', background: 'linear-gradient(to right, #F8FAFC, #CBD5E1)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
@@ -260,6 +276,7 @@ export default function Movies() {
       {/* Main Grid: Movies List & Transcoding Queue */}
       <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '2rem' }}>
 
+        
         {/* Catalog Table */}
         <div className="glass-panel" style={{ padding: '2rem' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
@@ -341,6 +358,12 @@ export default function Movies() {
               disabled={uploading}
               onChange={handleVideoUpload}
               style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', opacity: 0, cursor: uploading ? 'not-allowed' : 'pointer' }}
+            <input 
+              type="file" 
+              accept="video/*" 
+              disabled={uploading} 
+              onChange={handleVideoUpload}
+              style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', opacity: 0, cursor: uploading ? 'not-allowed' : 'pointer' }} 
             />
             {uploading && (
               <div style={{ marginTop: '10px' }}>
@@ -367,6 +390,12 @@ export default function Movies() {
                       borderRadius: '4px',
                       fontWeight: 'bold',
                       backgroundColor:
+                    <span style={{ 
+                      fontSize: '0.7rem', 
+                      padding: '2px 6px', 
+                      borderRadius: '4px', 
+                      fontWeight: 'bold',
+                      backgroundColor: 
                         video.status === 'completed' ? 'rgba(34, 197, 94, 0.2)' :
                         video.status === 'failed' ? 'rgba(239, 68, 68, 0.2)' : 'rgba(245, 158, 11, 0.2)',
                       color:
@@ -380,6 +409,9 @@ export default function Movies() {
                     <button
                       onClick={() => handleApplyTranscodedUrl(video.hlsUrl)}
                       className="btn-glass"
+                    <button 
+                      onClick={() => handleApplyTranscodedUrl(video.hlsUrl)} 
+                      className="btn-glass" 
                       style={{ padding: '4px 8px', fontSize: '0.75rem', width: '100%', marginTop: '4px' }}
                     >
                       Copy HLS to Catalog Form
@@ -421,6 +453,18 @@ export default function Movies() {
                     onChange={e => setFormData({ ...formData, title: e.target.value })}
                     style={{ width: '100%', padding: '10px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(248,250,252,0.1)', borderRadius: '8px', color: '#FFF' }}
                     required
+            
+            <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+              
+              <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '1rem' }}>
+                <div>
+                  <label style={{ fontSize: '0.8rem', color: '#CBD5E1', display: 'block', marginBottom: '6px' }}>Cinematic Title *</label>
+                  <input 
+                    type="text" 
+                    value={formData.title} 
+                    onChange={e => setFormData({ ...formData, title: e.target.value })} 
+                    style={{ width: '100%', padding: '10px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(248,250,252,0.1)', borderRadius: '8px', color: '#FFF' }}
+                    required 
                   />
                 </div>
                 <div>
@@ -428,6 +472,9 @@ export default function Movies() {
                   <select
                     value={formData.type}
                     onChange={e => setFormData({ ...formData, type: e.target.value })}
+                  <select 
+                    value={formData.type} 
+                    onChange={e => setFormData({ ...formData, type: e.target.value })} 
                     style={{ width: '100%', padding: '10px', background: '#121214', border: '1px solid rgba(248,250,252,0.1)', borderRadius: '8px', color: '#FFF' }}
                   >
                     <option>Movie</option>
@@ -444,6 +491,12 @@ export default function Movies() {
                   rows={3}
                   style={{ width: '100%', padding: '10px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(248,250,252,0.1)', borderRadius: '8px', color: '#FFF', resize: 'none' }}
                   required
+                <textarea 
+                  value={formData.description} 
+                  onChange={e => setFormData({ ...formData, description: e.target.value })} 
+                  rows={3}
+                  style={{ width: '100%', padding: '10px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(248,250,252,0.1)', borderRadius: '8px', color: '#FFF', resize: 'none' }}
+                  required 
                 />
               </div>
 
@@ -453,6 +506,9 @@ export default function Movies() {
                   <select
                     value={formData.genre}
                     onChange={e => setFormData({ ...formData, genre: e.target.value })}
+                  <select 
+                    value={formData.genre} 
+                    onChange={e => setFormData({ ...formData, genre: e.target.value })} 
                     style={{ width: '100%', padding: '10px', background: '#121214', border: '1px solid rgba(248,250,252,0.1)', borderRadius: '8px', color: '#FFF' }}
                   >
                     <option>Sci-Fi</option>
@@ -473,6 +529,14 @@ export default function Movies() {
                     value={formData.rating}
                     onChange={e => setFormData({ ...formData, rating: e.target.value })}
                     style={{ width: '100%', padding: '10px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(248,250,252,0.1)', borderRadius: '8px', color: '#FFF' }}
+                  <input 
+                    type="number" 
+                    step="0.1" 
+                    min="1" 
+                    max="10" 
+                    value={formData.rating} 
+                    onChange={e => setFormData({ ...formData, rating: e.target.value })} 
+                    style={{ width: '100%', padding: '10px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(248,250,252,0.1)', borderRadius: '8px', color: '#FFF' }} 
                   />
                 </div>
               </div>
@@ -486,6 +550,12 @@ export default function Movies() {
                     onChange={e => setFormData({ ...formData, releaseYear: e.target.value })}
                     style={{ width: '100%', padding: '10px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(248,250,252,0.1)', borderRadius: '8px', color: '#FFF' }}
                     required
+                  <input 
+                    type="number" 
+                    value={formData.releaseYear} 
+                    onChange={e => setFormData({ ...formData, releaseYear: e.target.value })} 
+                    style={{ width: '100%', padding: '10px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(248,250,252,0.1)', borderRadius: '8px', color: '#FFF' }}
+                    required 
                   />
                 </div>
                 <div>
@@ -497,6 +567,13 @@ export default function Movies() {
                     style={{ width: '100%', padding: '10px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(248,250,252,0.1)', borderRadius: '8px', color: '#FFF' }}
                     placeholder="e.g. 2h 15m or 10 Episodes"
                     required
+                  <input 
+                    type="text" 
+                    value={formData.duration} 
+                    onChange={e => setFormData({ ...formData, duration: e.target.value })} 
+                    style={{ width: '100%', padding: '10px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(248,250,252,0.1)', borderRadius: '8px', color: '#FFF' }} 
+                    placeholder="e.g. 2h 15m or 10 Episodes"
+                    required 
                   />
                 </div>
               </div>
@@ -510,6 +587,13 @@ export default function Movies() {
                   style={{ width: '100%', padding: '10px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(248,250,252,0.1)', borderRadius: '8px', color: '#FFF' }}
                   placeholder="Insert HLS playlist link or select from transcoding queue"
                   required
+                <input 
+                  type="url" 
+                  value={formData.videoUrl} 
+                  onChange={e => setFormData({ ...formData, videoUrl: e.target.value })} 
+                  style={{ width: '100%', padding: '10px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(248,250,252,0.1)', borderRadius: '8px', color: '#FFF' }}
+                  placeholder="Insert HLS playlist link or select from transcoding queue"
+                  required 
                 />
               </div>
 
@@ -521,6 +605,12 @@ export default function Movies() {
                   onChange={e => setFormData({ ...formData, thumbnailUrl: e.target.value })}
                   style={{ width: '100%', padding: '10px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(248,250,252,0.1)', borderRadius: '8px', color: '#FFF' }}
                   required
+                <input 
+                  type="text" 
+                  value={formData.thumbnailUrl} 
+                  onChange={e => setFormData({ ...formData, thumbnailUrl: e.target.value })} 
+                  style={{ width: '100%', padding: '10px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(248,250,252,0.1)', borderRadius: '8px', color: '#FFF' }}
+                  required 
                 />
               </div>
 
@@ -532,6 +622,12 @@ export default function Movies() {
                   onChange={e => setFormData({ ...formData, bannerUrl: e.target.value })}
                   style={{ width: '100%', padding: '10px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(248,250,252,0.1)', borderRadius: '8px', color: '#FFF' }}
                   required
+                <input 
+                  type="text" 
+                  value={formData.bannerUrl} 
+                  onChange={e => setFormData({ ...formData, bannerUrl: e.target.value })} 
+                  style={{ width: '100%', padding: '10px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(248,250,252,0.1)', borderRadius: '8px', color: '#FFF' }}
+                  required 
                 />
               </div>
 
@@ -543,6 +639,11 @@ export default function Movies() {
                     value={formData.cast}
                     onChange={e => setFormData({ ...formData, cast: e.target.value })}
                     style={{ width: '100%', padding: '10px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(248,250,252,0.1)', borderRadius: '8px', color: '#FFF' }}
+                  <input 
+                    type="text" 
+                    value={formData.cast} 
+                    onChange={e => setFormData({ ...formData, cast: e.target.value })} 
+                    style={{ width: '100%', padding: '10px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(248,250,252,0.1)', borderRadius: '8px', color: '#FFF' }} 
                     placeholder="e.g. John Doe, Sarah Connor"
                   />
                 </div>
@@ -553,6 +654,11 @@ export default function Movies() {
                     value={formData.crew}
                     onChange={e => setFormData({ ...formData, crew: e.target.value })}
                     style={{ width: '100%', padding: '10px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(248,250,252,0.1)', borderRadius: '8px', color: '#FFF' }}
+                  <input 
+                    type="text" 
+                    value={formData.crew} 
+                    onChange={e => setFormData({ ...formData, crew: e.target.value })} 
+                    style={{ width: '100%', padding: '10px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(248,250,252,0.1)', borderRadius: '8px', color: '#FFF' }} 
                     placeholder="e.g. Steven Spielberg (Director)"
                   />
                 </div>
@@ -566,6 +672,12 @@ export default function Movies() {
                     onChange={e => setFormData({ ...formData, isPremium: e.target.checked })}
                     id="modalPremCheck"
                     style={{ width: '18px', height: '18px', cursor: 'pointer' }}
+                  <input 
+                    type="checkbox" 
+                    checked={formData.isPremium} 
+                    onChange={e => setFormData({ ...formData, isPremium: e.target.checked })} 
+                    id="modalPremCheck" 
+                    style={{ width: '18px', height: '18px', cursor: 'pointer' }} 
                   />
                   <label htmlFor="modalPremCheck" style={{ fontSize: '0.85rem', color: '#CBD5E1', cursor: 'pointer' }}>Premium VIP Tier</label>
                 </div>
@@ -576,6 +688,12 @@ export default function Movies() {
                     onChange={e => setFormData({ ...formData, isFeatured: e.target.checked })}
                     id="modalFeatCheck"
                     style={{ width: '18px', height: '18px', cursor: 'pointer' }}
+                  <input 
+                    type="checkbox" 
+                    checked={formData.isFeatured} 
+                    onChange={e => setFormData({ ...formData, isFeatured: e.target.checked })} 
+                    id="modalFeatCheck" 
+                    style={{ width: '18px', height: '18px', cursor: 'pointer' }} 
                   />
                   <label htmlFor="modalFeatCheck" style={{ fontSize: '0.85rem', color: '#CBD5E1', cursor: 'pointer' }}>Feature Banner Spotlight</label>
                 </div>
@@ -595,6 +713,8 @@ export default function Movies() {
                   }}
                 >
                   {isDeploying ? 'Deploying...' : 'Deploy to Catalogue'}
+                <button type="submit" className="btn-premium">
+                  Deploy to Catalogue
                 </button>
               </div>
 

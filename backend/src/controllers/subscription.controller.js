@@ -62,6 +62,7 @@ exports.verifyPayment = async (req, res, next) => {
     // Verify Razorpay HMAC signature
     const isMockMode = env.RAZORPAY_KEY_SECRET === 'rzp_test_key_secret' || env.RAZORPAY_KEY_SECRET === 'rzp_test_your_key_secret' || !razorpaySignature;
 
+    
     if (isMockMode) {
       console.warn('⚠️ Running in simulated Razorpay mode. Bypassing cryptographic signature verification.');
     } else {
@@ -71,6 +72,7 @@ exports.verifyPayment = async (req, res, next) => {
         .update(body.toString())
         .digest('hex');
 
+      
       if (expectedSignature !== razorpaySignature) {
         return res.status(400).json({ success: false, message: 'Invalid payment signature. Transaction verification failed.' });
       }

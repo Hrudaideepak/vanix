@@ -214,6 +214,7 @@ exports.googleLogin = async (req, res, next) => {
         });
         const payload = ticket.getPayload();
 
+        
         googleId = payload['sub'];
         email = payload['email'];
         name = payload['name'];

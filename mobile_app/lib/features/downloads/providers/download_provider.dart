@@ -92,6 +92,7 @@ class DownloadProvider extends ChangeNotifier {
       final uri = Uri.parse(urlString);
       final file = File('${downloadsDir.path}/${movie.id}.mp4');
 
+      
       int existingBytes = 0;
       if (await file.exists() && _downloadProgress[movie.id]! > 0.0) {
         existingBytes = await file.length();
@@ -102,6 +103,9 @@ class DownloadProvider extends ChangeNotifier {
 
       final request = http.Request('GET', uri);
 
+      
+      final request = http.Request('GET', uri);
+      
       if (existingBytes > 0) {
         request.headers['Range'] = 'bytes=$existingBytes-';
       }
@@ -210,11 +214,12 @@ class DownloadProvider extends ChangeNotifier {
     // Check if already in list to avoid duplicates
     _downloadedItems.removeWhere((item) => item.id == movie.id);
 
+    
     _downloadedItems.add(movie);
     _downloadStatus[movie.id] = 'completed';
     _downloadDates[movie.id] = DateTime.now();
     notifyListeners();
-
+ 
     final stringList = _downloadedItems.map((item) => jsonEncode(item.toJson())).toList();
     await _prefs.setStringList(AppConstants.keyOfflineDownloads, stringList);
     

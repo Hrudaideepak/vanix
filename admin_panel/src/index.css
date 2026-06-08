@@ -29,6 +29,7 @@ body {
   position: relative;
   overflow-x: hidden;
 
+  
   /* Technical structure grid overlay (rgba(255, 0, 0, 0.03)) */
   background-image: 
     linear-gradient(rgba(255, 0, 0, 0.03) 1px, transparent 1px),
@@ -45,6 +46,9 @@ body::after {
   top: 0;
   left: 0;
   bottom: 0;
+  top: 0; 
+  left: 0; 
+  bottom: 0; 
   right: 0;
   background: linear-gradient(rgba(255, 255, 255, 0) 50%, rgba(255, 255, 255, 0.02) 50%);
   background-size: 100% 4px;

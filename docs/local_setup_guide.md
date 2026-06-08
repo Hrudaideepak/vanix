@@ -1,6 +1,7 @@
 # VANIX OTT Streaming Platform - Phase 0 Local Setup Guide
 
 Welcome to the local development setup guide for **VANIX**, a premium OTT streaming platform containing an Express backend, a React admin panel, and a Flutter mobile application.
+Welcome to the local development setup guide for **VANIX**, a premium OTT streaming platform containing an Express backend, a React admin panel, and a Flutter mobile application. 
 
 This document serves as a day-by-day playbook to get all components of the system cloned, configured, tested, and integrated locally on Windows (using PowerShell or CMD).
 
@@ -311,6 +312,10 @@ Check the codebase to identify the platform's architectural maturity:
 2. **Adaptive Bitrate Streaming (HLS)**:
    - *Observation*: The transcoding script outputs multiple resolutions (240p, 360p, 480p, 720p, 1080p) and links them inside a `master.m3u8` manifest file. The mobile player (`video_player`) consumes HLS.
 
+   
+2. **Adaptive Bitrate Streaming (HLS)**:
+   - *Observation*: The transcoding script outputs multiple resolutions (240p, 360p, 480p, 720p, 1080p) and links them inside a `master.m3u8` manifest file. The mobile player (`video_player`) consumes HLS.
+   
 3. **Razorpay Payments**:
    - Locate [playback_provider.dart](file:///c:/Users/PC/Desktop/vanix/vanix/mobile_app/lib/features/player/providers/playback_provider.dart).
    - *Observation*: Payments are integrated on the mobile side, but verify how web hooks notify the backend server of successful payments for subscription state changes.

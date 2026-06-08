@@ -8,6 +8,8 @@ const Profile = require('../src/models/profile.model');
 beforeAll(async () => {
   const baseUri = process.env.MONGO_URI
     ? process.env.MONGO_URI.replace(/\/[^\/]+$/, '')
+  const baseUri = process.env.MONGO_URI 
+    ? process.env.MONGO_URI.replace(/\/[^\/]+$/, '') 
     : 'mongodb://localhost:27017';
   const MONGO_TEST_URI = `${baseUri}/vanix_test`;
   await mongoose.connect(MONGO_TEST_URI);

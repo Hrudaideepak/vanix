@@ -39,6 +39,7 @@ exports.updateFCMToken = async (req, res, next) => {
   try {
     const { deviceId, fcmToken } = req.body;
 
+    
     if (!deviceId || !fcmToken) {
       return res.status(400).json({ success: false, message: 'Please provide deviceId and fcmToken' });
     }
@@ -51,6 +52,7 @@ exports.updateFCMToken = async (req, res, next) => {
       user.devices[deviceIdx].lastActive = new Date();
       await user.save();
 
+      
       // Trigger a test welcome notification to verify the FCM integration
       const fcm = require('../services/fcm.service');
       await fcm.sendPushNotification(fcmToken, {
@@ -59,6 +61,7 @@ exports.updateFCMToken = async (req, res, next) => {
         data: { type: 'registration_confirm' }
       });
 
+      
       return res.status(200).json({
         success: true,
         message: 'FCM push token registered successfully',
