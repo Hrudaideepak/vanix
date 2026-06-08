@@ -167,6 +167,11 @@ describe('Device Controller', () => {
     });
   });
 
+
+  test('should return 404 if devices list is empty', async () => {
+    const mockUser = {
+      devices: [],
+      save: jest.fn()
   test('should call next with error if saving fails', async () => {
     const error = new Error('Save error');
     const mockUser = {
@@ -180,6 +185,13 @@ describe('Device Controller', () => {
     await remoteLogout(req, res, next);
 
     expect(User.findById).toHaveBeenCalledWith('user123');
+    expect(res.status).toHaveBeenCalledWith(404);
+    expect(res.json).toHaveBeenCalledWith({
+      success: false,
+      message: 'Device registration not found'
+    });
+  });
+
     expect(mockUser.save).toHaveBeenCalled();
     expect(next).toHaveBeenCalledWith(error);
   });
