@@ -22,7 +22,8 @@ describe('Content Controller - searchContent', () => {
     req.query.q = 'test+*?^$()[]{}|\\';
 
     const mockResults = [{ title: 'test movie' }];
-    const mockLimit = jest.fn().mockResolvedValue(mockResults);
+    const mockLean = jest.fn().mockResolvedValue(mockResults);
+    const mockLimit = jest.fn().mockReturnValue({ lean: mockLean });
     Movie.find.mockReturnValue({ limit: mockLimit });
 
     await searchContent(req, res, next);
@@ -45,7 +46,8 @@ describe('Content Controller - searchContent', () => {
     req.query.q = 'normal search';
 
     const mockResults = [{ title: 'normal search movie' }];
-    const mockLimit = jest.fn().mockResolvedValue(mockResults);
+    const mockLean = jest.fn().mockResolvedValue(mockResults);
+    const mockLimit = jest.fn().mockReturnValue({ lean: mockLean });
     Movie.find.mockReturnValue({ limit: mockLimit });
 
     await searchContent(req, res, next);
