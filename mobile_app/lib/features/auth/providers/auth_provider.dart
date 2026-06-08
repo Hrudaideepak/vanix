@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../core/utils/logger.dart';
 import '../data/auth_service.dart';
@@ -12,6 +13,7 @@ import 'dart:io' show Platform;
 class AuthProvider extends ChangeNotifier {
   final SharedPreferences _prefs;
   final AuthService _authService;
+  final FlutterSecureStorage _secureStorage = const FlutterSecureStorage();
 
   UserModel? _currentUser;
   String? _token;
@@ -35,10 +37,10 @@ class AuthProvider extends ChangeNotifier {
   String? get errorMessage => _errorMessage;
 
   /// Load session from local storage on startup
-  void _loadSession() {
-    final token = _prefs.getString(AppConstants.keyToken);
-    final refreshToken = _prefs.getString(AppConstants.keyRefreshToken);
-    final userJson = _prefs.getString(AppConstants.keyUser);
+  Future<void> _loadSession() async {
+    final token = await _secureStorage.read(key: AppConstants.keyToken);
+    final refreshToken = await _secureStorage.read(key: AppConstants.keyRefreshToken);
+    final userJson = await _secureStorage.read(key: AppConstants.keyUser);
 
     if (token != null && refreshToken != null && userJson != null) {
       try {
@@ -46,10 +48,11 @@ class AuthProvider extends ChangeNotifier {
         _refreshToken = refreshToken;
         _currentUser = UserModel.fromJson(jsonDecode(userJson));
         AppLogger.info('Session restored for: ${_currentUser?.email}');
+        notifyListeners();
         syncDevicePushToken();
       } catch (e) {
         AppLogger.error('Failed to parse cached session: $e');
-        _clearSession();
+        await _clearSession();
       }
     }
   }
@@ -140,14 +143,14 @@ class AuthProvider extends ChangeNotifier {
       final newAccessToken = response['accessToken'];
       
       _token = newAccessToken;
-      await _prefs.setString(AppConstants.keyToken, newAccessToken);
+      await _secureStorage.write(key: AppConstants.keyToken, value: newAccessToken);
       
       AppLogger.info('Access Token successfully refreshed.');
       notifyListeners();
       return true;
     } catch (e) {
       AppLogger.error('Refresh token expired or failed: $e');
-      logout();
+      await logout();
       return false;
     }
   }
@@ -155,7 +158,7 @@ class AuthProvider extends ChangeNotifier {
   /// Logout User
   Future<void> logout() async {
     _setLoading(true);
-    _clearSession();
+    await _clearSession();
     _setLoading(false);
   }
 
@@ -169,24 +172,24 @@ class AuthProvider extends ChangeNotifier {
     _refreshToken = refreshToken;
     _currentUser = UserModel.fromJson(userData);
 
-    await _prefs.setString(AppConstants.keyToken, token);
-    await _prefs.setString(AppConstants.keyRefreshToken, refreshToken);
-    await _prefs.setString(AppConstants.keyUser, jsonEncode(userData));
+    await _secureStorage.write(key: AppConstants.keyToken, value: token);
+    await _secureStorage.write(key: AppConstants.keyRefreshToken, value: refreshToken);
+    await _secureStorage.write(key: AppConstants.keyUser, value: jsonEncode(userData));
     
     notifyListeners();
     syncDevicePushToken();
   }
 
   // Helper: Clear local storage session
-  void _clearSession() {
+  Future<void> _clearSession() async {
     _token = null;
     _refreshToken = null;
     _currentUser = null;
 
-    _prefs.remove(AppConstants.keyToken);
-    _prefs.remove(AppConstants.keyRefreshToken);
-    _prefs.remove(AppConstants.keyUser);
-    _prefs.remove(AppConstants.keyActiveProfileId);
+    await _secureStorage.delete(key: AppConstants.keyToken);
+    await _secureStorage.delete(key: AppConstants.keyRefreshToken);
+    await _secureStorage.delete(key: AppConstants.keyUser);
+    await _secureStorage.delete(key: AppConstants.keyActiveProfileId);
 
     notifyListeners();
   }

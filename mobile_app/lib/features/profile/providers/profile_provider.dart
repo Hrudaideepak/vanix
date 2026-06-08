@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../core/utils/logger.dart';
 import '../../../core/network/api_client.dart';
@@ -8,6 +9,7 @@ import '../../auth/models/user_model.dart';
 import '../models/profile_model.dart';
 
 class ProfileProvider extends ChangeNotifier {
+  final FlutterSecureStorage _secureStorage = const FlutterSecureStorage();
   final SharedPreferences _prefs;
   UserModel? _user;
   
@@ -219,7 +221,7 @@ class ProfileProvider extends ChangeNotifier {
         subscriptionPlan: _user!.subscriptionPlan,
         profiles: _profiles,
       );
-      await _prefs.setString(AppConstants.keyUser, jsonEncode(updatedUser.toJson()));
+      await _secureStorage.write(key: AppConstants.keyUser, value: jsonEncode(updatedUser.toJson()));
     }
   }
 }

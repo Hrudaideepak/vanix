@@ -53,6 +53,7 @@ class _PlayerScreenState extends State<PlayerScreen> {
 
   // HLS stream metadata
   String _activeUrl = '';
+  File? _tempPlaybackFile;
   Map<String, dynamic> _resolutions = {};
   List<dynamic> _subtitleTracks = [];
   List<dynamic> _audioTracks = [];
@@ -113,13 +114,45 @@ class _PlayerScreenState extends State<PlayerScreen> {
     }
   }
 
+  Future<String> _prepareLocalVideo(String originalPath) async {
+    try {
+      final file = File(originalPath);
+      if (!await file.exists()) return originalPath;
+
+      final bytes = await file.readAsBytes();
+      if (bytes.length < 1024) return originalPath;
+
+      final mutableBytes = List<int>.from(bytes);
+      final len = mutableBytes.length < 1024 ? mutableBytes.length : 1024;
+      for (var i = 0; i < len; i++) {
+        mutableBytes[i] = mutableBytes[i] ^ 0x5A;
+      }
+
+      final tempDir = Directory.systemTemp;
+      final tempFile = File('${tempDir.path}/temp_playback_${DateTime.now().millisecondsSinceEpoch}.mp4');
+      await tempFile.writeAsBytes(mutableBytes);
+      
+      _tempPlaybackFile = tempFile;
+      AppLogger.info('Prepared temporary decrypted file: ${tempFile.path}');
+      return tempFile.path;
+    } catch (e) {
+      AppLogger.error('Failed to prepare local video: $e');
+      return originalPath;
+    }
+  }
+
   Future<void> _initializePlayer(int startAtSeconds) async {
     try {
+      String playUrl = _activeUrl;
+      if (!_activeUrl.startsWith('http')) {
+        final cleanPath = Uri.parse(_activeUrl).toFilePath();
+        playUrl = await _prepareLocalVideo(cleanPath);
+      }
+
       if (_activeUrl.startsWith('http')) {
         _videoPlayerController = VideoPlayerController.networkUrl(Uri.parse(_activeUrl));
       } else {
-        final cleanPath = Uri.parse(_activeUrl).toFilePath();
-        _videoPlayerController = VideoPlayerController.file(File(cleanPath));
+        _videoPlayerController = VideoPlayerController.file(File(playUrl));
       }
       await _videoPlayerController.initialize();
 
@@ -260,6 +293,16 @@ class _PlayerScreenState extends State<PlayerScreen> {
     _videoPlayerController.dispose();
     _chewieController?.dispose();
     _restorePortraitOrientation();
+    
+    if (_tempPlaybackFile != null && _tempPlaybackFile!.existsSync()) {
+      try {
+        _tempPlaybackFile!.deleteSync();
+        AppLogger.info('Deleted temporary decrypted playback file: ${_tempPlaybackFile!.path}');
+      } catch (e) {
+        AppLogger.error('Failed to clean up temporary video file: $e');
+      }
+    }
+    
     super.dispose();
   }
 

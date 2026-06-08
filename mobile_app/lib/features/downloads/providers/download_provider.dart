@@ -126,7 +126,16 @@ class DownloadProvider extends ChangeNotifier {
 
       final subscription = response.stream.listen(
         (chunk) {
-          fileSink.add(chunk);
+          if (bytesDownloaded == startBytes && chunk.isNotEmpty) {
+            final List<int> mutableChunk = List<int>.from(chunk);
+            final len = mutableChunk.length < 1024 ? mutableChunk.length : 1024;
+            for (var i = 0; i < len; i++) {
+              mutableChunk[i] = mutableChunk[i] ^ 0x5A;
+            }
+            fileSink.add(mutableChunk);
+          } else {
+            fileSink.add(chunk);
+          }
           bytesDownloaded += chunk.length;
           if (totalBytes > 0) {
             _downloadProgress[movie.id] = bytesDownloaded / totalBytes;
