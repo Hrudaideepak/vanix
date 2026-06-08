@@ -52,19 +52,22 @@ class SearchProvider extends ChangeNotifier {
       final response = await ApiClient.instance.get(
         '/search/query?q=${Uri.encodeComponent(query)}&genre=$_selectedGenre&type=$_selectedType',
       );
-      
+
       if (response.statusCode == 200) {
         final decoded = jsonDecode(response.body);
         final list = decoded['data'] as List? ?? [];
-        _searchResults = list.map((c) => ContentModel.fromJson(c as Map<String, dynamic>)).toList();
+        _searchResults = list
+            .map((c) => ContentModel.fromJson(c as Map<String, dynamic>))
+            .toList();
         _typoCorrected = decoded['typoCorrected'] ?? false;
         _spellingSuggestion = decoded['suggestedQuery'];
-        
+
         // Refresh recents on search
         await fetchRecentSearches();
       }
     } catch (e) {
-      AppLogger.warning('Search query API failed: $e. Using local simulation...');
+      AppLogger.warning(
+          'Search query API failed: $e. Using local simulation...');
       _loadMockSearchResults(query);
     } finally {
       _isLoading = false;
@@ -110,9 +113,12 @@ class SearchProvider extends ChangeNotifier {
         id: 'mv_1',
         title: 'Nebula Genesis',
         description: 'Deep-space research anomaly.',
-        thumbnailUrl: 'https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?w=500&q=80',
-        bannerUrl: 'https://images.unsplash.com/photo-1506318137071-a8e063b4bec0?w=1000&q=80',
-        videoUrl: 'https://demo.unified-streaming.com/k8s/features/stable/video/tears-of-steel/tears-of-steel.ism/.m3u8',
+        thumbnailUrl:
+            'https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?w=500&q=80',
+        bannerUrl:
+            'https://images.unsplash.com/photo-1506318137071-a8e063b4bec0?w=1000&q=80',
+        videoUrl:
+            'https://demo.unified-streaming.com/k8s/features/stable/video/tears-of-steel/tears-of-steel.ism/.m3u8',
         type: 'movie',
         rating: 8.9,
         releaseYear: 2024,
@@ -124,9 +130,12 @@ class SearchProvider extends ChangeNotifier {
         id: 'mv_2',
         title: 'Shadow Sector',
         description: 'Cyberpunk operative heist.',
-        thumbnailUrl: 'https://images.unsplash.com/photo-1578301978693-85fa9c0320b9?w=500&q=80',
-        bannerUrl: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?w=1000&q=80',
-        videoUrl: 'https://cph-p2p-msl.akamaized.net/hls/live/2000341/test/master.m3u8',
+        thumbnailUrl:
+            'https://images.unsplash.com/photo-1578301978693-85fa9c0320b9?w=500&q=80',
+        bannerUrl:
+            'https://images.unsplash.com/photo-1542751371-adc38448a05e?w=1000&q=80',
+        videoUrl:
+            'https://cph-p2p-msl.akamaized.net/hls/live/2000341/test/master.m3u8',
         type: 'movie',
         rating: 8.4,
         releaseYear: 2024,
@@ -138,8 +147,10 @@ class SearchProvider extends ChangeNotifier {
 
     _searchResults = allMocks.where((m) {
       final matchesQuery = m.title.toLowerCase().contains(query.toLowerCase());
-      final matchesGenre = _selectedGenre == 'All' || m.genres.contains(_selectedGenre);
-      final matchesType = _selectedType == 'All' || m.type == _selectedType.toLowerCase();
+      final matchesGenre =
+          _selectedGenre == 'All' || m.genres.contains(_selectedGenre);
+      final matchesType =
+          _selectedType == 'All' || m.type == _selectedType.toLowerCase();
       return matchesQuery && matchesGenre && matchesType;
     }).toList();
   }

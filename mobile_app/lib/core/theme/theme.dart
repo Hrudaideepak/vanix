@@ -83,7 +83,8 @@ class AppTheme {
         filled: true,
         fillColor: softWhite.withValues(alpha: 0.05),
         hintStyle: TextStyle(color: silverAccent.withValues(alpha: 0.5)),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
         border: const OutlineInputBorder(
           borderRadius: BorderRadius.zero,
           borderSide: BorderSide.none,
@@ -119,13 +120,18 @@ class AppTheme {
         ),
       ),
       textTheme: const TextTheme(
-        displayLarge: TextStyle(color: softWhite, fontSize: 32, fontWeight: FontWeight.bold),
-        displayMedium: TextStyle(color: softWhite, fontSize: 28, fontWeight: FontWeight.bold),
-        titleLarge: TextStyle(color: softWhite, fontSize: 22, fontWeight: FontWeight.w600),
-        titleMedium: TextStyle(color: softWhite, fontSize: 18, fontWeight: FontWeight.w500),
+        displayLarge: TextStyle(
+            color: softWhite, fontSize: 32, fontWeight: FontWeight.bold),
+        displayMedium: TextStyle(
+            color: softWhite, fontSize: 28, fontWeight: FontWeight.bold),
+        titleLarge: TextStyle(
+            color: softWhite, fontSize: 22, fontWeight: FontWeight.w600),
+        titleMedium: TextStyle(
+            color: softWhite, fontSize: 18, fontWeight: FontWeight.w500),
         bodyLarge: TextStyle(color: silverAccent, fontSize: 16),
         bodyMedium: TextStyle(color: silverAccent, fontSize: 14),
-        labelLarge: TextStyle(color: softWhite, fontSize: 14, fontWeight: FontWeight.bold),
+        labelLarge: TextStyle(
+            color: softWhite, fontSize: 14, fontWeight: FontWeight.bold),
       ),
     );
   }
@@ -145,8 +151,10 @@ class AppTheme {
       ),
       fontFamily: 'SpaceGrotesk',
       textTheme: const TextTheme(
-        displayLarge: TextStyle(color: deepBlack, fontSize: 32, fontWeight: FontWeight.bold),
-        titleLarge: TextStyle(color: deepBlack, fontSize: 22, fontWeight: FontWeight.w600),
+        displayLarge: TextStyle(
+            color: deepBlack, fontSize: 32, fontWeight: FontWeight.bold),
+        titleLarge: TextStyle(
+            color: deepBlack, fontSize: 22, fontWeight: FontWeight.w600),
         bodyLarge: TextStyle(color: deepBlack, fontSize: 16),
         bodyMedium: TextStyle(color: deepBlack, fontSize: 14),
       ),

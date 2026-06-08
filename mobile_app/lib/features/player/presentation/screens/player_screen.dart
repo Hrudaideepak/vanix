@@ -87,12 +87,14 @@ class _PlayerScreenState extends State<PlayerScreen> {
     await SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
     ]);
-    await SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: SystemUiOverlay.values);
+    await SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
+        overlays: SystemUiOverlay.values);
   }
 
   Future<void> _fetchMediaDetails() async {
     try {
-      final response = await ApiClient.instance.get('/movie/${widget.contentId}');
+      final response =
+          await ApiClient.instance.get('/movie/${widget.contentId}');
       if (response.statusCode == 200) {
         final decoded = jsonDecode(response.body);
         final data = decoded['data'];
@@ -101,7 +103,7 @@ class _PlayerScreenState extends State<PlayerScreen> {
             _resolutions = data['resolutions'] ?? {};
             _subtitleTracks = data['subtitles'] ?? [];
             _audioTracks = data['audioTracks'] ?? [];
-            
+
             // Set HLS base url if it exists
             if (data['hlsUrl'] != null && data['hlsUrl'].isNotEmpty) {
               _activeUrl = data['hlsUrl'];
@@ -129,9 +131,10 @@ class _PlayerScreenState extends State<PlayerScreen> {
       }
 
       final tempDir = Directory.systemTemp;
-      final tempFile = File('${tempDir.path}/temp_playback_${DateTime.now().millisecondsSinceEpoch}.mp4');
+      final tempFile = File(
+          '${tempDir.path}/temp_playback_${DateTime.now().millisecondsSinceEpoch}.mp4');
       await tempFile.writeAsBytes(mutableBytes);
-      
+
       _tempPlaybackFile = tempFile;
       AppLogger.info('Prepared temporary decrypted file: ${tempFile.path}');
       return tempFile.path;
@@ -150,7 +153,8 @@ class _PlayerScreenState extends State<PlayerScreen> {
       }
 
       if (_activeUrl.startsWith('http')) {
-        _videoPlayerController = VideoPlayerController.networkUrl(Uri.parse(_activeUrl));
+        _videoPlayerController =
+            VideoPlayerController.networkUrl(Uri.parse(_activeUrl));
       } else {
         _videoPlayerController = VideoPlayerController.file(File(playUrl));
       }
@@ -191,16 +195,16 @@ class _PlayerScreenState extends State<PlayerScreen> {
 
   void _switchStream(String newUrl) async {
     if (_chewieController == null) return;
-    
+
     final currentPos = _videoPlayerController.value.position.inSeconds;
-    
+
     _progressTimer?.cancel();
     _videoPlayerController.removeListener(_subtitleListener);
-    
+
     // Dispose current player
     await _videoPlayerController.dispose();
     _chewieController?.dispose();
-    
+
     setState(() {
       _chewieController = null;
       _activeUrl = newUrl;
@@ -247,7 +251,8 @@ class _PlayerScreenState extends State<PlayerScreen> {
         setState(() {
           _parsedSubtitles = _parseVtt(res.body);
         });
-        AppLogger.info('Subtitles loaded: ${_parsedSubtitles.length} cues parsed');
+        AppLogger.info(
+            'Subtitles loaded: ${_parsedSubtitles.length} cues parsed');
       }
     } catch (e) {
       AppLogger.error('Failed loading subtitles track: $e');
@@ -256,11 +261,12 @@ class _PlayerScreenState extends State<PlayerScreen> {
 
   void _subtitleListener() {
     if (_parsedSubtitles.isEmpty) return;
-    
+
     final pos = _videoPlayerController.value.position;
     final activeLine = _parsedSubtitles.firstWhere(
       (line) => pos >= line.start && pos <= line.end,
-      orElse: () => SubtitleLine(start: Duration.zero, end: Duration.zero, text: ''),
+      orElse: () =>
+          SubtitleLine(start: Duration.zero, end: Duration.zero, text: ''),
     );
 
     if (_currentSubtitleText != activeLine.text) {
@@ -275,7 +281,7 @@ class _PlayerScreenState extends State<PlayerScreen> {
       if (_videoPlayerController.value.isInitialized) {
         final position = _videoPlayerController.value.position.inSeconds;
         final duration = _videoPlayerController.value.duration.inSeconds;
-        
+
         Provider.of<PlaybackProvider>(context, listen: false).syncWatchProgress(
           contentId: widget.contentId,
           progressSeconds: position,
@@ -293,16 +299,17 @@ class _PlayerScreenState extends State<PlayerScreen> {
     _videoPlayerController.dispose();
     _chewieController?.dispose();
     _restorePortraitOrientation();
-    
+
     if (_tempPlaybackFile != null && _tempPlaybackFile!.existsSync()) {
       try {
         _tempPlaybackFile!.deleteSync();
-        AppLogger.info('Deleted temporary decrypted playback file: ${_tempPlaybackFile!.path}');
+        AppLogger.info(
+            'Deleted temporary decrypted playback file: ${_tempPlaybackFile!.path}');
       } catch (e) {
         AppLogger.error('Failed to clean up temporary video file: $e');
       }
     }
-    
+
     super.dispose();
   }
 
@@ -353,7 +360,8 @@ class _PlayerScreenState extends State<PlayerScreen> {
       builder: (context) {
         return StatefulBuilder(
           builder: (context, setModalState) {
-            final double currentSpeed = _videoPlayerController.value.playbackSpeed;
+            final double currentSpeed =
+                _videoPlayerController.value.playbackSpeed;
             return SingleChildScrollView(
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
               child: Column(
@@ -361,12 +369,19 @@ class _PlayerScreenState extends State<PlayerScreen> {
                 children: [
                   const Text(
                     'Playback Configurations',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppTheme.softWhite),
+                    style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: AppTheme.softWhite),
                   ),
                   const SizedBox(height: 20),
 
                   // Playback Speed Selector
-                  const Text('Playback Speed', style: TextStyle(color: AppTheme.silverAccent, fontSize: 13, fontWeight: FontWeight.bold)),
+                  const Text('Playback Speed',
+                      style: TextStyle(
+                          color: AppTheme.silverAccent,
+                          fontSize: 13,
+                          fontWeight: FontWeight.bold)),
                   const SizedBox(height: 8),
                   Wrap(
                     spacing: 8,
@@ -376,7 +391,8 @@ class _PlayerScreenState extends State<PlayerScreen> {
                         setModalState(() {});
                         Navigator.pop(context);
                       }),
-                      _buildSettingsChip('1.0x (Normal)', currentSpeed == 1.0, () {
+                      _buildSettingsChip('1.0x (Normal)', currentSpeed == 1.0,
+                          () {
                         _videoPlayerController.setPlaybackSpeed(1.0);
                         setModalState(() {});
                         Navigator.pop(context);
@@ -401,18 +417,24 @@ class _PlayerScreenState extends State<PlayerScreen> {
                   const Divider(color: Colors.white10, height: 24),
 
                   // Quality switcher
-                  const Text('Video Quality', style: TextStyle(color: AppTheme.silverAccent, fontSize: 13, fontWeight: FontWeight.bold)),
+                  const Text('Video Quality',
+                      style: TextStyle(
+                          color: AppTheme.silverAccent,
+                          fontSize: 13,
+                          fontWeight: FontWeight.bold)),
                   const SizedBox(height: 8),
                   Wrap(
                     spacing: 8,
                     children: [
-                      _buildSettingsChip('Auto', _selectedQuality == 'Auto', () {
+                      _buildSettingsChip('Auto', _selectedQuality == 'Auto',
+                          () {
                         setModalState(() => _selectedQuality = 'Auto');
                         _switchStream(widget.videoUrl);
                         Navigator.pop(context);
                       }),
                       ..._resolutions.entries.map((entry) {
-                        return _buildSettingsChip(entry.key, _selectedQuality == entry.key, () {
+                        return _buildSettingsChip(
+                            entry.key, _selectedQuality == entry.key, () {
                           setModalState(() => _selectedQuality = entry.key);
                           _switchStream(entry.value);
                           Navigator.pop(context);
@@ -423,7 +445,11 @@ class _PlayerScreenState extends State<PlayerScreen> {
                   const Divider(color: Colors.white10, height: 24),
 
                   // Subtitles switcher
-                  const Text('Subtitles (SRT / VTT)', style: TextStyle(color: AppTheme.silverAccent, fontSize: 13, fontWeight: FontWeight.bold)),
+                  const Text('Subtitles (SRT / VTT)',
+                      style: TextStyle(
+                          color: AppTheme.silverAccent,
+                          fontSize: 13,
+                          fontWeight: FontWeight.bold)),
                   const SizedBox(height: 8),
                   Wrap(
                     spacing: 8,
@@ -438,7 +464,8 @@ class _PlayerScreenState extends State<PlayerScreen> {
                       }),
                       ..._subtitleTracks.map((sub) {
                         final label = sub['language'] ?? 'Unknown';
-                        final isSel = _selectedSubtitle != null && _selectedSubtitle!['url'] == sub['url'];
+                        final isSel = _selectedSubtitle != null &&
+                            _selectedSubtitle!['url'] == sub['url'];
                         return _buildSettingsChip(label, isSel, () {
                           setModalState(() => _selectedSubtitle = sub);
                           _loadSubtitleTrack(sub['url']);
@@ -450,7 +477,11 @@ class _PlayerScreenState extends State<PlayerScreen> {
                   const Divider(color: Colors.white10, height: 24),
 
                   // Audio Track switcher
-                  const Text('Audio Language Track', style: TextStyle(color: AppTheme.silverAccent, fontSize: 13, fontWeight: FontWeight.bold)),
+                  const Text('Audio Language Track',
+                      style: TextStyle(
+                          color: AppTheme.silverAccent,
+                          fontSize: 13,
+                          fontWeight: FontWeight.bold)),
                   const SizedBox(height: 8),
                   Wrap(
                     spacing: 8,
@@ -462,7 +493,8 @@ class _PlayerScreenState extends State<PlayerScreen> {
                       }),
                       ..._audioTracks.map((aud) {
                         final label = aud['language'] ?? 'Audio Track';
-                        final isSel = _selectedAudio != null && _selectedAudio!['url'] == aud['url'];
+                        final isSel = _selectedAudio != null &&
+                            _selectedAudio!['url'] == aud['url'];
                         return _buildSettingsChip(label, isSel, () {
                           setModalState(() => _selectedAudio = aud);
                           _switchStream(aud['url']);
@@ -482,7 +514,10 @@ class _PlayerScreenState extends State<PlayerScreen> {
 
   Widget _buildSettingsChip(String label, bool isSelected, VoidCallback onTap) {
     return ChoiceChip(
-      label: Text(label, style: TextStyle(color: isSelected ? Colors.white : AppTheme.silverAccent, fontSize: 12)),
+      label: Text(label,
+          style: TextStyle(
+              color: isSelected ? Colors.white : AppTheme.silverAccent,
+              fontSize: 12)),
       selected: isSelected,
       selectedColor: AppTheme.royalPurple,
       backgroundColor: Colors.white10,
@@ -499,25 +534,32 @@ class _PlayerScreenState extends State<PlayerScreen> {
       body: _hasError
           ? _buildErrorWidget()
           : _chewieController == null
-              ? const Center(child: CircularProgressIndicator(color: AppTheme.royalPurple))
+              ? const Center(
+                  child: CircularProgressIndicator(color: AppTheme.royalPurple))
               : Stack(
                   children: [
                     // Swipe handler + Player + Double-tap to seek
                     GestureDetector(
-                      onVerticalDragUpdate: (details) => _handleVerticalSwipe(details, size.width),
+                      onVerticalDragUpdate: (details) =>
+                          _handleVerticalSwipe(details, size.width),
                       onDoubleTapDown: (details) {
                         final x = details.localPosition.dx;
                         final isRightSide = x > (size.width / 2);
-                        final currentPos = _videoPlayerController.value.position;
+                        final currentPos =
+                            _videoPlayerController.value.position;
                         final duration = _videoPlayerController.value.duration;
                         if (isRightSide) {
-                          final newPos = currentPos + const Duration(seconds: 10);
-                          final clampedPos = newPos > duration ? duration : newPos;
+                          final newPos =
+                              currentPos + const Duration(seconds: 10);
+                          final clampedPos =
+                              newPos > duration ? duration : newPos;
                           _videoPlayerController.seekTo(clampedPos);
                           _showSeekIndicator('Skip +10s ⏩');
                         } else {
-                          final newPos = currentPos - const Duration(seconds: 10);
-                          final clampedPos = newPos < Duration.zero ? Duration.zero : newPos;
+                          final newPos =
+                              currentPos - const Duration(seconds: 10);
+                          final clampedPos =
+                              newPos < Duration.zero ? Duration.zero : newPos;
                           _videoPlayerController.seekTo(clampedPos);
                           _showSeekIndicator('Rewind -10s ⏪');
                         }
@@ -538,7 +580,8 @@ class _PlayerScreenState extends State<PlayerScreen> {
                         right: 20,
                         child: Center(
                           child: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 8),
                             decoration: BoxDecoration(
                               color: Colors.black54,
                               borderRadius: BorderRadius.circular(8),
@@ -569,7 +612,8 @@ class _PlayerScreenState extends State<PlayerScreen> {
                         alignment: Alignment.center,
                         child: GlassCard(
                           borderRadius: 12,
-                          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 20, vertical: 12),
                           opacity: 0.2,
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
@@ -604,7 +648,8 @@ class _PlayerScreenState extends State<PlayerScreen> {
                           color: Colors.black.withValues(alpha: 0.5),
                         ),
                         child: IconButton(
-                          icon: const Icon(Icons.arrow_back, color: AppTheme.softWhite),
+                          icon: const Icon(Icons.arrow_back,
+                              color: AppTheme.softWhite),
                           onPressed: () => Navigator.pop(context),
                         ),
                       ),
@@ -619,7 +664,8 @@ class _PlayerScreenState extends State<PlayerScreen> {
                           color: Colors.black.withValues(alpha: 0.5),
                         ),
                         child: IconButton(
-                          icon: const Icon(Icons.settings, color: AppTheme.softWhite),
+                          icon: const Icon(Icons.settings,
+                              color: AppTheme.softWhite),
                           onPressed: _showSettingsBottomSheet,
                         ),
                       ),
@@ -638,11 +684,15 @@ class _PlayerScreenState extends State<PlayerScreen> {
           const SizedBox(height: 16),
           const Text(
             'Failed to load video stream.',
-            style: TextStyle(color: AppTheme.softWhite, fontSize: 18, fontWeight: FontWeight.bold),
+            style: TextStyle(
+                color: AppTheme.softWhite,
+                fontSize: 18,
+                fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 8),
           ElevatedButton(
-            style: ElevatedButton.styleFrom(backgroundColor: AppTheme.royalPurple),
+            style:
+                ElevatedButton.styleFrom(backgroundColor: AppTheme.royalPurple),
             child: const Text('Go Back'),
             onPressed: () => Navigator.pop(context),
           ),

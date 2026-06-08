@@ -19,7 +19,8 @@ class ProfileModel {
     return ProfileModel(
       id: json['_id'] ?? json['id'] ?? '',
       name: json['name'] ?? '',
-      avatarUrl: json['avatarUrl'] ?? 'https://api.dicebear.com/7.x/bottts/png?seed=Vanix',
+      avatarUrl: json['avatarUrl'] ??
+          'https://api.dicebear.com/7.x/bottts/png?seed=Vanix',
       isKids: json['isKids'] ?? false,
       pin: json['pin'],
       languagePreference: json['languagePreference'] ?? 'en',

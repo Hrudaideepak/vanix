@@ -18,7 +18,7 @@ import 'features/subscription/providers/subscription_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
+
   // Firebase initialization (disabled until google-services.json is added)
   // try {
   //   await Firebase.initializeApp();
@@ -27,7 +27,6 @@ void main() async {
   //   print("⚠️ Firebase initialization bypassed: $e");
   // }
 
-  
   // Set preferred orientations to portrait first, player will handle landscape rotation
   await SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
@@ -50,10 +49,12 @@ void main() async {
       providers: [
         Provider<SharedPreferences>.value(value: sharedPreferences),
         ChangeNotifierProvider(
-          create: (context) => AuthProvider(sharedPreferences: sharedPreferences),
+          create: (context) =>
+              AuthProvider(sharedPreferences: sharedPreferences),
         ),
         ChangeNotifierProxyProvider<AuthProvider, ProfileProvider>(
-          create: (context) => ProfileProvider(sharedPreferences: sharedPreferences),
+          create: (context) =>
+              ProfileProvider(sharedPreferences: sharedPreferences),
           update: (context, auth, previous) =>
               previous!..updateAuth(auth.token, auth.currentUser),
         ),
@@ -78,7 +79,8 @@ void main() async {
               previous!..updateAuth(auth.token),
         ),
         ChangeNotifierProxyProvider<AuthProvider, DownloadProvider>(
-          create: (context) => DownloadProvider(sharedPreferences: sharedPreferences),
+          create: (context) =>
+              DownloadProvider(sharedPreferences: sharedPreferences),
           update: (context, auth, previous) =>
               previous!..updateAuth(auth.token),
         ),

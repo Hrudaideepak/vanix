@@ -28,7 +28,9 @@ class WatchlistProvider extends ChangeNotifier {
       if (response.statusCode == 200) {
         final decoded = jsonDecode(response.body);
         final list = decoded['data'] as List? ?? [];
-        _watchlistItems = list.map((c) => ContentModel.fromJson(c as Map<String, dynamic>)).toList();
+        _watchlistItems = list
+            .map((c) => ContentModel.fromJson(c as Map<String, dynamic>))
+            .toList();
       }
     } catch (e) {
       AppLogger.warning('Fetch watchlist failed: $e.');
