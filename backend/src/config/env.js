@@ -1,15 +1,24 @@
 const dotenv = require('dotenv');
 const path = require('path');
+const crypto = require('crypto');
 
 // Load environment variables from .env file
 dotenv.config({ path: path.join(__dirname, '../../.env') });
+
+const requireEnv = (key) => {
+  if (process.env[key]) return process.env[key];
+  if (process.env.NODE_ENV === 'test') {
+      return crypto.createHash('sha256').update(key).digest('hex'); // consistent dummy secret for tests
+  }
+  throw new Error(`CRITICAL ERROR: Environment variable ${key} is not set in .env file! This is a severe security risk.`);
+};
 
 module.exports = {
   NODE_ENV: process.env.NODE_ENV || 'development',
   PORT: process.env.PORT || 5000,
   MONGO_URI: process.env.MONGO_URI || 'mongodb://localhost:27017/vanix',
-  JWT_SECRET: process.env.JWT_SECRET || 'vanix_super_secret_jwt_key_12345!',
-  JWT_REFRESH_SECRET: process.env.JWT_REFRESH_SECRET || 'vanix_super_secret_refresh_jwt_key_54321!',
+  JWT_SECRET: requireEnv('JWT_SECRET'),
+  JWT_REFRESH_SECRET: requireEnv('JWT_REFRESH_SECRET'),
   JWT_EXPIRES_IN: process.env.JWT_EXPIRES_IN || '15m',
   JWT_REFRESH_EXPIRES_IN: process.env.JWT_REFRESH_EXPIRES_IN || '7d',
   CLOUDINARY_CLOUD_NAME: process.env.CLOUDINARY_CLOUD_NAME || 'vanix-cloud',
