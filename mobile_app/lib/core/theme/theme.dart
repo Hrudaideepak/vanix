@@ -4,13 +4,13 @@ class AppTheme {
   AppTheme._();
 
   // Color Palette
-  static const Color deepBlack = Color(0xFF050508);
-  static const Color cardGrey = Color(0xFF121118);
-  static const Color royalPurple = Color(0xFF8B5CF6); // Vibrant Purple Accent
-  static const Color electricBlue = Color(0xFF3B82F6); // Vibrant Blue Accent
-  static const Color softWhite = Color(0xFFF8FAFC);
-  static const Color silverAccent = Color(0xFFE2E8F0); // on-surface
-  static const Color errorRed = Color(0xFFFDA4AF);
+  static const Color deepBlack = Color(0xFF000000);
+  static const Color cardGrey = Color(0xFF0A0A0A);
+  static const Color royalPurple = Color(0xFFFF0000); // Primary Red Accent
+  static const Color electricBlue = Color(0xFFCC0000); // Secondary Red Accent
+  static const Color softWhite = Color(0xFFFFFFFF);
+  static const Color silverAccent = Color(0xFFE5E2E1); // on-surface
+  static const Color errorRed = Color(0xFFFFB4AB);
 
   // Gradient Colors
   static const LinearGradient premiumGradient = LinearGradient(
@@ -21,20 +21,20 @@ class AppTheme {
 
   static const LinearGradient backgroundGradient = LinearGradient(
     colors: [
-      Color(0xFF09070F), // Very deep purple-black
       deepBlack,
-      Color(0xFF020205),
+      cardGrey,
+      deepBlack,
     ],
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
   );
 
-  // Playful dynamic gradient for Kids Mode space
+  // Playful dynamic gradient for Kids Mode space (retains cyberpunk contrast)
   static const LinearGradient kidsBackgroundGradient = LinearGradient(
     colors: [
-      Color(0xFF0F172A), // Slate base
-      Color(0xFF1E1B4B), // Deep Indigo
-      Color(0xFF3B0764), // Deep Purple
+      Color(0xFF0A0714), // Deep indigo-black
+      deepBlack,
+      Color(0xFF050A1A), // Deep navy-black
     ],
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
@@ -51,7 +51,7 @@ class AppTheme {
         secondary: electricBlue,
         surface: cardGrey,
         error: errorRed,
-        onPrimary: Colors.white,
+        onPrimary: deepBlack,
         onSecondary: softWhite,
         onSurface: silverAccent,
       ),
@@ -68,13 +68,13 @@ class AppTheme {
         ),
         iconTheme: IconThemeData(color: softWhite),
       ),
-      cardTheme: CardThemeData(
+      cardTheme: const CardThemeData(
         color: cardGrey,
-        elevation: 6,
+        elevation: 4,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16), // modern rounded corners
-          side: const BorderSide(
-            color: Color(0x1A8B5CF6), // Subtle purple border highlight
+          borderRadius: BorderRadius.zero, // strictly sharp corners (0px)
+          side: BorderSide(
+            color: Color(0x33FF0000), // rgba(255, 0, 0, 0.2)
             width: 1,
           ),
         ),
@@ -84,21 +84,21 @@ class AppTheme {
         fillColor: softWhite.withValues(alpha: 0.05),
         hintStyle: TextStyle(color: silverAccent.withValues(alpha: 0.5)),
         contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
+        border: const OutlineInputBorder(
+          borderRadius: BorderRadius.zero,
           borderSide: BorderSide.none,
         ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: Color(0x1A8B5CF6), width: 1),
+        enabledBorder: const OutlineInputBorder(
+          borderRadius: BorderRadius.zero,
+          borderSide: BorderSide(color: Color(0x33FF0000), width: 1),
         ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: royalPurple, width: 1.5),
+        focusedBorder: const OutlineInputBorder(
+          borderRadius: BorderRadius.zero,
+          borderSide: BorderSide(color: royalPurple, width: 1.5),
         ),
-        errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: errorRed, width: 1),
+        errorBorder: const OutlineInputBorder(
+          borderRadius: BorderRadius.zero,
+          borderSide: BorderSide(color: errorRed, width: 1),
         ),
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
@@ -108,8 +108,8 @@ class AppTheme {
           shadowColor: royalPurple.withValues(alpha: 0.3),
           elevation: 8,
           padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.zero,
           ),
           textStyle: const TextStyle(
             fontSize: 16,
@@ -165,7 +165,7 @@ class AppTheme {
       color: (color ?? cardGrey).withValues(alpha: opacity),
       borderRadius: BorderRadius.circular(borderRadius),
       border: Border.all(
-        color: const Color(0x1AFF0000), // rgba(255, 0, 0, 0.1)
+        color: const Color(0x33FF0000), // rgba(255, 0, 0, 0.2)
         width: 1.0,
       ),
       boxShadow: [

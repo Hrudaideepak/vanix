@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'dart:io' show Platform;
 
 class AppConstants {
   AppConstants._();
@@ -9,6 +10,16 @@ class AppConstants {
     if (kIsWeb) {
       final host = Uri.base.host.isEmpty ? 'localhost' : Uri.base.host;
       return 'http://$host:5000/api';
+    }
+    // On Windows desktop, connect to localhost directly
+    if (!kIsWeb) {
+      try {
+        if (Platform.isWindows) {
+          return 'http://localhost:5000/api';
+        }
+      } catch (e) {
+        // Platform import might throw on unsupported platforms
+      }
     }
     return 'http://192.168.29.161:5000/api';
   }

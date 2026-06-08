@@ -193,7 +193,7 @@ class AuthProvider extends ChangeNotifier {
 
   /// Sync client's FCM token with the backend
   Future<void> syncDevicePushToken() async {
-    // TODO: Re-enable after Firebase is configured
+    // Firebase Cloud Messaging sync (disabled until Firebase is configured)
     // if (!isAuthenticated || _token == null) return;
     // try {
     //   final fcmToken = await FirebaseMessaging.instance.getToken();

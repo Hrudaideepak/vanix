@@ -8,6 +8,7 @@ import '../../../../core/widgets/vanix_image.dart';
 import '../../../../core/widgets/shimmer_loading.dart';
 import '../../providers/home_provider.dart';
 import '../../../movies/models/content_model.dart';
+import '../../../profile/providers/profile_provider.dart';
 
 class HomeScreen extends StatefulWidget {
   final String? filterType;

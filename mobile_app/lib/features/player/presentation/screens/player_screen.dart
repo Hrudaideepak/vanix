@@ -466,13 +466,16 @@ class _PlayerScreenState extends State<PlayerScreen> {
                         final x = details.localPosition.dx;
                         final isRightSide = x > (size.width / 2);
                         final currentPos = _videoPlayerController.value.position;
+                        final duration = _videoPlayerController.value.duration;
                         if (isRightSide) {
                           final newPos = currentPos + const Duration(seconds: 10);
-                          _videoPlayerController.seekTo(newPos);
+                          final clampedPos = newPos > duration ? duration : newPos;
+                          _videoPlayerController.seekTo(clampedPos);
                           _showSeekIndicator('Skip +10s ⏩');
                         } else {
                           final newPos = currentPos - const Duration(seconds: 10);
-                          _videoPlayerController.seekTo(newPos.clamp(Duration.zero, _videoPlayerController.value.duration));
+                          final clampedPos = newPos < Duration.zero ? Duration.zero : newPos;
+                          _videoPlayerController.seekTo(clampedPos);
                           _showSeekIndicator('Rewind -10s ⏪');
                         }
                       },

@@ -19,7 +19,7 @@ import 'features/subscription/providers/subscription_provider.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   
-  // TODO: Re-enable Firebase initialization after adding google-services.json
+  // Firebase initialization (disabled until google-services.json is added)
   // try {
   //   await Firebase.initializeApp();
   //   print("🔥 Firebase initialized successfully!");

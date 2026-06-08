@@ -38,3 +38,5 @@ Thumbs.db
 **/ios/Flutter/.last_build_id
 admin_panel/dist/
 
+# Android APK builds
+*.apk
