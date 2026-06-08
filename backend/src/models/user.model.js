@@ -47,6 +47,7 @@ const UserSchema = new mongoose.Schema({
     deviceId: { type: String, required: true },
     deviceName: { type: String, default: 'Unknown Device' },
     token: { type: String },
+    fcmToken: { type: String },
     lastActive: { type: Date, default: Date.now },
   }],
   isBanned: {
@@ -60,7 +61,7 @@ const UserSchema = new mongoose.Schema({
 // Encrypt password using bcrypt
 UserSchema.pre('save', async function(next) {
   if (!this.isModified('password')) {
-    next();
+    return next();
   }
   const salt = await bcrypt.genSalt(10);
   this.password = await bcrypt.hash(this.password, salt);

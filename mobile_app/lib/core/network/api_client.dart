@@ -37,7 +37,7 @@ class ApiClient {
 
   Future<void> _checkConnectivity() async {
     final connectivityResult = await _connectivity.checkConnectivity();
-    if (connectivityResult == ConnectivityResult.none) {
+    if (connectivityResult.contains(ConnectivityResult.none)) {
       throw const SocketException('No Internet Connection');
     }
   }

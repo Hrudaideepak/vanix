@@ -29,7 +29,8 @@ exports.smartSearch = async (req, res, next) => {
     if (genre && genre !== 'All') filter.genres = genre;
     if (type && type !== 'All') filter.type = type.toLowerCase();
 
-    const regexQuery = new RegExp(q.trim(), 'i');
+    const escapeRegExp = (string) => string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const regexQuery = new RegExp(escapeRegExp(q.trim()), 'i');
     filter.$or = [
       { title: regexQuery },
       { description: regexQuery },
@@ -40,12 +41,13 @@ exports.smartSearch = async (req, res, next) => {
       filter.genres = { $in: ['Kids', 'Animation', 'Family', 'Sci-Fi', 'Fantasy'] };
     }
 
-    let results = await Movie.find(filter).limit(20);
+    let results = await Movie.find(filter).limit(20).lean();
 
     let typoCorrected = false;
     let suggestedQuery = null;
     if (results.length === 0) {
-      const allMovies = await Movie.find(req.profile && req.profile.isKids ? { genres: { $in: ['Kids', 'Animation', 'Family', 'Sci-Fi', 'Fantasy'] } } : {});
+      // ⚡ Bolt: Optimize typo correction by only loading _id and title, and using lean()
+      const allMovies = await Movie.find(req.profile && req.profile.isKids ? { genres: { $in: ['Kids', 'Animation', 'Family', 'Sci-Fi', 'Fantasy'] } } : {}).select('_id title').lean();
       const matches = [];
       const queryWords = q.trim().toLowerCase().split(/\s+/);
       
@@ -60,15 +62,23 @@ exports.smartSearch = async (req, res, next) => {
         });
 
         if (minDistance <= 2) {
-          matches.push({ movie, distance: minDistance });
+          matches.push({ id: movie._id, distance: minDistance, title: movie.title });
         }
       });
 
       if (matches.length > 0) {
         matches.sort((a, b) => a.distance - b.distance);
-        results = matches.map(m => m.movie).slice(0, 5);
+        const topMatches = matches.slice(0, 5);
+
+        // Fetch the full documents for the matched movies
+        const matchedIds = topMatches.map(m => m.id);
+        const matchedMovies = await Movie.find({ _id: { $in: matchedIds } }).lean();
+
+        // Maintain the sorted order based on distance
+        results = topMatches.map(m => matchedMovies.find(movie => movie._id.toString() === m.id.toString())).filter(Boolean);
+
         typoCorrected = true;
-        suggestedQuery = results[0].title;
+        suggestedQuery = topMatches[0].title;
       }
     }
 

@@ -6,7 +6,10 @@ const Profile = require('../src/models/profile.model');
 const Movie = require('../src/models/movie.model');
 
 beforeAll(async () => {
-  const MONGO_TEST_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/vanix_test_ent';
+  const baseUri = process.env.MONGO_URI
+    ? process.env.MONGO_URI.replace(/\/[^\/]+$/, '')
+    : 'mongodb://localhost:27017';
+  const MONGO_TEST_URI = `${baseUri}/vanix_test_ent`;
   await mongoose.connect(MONGO_TEST_URI);
 });
 
@@ -61,6 +64,8 @@ describe('🌌 Enterprise OTT Features Integration Tests', () => {
     await Movie.create({
       title: 'Nebula Genesis',
       description: 'Sci-fi cosmic movie',
+      thumbnailUrl: 'https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?w=500',
+      bannerUrl: 'https://images.unsplash.com/photo-1506318137071-a8e063b4bec0?w=1000',
       videoUrl: 'https://demo.unified-streaming.com/k8s/features/stable/video/tears-of-steel/tears-of-steel.ism/.m3u8',
       releaseYear: 2024,
       duration: '2h 15m',

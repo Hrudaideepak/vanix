@@ -1,10 +1,13 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../core/utils/logger.dart';
 import '../data/auth_service.dart';
 import '../models/user_model.dart';
+import 'dart:io' show Platform;
+// import 'package:firebase_messaging/firebase_messaging.dart'; // Re-enable with Firebase
 
 class AuthProvider extends ChangeNotifier {
   final SharedPreferences _prefs;
@@ -43,11 +46,33 @@ class AuthProvider extends ChangeNotifier {
         _refreshToken = refreshToken;
         _currentUser = UserModel.fromJson(jsonDecode(userJson));
         AppLogger.info('Session restored for: ${_currentUser?.email}');
+        syncDevicePushToken();
       } catch (e) {
         AppLogger.error('Failed to parse cached session: $e');
         _clearSession();
       }
     }
+  }
+
+  /// Generate or fetch stored device ID
+  Future<String> _getOrCreateDeviceId() async {
+    String? deviceId = _prefs.getString('vanix_device_id');
+    if (deviceId == null) {
+      final rand = '${DateTime.now().microsecondsSinceEpoch}_${100000 + (DateTime.now().millisecond * 100)}';
+      deviceId = 'dev_$rand';
+      await _prefs.setString('vanix_device_id', deviceId);
+    }
+    return deviceId;
+  }
+
+  /// Determine platform device name
+  String _getDeviceName() {
+    if (kIsWeb) return 'Web Browser';
+    return Platform.isAndroid
+        ? 'Android Device'
+        : Platform.isIOS
+            ? 'iPhone/iPad'
+            : 'Desktop App';
   }
 
   /// Register User
@@ -56,7 +81,14 @@ class AuthProvider extends ChangeNotifier {
     _errorMessage = null;
 
     try {
-      final response = await _authService.register(email, password);
+      final deviceId = await _getOrCreateDeviceId();
+      final deviceName = _getDeviceName();
+      final response = await _authService.register(
+        email,
+        password,
+        deviceId: deviceId,
+        deviceName: deviceName,
+      );
       await _saveSession(
         token: response['accessToken'],
         refreshToken: response['refreshToken'],
@@ -77,7 +109,14 @@ class AuthProvider extends ChangeNotifier {
     _errorMessage = null;
 
     try {
-      final response = await _authService.login(email, password);
+      final deviceId = await _getOrCreateDeviceId();
+      final deviceName = _getDeviceName();
+      final response = await _authService.login(
+        email,
+        password,
+        deviceId: deviceId,
+        deviceName: deviceName,
+      );
       await _saveSession(
         token: response['accessToken'],
         refreshToken: response['refreshToken'],
@@ -135,6 +174,7 @@ class AuthProvider extends ChangeNotifier {
     await _prefs.setString(AppConstants.keyUser, jsonEncode(userData));
     
     notifyListeners();
+    syncDevicePushToken();
   }
 
   // Helper: Clear local storage session
@@ -149,6 +189,27 @@ class AuthProvider extends ChangeNotifier {
     _prefs.remove(AppConstants.keyActiveProfileId);
 
     notifyListeners();
+  }
+
+  /// Sync client's FCM token with the backend
+  Future<void> syncDevicePushToken() async {
+    // TODO: Re-enable after Firebase is configured
+    // if (!isAuthenticated || _token == null) return;
+    // try {
+    //   final fcmToken = await FirebaseMessaging.instance.getToken();
+    //   final deviceId = await _getOrCreateDeviceId();
+    //   if (fcmToken != null) {
+    //     final response = await _authService.registerFCMToken(
+    //       token: _token!,
+    //       deviceId: deviceId,
+    //       fcmToken: fcmToken,
+    //     );
+    //     AppLogger.info('FCM Token synchronized with server: $response');
+    //   }
+    // } catch (e) {
+    //   AppLogger.warning('Failed to sync push token: $e');
+    // }
+    AppLogger.info('FCM sync skipped — Firebase not yet configured');
   }
 
   void _setLoading(bool val) {

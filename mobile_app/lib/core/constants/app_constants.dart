@@ -8,9 +8,10 @@ class AppConstants {
   // On android emulator, 10.0.2.2 points to host machine localhost
   static String get apiBaseUrl {
     if (kIsWeb) {
-      return 'http://localhost:5000/api';
+      final host = Uri.base.host.isEmpty ? 'localhost' : Uri.base.host;
+      return 'http://$host:5000/api';
     }
-    return Platform.isAndroid ? 'http://10.0.2.2:5000/api' : 'http://localhost:5000/api';
+    return 'http://192.168.29.161:5000/api';
   }
   
   // Storage Keys
