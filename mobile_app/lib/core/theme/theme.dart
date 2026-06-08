@@ -4,13 +4,13 @@ class AppTheme {
   AppTheme._();
 
   // Color Palette
-  static const Color deepBlack = Color(0xFF0B0F1A);
-  static const Color cardGrey = Color(0xFF151A28);
-  static const Color royalPurple = Color(0xFF6C63FF);
-  static const Color electricBlue = Color(0xFF00D4FF);
+  static const Color deepBlack = Color(0xFF000000);
+  static const Color cardGrey = Color(0xFF0A0A0A);
+  static const Color royalPurple = Color(0xFFFF0000); // Primary Red Accent
+  static const Color electricBlue = Color(0xFFCC0000); // Secondary Red Accent
   static const Color softWhite = Color(0xFFFFFFFF);
-  static const Color silverAccent = Color(0xFFA0A7B8);
-  static const Color errorRed = Color(0xFFEF4444);
+  static const Color silverAccent = Color(0xFFE5E2E1); // on-surface
+  static const Color errorRed = Color(0xFFFFB4AB);
 
   // Gradient Colors
   static const LinearGradient premiumGradient = LinearGradient(
@@ -21,9 +21,9 @@ class AppTheme {
 
   static const LinearGradient backgroundGradient = LinearGradient(
     colors: [
-      Color(0xFF121829), // Slightly lighter Navy Slate top-left
+      Color(0xFF0A0A0A),
       deepBlack,
-      Color(0xFF070B14), // Deeper Obsidian Navy bottom-right
+      Color(0xFF000000),
     ],
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
@@ -40,11 +40,11 @@ class AppTheme {
         secondary: electricBlue,
         surface: cardGrey,
         error: errorRed,
-        onPrimary: softWhite,
+        onPrimary: deepBlack,
         onSecondary: softWhite,
         onSurface: silverAccent,
       ),
-      fontFamily: 'Outfit',
+      fontFamily: 'SpaceGrotesk',
       appBarTheme: const AppBarTheme(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -53,17 +53,17 @@ class AppTheme {
           color: softWhite,
           fontSize: 20,
           fontWeight: FontWeight.bold,
-          fontFamily: 'Outfit',
+          fontFamily: 'SpaceGrotesk',
         ),
         iconTheme: IconThemeData(color: softWhite),
       ),
-      cardTheme: CardThemeData(
-        color: cardGrey.withValues(alpha: 0.7),
+      cardTheme: const CardThemeData(
+        color: cardGrey,
         elevation: 4,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.zero, // strictly sharp corners (0px)
           side: BorderSide(
-            color: softWhite.withValues(alpha: 0.08),
+            color: Color(0x1AFF0000), // rgba(255, 0, 0, 0.1)
             width: 1,
           ),
         ),
@@ -73,21 +73,21 @@ class AppTheme {
         fillColor: softWhite.withValues(alpha: 0.05),
         hintStyle: TextStyle(color: silverAccent.withValues(alpha: 0.5)),
         contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
+        border: const OutlineInputBorder(
+          borderRadius: BorderRadius.zero,
           borderSide: BorderSide.none,
         ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: softWhite.withValues(alpha: 0.08), width: 1),
+        enabledBorder: const OutlineInputBorder(
+          borderRadius: BorderRadius.zero,
+          borderSide: BorderSide(color: Color(0x1AFF0000), width: 1),
         ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: royalPurple, width: 1.5),
+        focusedBorder: const OutlineInputBorder(
+          borderRadius: BorderRadius.zero,
+          borderSide: BorderSide(color: royalPurple, width: 1.5),
         ),
-        errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: errorRed, width: 1),
+        errorBorder: const OutlineInputBorder(
+          borderRadius: BorderRadius.zero,
+          borderSide: BorderSide(color: errorRed, width: 1),
         ),
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
@@ -97,13 +97,13 @@ class AppTheme {
           shadowColor: royalPurple.withValues(alpha: 0.3),
           elevation: 8,
           padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.zero,
           ),
           textStyle: const TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.bold,
-            fontFamily: 'Outfit',
+            fontFamily: 'SpaceGrotesk',
           ),
         ),
       ),
@@ -132,7 +132,7 @@ class AppTheme {
         surface: Colors.white,
         error: errorRed,
       ),
-      fontFamily: 'Outfit',
+      fontFamily: 'SpaceGrotesk',
       textTheme: const TextTheme(
         displayLarge: TextStyle(color: deepBlack, fontSize: 32, fontWeight: FontWeight.bold),
         titleLarge: TextStyle(color: deepBlack, fontSize: 22, fontWeight: FontWeight.w600),
@@ -145,16 +145,16 @@ class AppTheme {
   // Custom Glassmorphism Box Decoration helper
   static BoxDecoration glassDecoration({
     required BuildContext context,
-    double blur = 15.0,
-    double opacity = 0.08,
-    double borderRadius = 16.0,
+    double blur = 12.0,
+    double opacity = 0.8,
+    double borderRadius = 0.0,
     Color? color,
   }) {
     return BoxDecoration(
-      color: (color ?? softWhite).withValues(alpha: opacity),
+      color: (color ?? cardGrey).withValues(alpha: opacity),
       borderRadius: BorderRadius.circular(borderRadius),
       border: Border.all(
-        color: (color ?? softWhite).withValues(alpha: 0.12),
+        color: const Color(0x1AFF0000), // rgba(255, 0, 0, 0.1)
         width: 1.0,
       ),
       boxShadow: [

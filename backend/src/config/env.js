@@ -37,4 +37,5 @@ module.exports = {
   CLOUDFRONT_KEY_PAIR_ID: process.env.CLOUDFRONT_KEY_PAIR_ID,
   CLOUDFRONT_PRIVATE_KEY_PATH: process.env.CLOUDFRONT_PRIVATE_KEY_PATH,
   TEMP_VIDEO_PATH: process.env.TEMP_VIDEO_PATH || './temp/uploads',
+  GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID || 'google_client_id_placeholder',
 };

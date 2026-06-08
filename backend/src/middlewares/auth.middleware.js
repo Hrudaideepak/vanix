@@ -36,6 +36,14 @@ exports.protect = async (req, res, next) => {
       });
     }
 
+    // Restrict access immediately if banned
+    if (req.user.isBanned) {
+      return res.status(403).json({
+        success: false,
+        message: 'Access denied. Your account has been restricted by system security policies.',
+      });
+    }
+
     // Resolve active profile if profile ID header is supplied
     const profileId = req.headers['x-profile-id'];
     if (profileId && mongoose.Types.ObjectId.isValid(profileId)) {
