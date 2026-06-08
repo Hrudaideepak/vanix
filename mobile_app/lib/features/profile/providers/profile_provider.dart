@@ -12,7 +12,7 @@ class ProfileProvider extends ChangeNotifier {
   final FlutterSecureStorage _secureStorage = const FlutterSecureStorage();
   final SharedPreferences _prefs;
   UserModel? _user;
-  
+
   ProfileModel? _activeProfile;
   List<ProfileModel> _profiles = [];
   bool _isLoading = false;
@@ -67,7 +67,8 @@ class ProfileProvider extends ChangeNotifier {
     return true;
   }
 
-  Future<bool> createProfile(String name, {bool isKids = false, String? pin}) async {
+  Future<bool> createProfile(String name,
+      {bool isKids = false, String? pin}) async {
     if (_user == null) return false;
     _isLoading = true;
     notifyListeners();
@@ -84,16 +85,17 @@ class ProfileProvider extends ChangeNotifier {
       if (decoded['success'] == true) {
         final newProfile = ProfileModel.fromJson(decoded['data']);
         _profiles.add(newProfile);
-        
+
         // Save user profiles locally
         await _saveUpdatedProfilesLocally();
-        
+
         _isLoading = false;
         notifyListeners();
         return true;
       }
     } catch (e) {
-      AppLogger.warning('Create profile API failed: $e. Using local mock fallback...');
+      AppLogger.warning(
+          'Create profile API failed: $e. Using local mock fallback...');
     }
 
     // Local fallback/mocking
@@ -110,7 +112,7 @@ class ProfileProvider extends ChangeNotifier {
 
       _profiles.add(newProfile);
       await _saveUpdatedProfilesLocally();
-      
+
       _isLoading = false;
       notifyListeners();
       return true;
@@ -122,16 +124,22 @@ class ProfileProvider extends ChangeNotifier {
     }
   }
 
-  Future<bool> updateProfile(String profileId, {String? name, bool? isKids, String? pin, String? languagePreference}) async {
+  Future<bool> updateProfile(String profileId,
+      {String? name,
+      bool? isKids,
+      String? pin,
+      String? languagePreference}) async {
     _isLoading = true;
     notifyListeners();
 
     try {
-      final response = await ApiClient.instance.post('/profiles/$profileId', body: {
+      final response =
+          await ApiClient.instance.post('/profiles/$profileId', body: {
         if (name != null) 'name': name,
         if (isKids != null) 'isKids': isKids,
         if (pin != null) 'pin': pin,
-        if (languagePreference != null) 'languagePreference': languagePreference,
+        if (languagePreference != null)
+          'languagePreference': languagePreference,
       });
 
       final decoded = jsonDecode(response.body);
@@ -221,7 +229,8 @@ class ProfileProvider extends ChangeNotifier {
         subscriptionPlan: _user!.subscriptionPlan,
         profiles: _profiles,
       );
-      await _secureStorage.write(key: AppConstants.keyUser, value: jsonEncode(updatedUser.toJson()));
+      await _secureStorage.write(
+          key: AppConstants.keyUser, value: jsonEncode(updatedUser.toJson()));
     }
   }
 }

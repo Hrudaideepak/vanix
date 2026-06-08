@@ -11,8 +11,10 @@ import '../../../auth/providers/auth_provider.dart';
 class SubscriptionScreen extends StatelessWidget {
   const SubscriptionScreen({super.key});
 
-  void _handleSubscribe(BuildContext context, String planId, String price) async {
-    final subProvider = Provider.of<SubscriptionProvider>(context, listen: false);
+  void _handleSubscribe(
+      BuildContext context, String planId, String price) async {
+    final subProvider =
+        Provider.of<SubscriptionProvider>(context, listen: false);
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
 
     // Call checkout api
@@ -20,7 +22,7 @@ class SubscriptionScreen extends StatelessWidget {
 
     if (checkoutResult != null && context.mounted) {
       final orderId = checkoutResult['orderId'] as String;
-      
+
       // Simulate Payment gateway screen / Razorpay prompt success
       showDialog(
         context: context,
@@ -28,11 +30,13 @@ class SubscriptionScreen extends StatelessWidget {
         builder: (context) {
           return AlertDialog(
             backgroundColor: AppTheme.cardGrey,
-            title: const Text('Razorpay Gateway', style: TextStyle(color: AppTheme.softWhite)),
+            title: const Text('Razorpay Gateway',
+                style: TextStyle(color: AppTheme.softWhite)),
             content: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Icon(Icons.payment, color: AppTheme.royalPurple, size: 48),
+                const Icon(Icons.payment,
+                    color: AppTheme.royalPurple, size: 48),
                 const SizedBox(height: 16),
                 Text(
                   'Processing payment of ₹$price via UPI/Card...',
@@ -43,40 +47,47 @@ class SubscriptionScreen extends StatelessWidget {
             ),
             actions: [
               TextButton(
-                child: const Text('Cancel', style: TextStyle(color: AppTheme.errorRed)),
+                child: const Text('Cancel',
+                    style: TextStyle(color: AppTheme.errorRed)),
                 onPressed: () => Navigator.pop(context),
               ),
               ElevatedButton(
-                style: ElevatedButton.styleFrom(backgroundColor: AppTheme.royalPurple),
+                style: ElevatedButton.styleFrom(
+                    backgroundColor: AppTheme.royalPurple),
                 child: const Text('Simulate Success'),
                 onPressed: () async {
                   Navigator.pop(context); // Close gateway dialog
-                  
+
                   // Call verify API
                   final success = await subProvider.verifyPayment(
                     orderId: orderId,
-                    paymentId: 'pay_mock_${DateTime.now().millisecondsSinceEpoch}',
+                    paymentId:
+                        'pay_mock_${DateTime.now().millisecondsSinceEpoch}',
                     signature: 'mock_signature',
                     planId: planId,
                   );
 
                   if (success && context.mounted) {
                     // Refresh session in auth state
-                    await authProvider.login(authProvider.currentUser?.email ?? 'user@vanix.com', 'userpassword123');
-                    
+                    await authProvider.login(
+                        authProvider.currentUser?.email ?? 'user@vanix.com',
+                        'userpassword123');
+
                     if (context.mounted) {
                       showDialog(
                         context: context,
                         builder: (context) => AlertDialog(
                           backgroundColor: AppTheme.cardGrey,
                           title: const Text('Success!'),
-                          content: const Text('Welcome to the Premium tier! Your subscription is now active.'),
+                          content: const Text(
+                              'Welcome to the Premium tier! Your subscription is now active.'),
                           actions: [
                             TextButton(
                               child: const Text('Start Streaming'),
                               onPressed: () {
                                 Navigator.pop(context);
-                                Navigator.pop(context); // Go back to profile screen
+                                Navigator.pop(
+                                    context); // Go back to profile screen
                               },
                             )
                           ],
@@ -119,13 +130,18 @@ class SubscriptionScreen extends StatelessWidget {
             children: [
               Text(
                 'Choose Your Universe',
-                style: Theme.of(context).textTheme.displaySmall?.copyWith(fontWeight: FontWeight.w800),
+                style: Theme.of(context)
+                    .textTheme
+                    .displaySmall
+                    ?.copyWith(fontWeight: FontWeight.w800),
               ),
               const SizedBox(height: 8),
               Text(
                 'Select a subscription tier to activate Dolby Atmos and 4K HDR streams.',
                 textAlign: TextAlign.center,
-                style: TextStyle(color: AppTheme.silverAccent.withValues(alpha: 0.6), fontSize: 13),
+                style: TextStyle(
+                    color: AppTheme.silverAccent.withValues(alpha: 0.6),
+                    fontSize: 13),
               ),
               const SizedBox(height: 32),
 
@@ -150,14 +166,19 @@ class SubscriptionScreen extends StatelessWidget {
                           if (isPremium)
                             Container(
                               margin: const EdgeInsets.only(bottom: 12),
-                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 10, vertical: 4),
                               decoration: BoxDecoration(
-                                gradient: const LinearGradient(colors: [Colors.amber, Colors.orange]),
+                                gradient: const LinearGradient(
+                                    colors: [Colors.amber, Colors.orange]),
                                 borderRadius: BorderRadius.circular(6),
                               ),
                               child: const Text(
                                 'RECOMMENDED TIER',
-                                style: TextStyle(fontSize: 9, fontWeight: FontWeight.bold, color: Colors.black),
+                                style: TextStyle(
+                                    fontSize: 9,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black),
                               ),
                             ),
                           Row(
@@ -165,7 +186,10 @@ class SubscriptionScreen extends StatelessWidget {
                             children: [
                               Text(
                                 plan['name'] as String,
-                                style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w800, color: AppTheme.softWhite),
+                                style: const TextStyle(
+                                    fontSize: 22,
+                                    fontWeight: FontWeight.w800,
+                                    color: AppTheme.softWhite),
                               ),
                               Row(
                                 crossAxisAlignment: CrossAxisAlignment.baseline,
@@ -173,11 +197,17 @@ class SubscriptionScreen extends StatelessWidget {
                                 children: [
                                   Text(
                                     '₹${plan['price']}',
-                                    style: const TextStyle(fontSize: 26, fontWeight: FontWeight.w900, color: AppTheme.softWhite),
+                                    style: const TextStyle(
+                                        fontSize: 26,
+                                        fontWeight: FontWeight.w900,
+                                        color: AppTheme.softWhite),
                                   ),
                                   Text(
                                     ' / ${plan['duration']}',
-                                    style: TextStyle(fontSize: 12, color: AppTheme.silverAccent.withValues(alpha: 0.6)),
+                                    style: TextStyle(
+                                        fontSize: 12,
+                                        color: AppTheme.silverAccent
+                                            .withValues(alpha: 0.6)),
                                   ),
                                 ],
                               )
@@ -186,17 +216,22 @@ class SubscriptionScreen extends StatelessWidget {
                           const SizedBox(height: 16),
                           const Divider(color: Colors.white10),
                           const SizedBox(height: 16),
-                          ...List.generate((plan['features'] as List).length, (fIdx) {
-                            final feature = (plan['features'] as List)[fIdx] as String;
+                          ...List.generate((plan['features'] as List).length,
+                              (fIdx) {
+                            final feature =
+                                (plan['features'] as List)[fIdx] as String;
                             return Padding(
                               padding: const EdgeInsets.only(bottom: 10),
                               child: Row(
                                 children: [
-                                  const Icon(Icons.check, color: AppTheme.royalPurple, size: 18),
+                                  const Icon(Icons.check,
+                                      color: AppTheme.royalPurple, size: 18),
                                   const SizedBox(width: 12),
                                   Text(
                                     feature,
-                                    style: const TextStyle(color: AppTheme.silverAccent, fontSize: 13),
+                                    style: const TextStyle(
+                                        color: AppTheme.silverAccent,
+                                        fontSize: 13),
                                   ),
                                 ],
                               ),
@@ -204,10 +239,15 @@ class SubscriptionScreen extends StatelessWidget {
                           }),
                           const SizedBox(height: 24),
                           PremiumButton(
-                            text: plan['price'] == '0' ? 'Free Tier' : 'Upgrade Plan',
+                            text: plan['price'] == '0'
+                                ? 'Free Tier'
+                                : 'Upgrade Plan',
                             onTap: plan['price'] == '0'
                                 ? null
-                                : () => _handleSubscribe(context, plan['id'] as String, plan['price'] as String),
+                                : () => _handleSubscribe(
+                                    context,
+                                    plan['id'] as String,
+                                    plan['price'] as String),
                           ),
                         ],
                       ),

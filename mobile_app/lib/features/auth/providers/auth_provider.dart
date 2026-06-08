@@ -39,7 +39,8 @@ class AuthProvider extends ChangeNotifier {
   /// Load session from local storage on startup
   Future<void> _loadSession() async {
     final token = await _secureStorage.read(key: AppConstants.keyToken);
-    final refreshToken = await _secureStorage.read(key: AppConstants.keyRefreshToken);
+    final refreshToken =
+        await _secureStorage.read(key: AppConstants.keyRefreshToken);
     final userJson = await _secureStorage.read(key: AppConstants.keyUser);
 
     if (token != null && refreshToken != null && userJson != null) {
@@ -61,7 +62,8 @@ class AuthProvider extends ChangeNotifier {
   Future<String> _getOrCreateDeviceId() async {
     String? deviceId = _prefs.getString('vanix_device_id');
     if (deviceId == null) {
-      final rand = '${DateTime.now().microsecondsSinceEpoch}_${100000 + (DateTime.now().millisecond * 100)}';
+      final rand =
+          '${DateTime.now().microsecondsSinceEpoch}_${100000 + (DateTime.now().millisecond * 100)}';
       deviceId = 'dev_$rand';
       await _prefs.setString('vanix_device_id', deviceId);
     }
@@ -141,10 +143,11 @@ class AuthProvider extends ChangeNotifier {
     try {
       final response = await _authService.refreshAccessToken(_refreshToken!);
       final newAccessToken = response['accessToken'];
-      
+
       _token = newAccessToken;
-      await _secureStorage.write(key: AppConstants.keyToken, value: newAccessToken);
-      
+      await _secureStorage.write(
+          key: AppConstants.keyToken, value: newAccessToken);
+
       AppLogger.info('Access Token successfully refreshed.');
       notifyListeners();
       return true;
@@ -173,9 +176,11 @@ class AuthProvider extends ChangeNotifier {
     _currentUser = UserModel.fromJson(userData);
 
     await _secureStorage.write(key: AppConstants.keyToken, value: token);
-    await _secureStorage.write(key: AppConstants.keyRefreshToken, value: refreshToken);
-    await _secureStorage.write(key: AppConstants.keyUser, value: jsonEncode(userData));
-    
+    await _secureStorage.write(
+        key: AppConstants.keyRefreshToken, value: refreshToken);
+    await _secureStorage.write(
+        key: AppConstants.keyUser, value: jsonEncode(userData));
+
     notifyListeners();
     syncDevicePushToken();
   }
