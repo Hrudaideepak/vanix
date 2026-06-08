@@ -8,7 +8,7 @@ import '../../../search/presentation/screens/search_screen.dart';
 import '../../../downloads/presentation/screens/downloads_screen.dart';
 import '../../../watchlist/presentation/screens/watchlist_screen.dart';
 import '../../../profile/presentation/screens/profile_screen.dart';
-import '../../../live_tv/presentation/screens/live_tv_screen.dart';
+import '../../../trailers/presentation/screens/trailers_feed_screen.dart';
 
 class NavigationHolder extends StatefulWidget {
   const NavigationHolder({super.key});
@@ -26,7 +26,7 @@ class _NavigationHolderState extends State<NavigationHolder> {
     {'label': 'Search', 'icon': Icons.search, 'inactiveIcon': Icons.search},
     {'label': 'TV Shows', 'icon': Icons.tv, 'inactiveIcon': Icons.tv_outlined},
     {'label': 'Movies', 'icon': Icons.movie_creation, 'inactiveIcon': Icons.movie_creation_outlined},
-    {'label': 'Live TV', 'icon': Icons.live_tv, 'inactiveIcon': Icons.live_tv_outlined},
+    {'label': 'Trailers', 'icon': Icons.video_library, 'inactiveIcon': Icons.video_library_outlined},
     {'label': 'My List', 'icon': Icons.playlist_add_check, 'inactiveIcon': Icons.playlist_add_check_outlined},
     {'label': 'Downloads', 'icon': Icons.download, 'inactiveIcon': Icons.download_outlined},
     {'label': 'Settings', 'icon': Icons.settings, 'inactiveIcon': Icons.settings_outlined},
@@ -43,7 +43,7 @@ class _NavigationHolderState extends State<NavigationHolder> {
       case 3:
         return const HomeScreen(filterType: 'movie');
       case 4:
-        return const LiveTvScreen();
+        return const TrailersFeedScreen();
       case 5:
         return const WatchlistScreen();
       case 6:
@@ -119,7 +119,7 @@ class _NavigationHolderState extends State<NavigationHolder> {
             children: [
               _buildMobileNavItem(0, mobileToGlobalMap[0], Icons.home_filled, Icons.home_outlined, 'Home'),
               _buildMobileNavItem(1, mobileToGlobalMap[1], Icons.search, Icons.search, 'Search'),
-              _buildMobileNavItem(2, mobileToGlobalMap[2], Icons.live_tv, Icons.live_tv_outlined, 'Live TV'),
+              _buildMobileNavItem(2, mobileToGlobalMap[2], Icons.video_library, Icons.video_library_outlined, 'Trailers'),
               _buildMobileNavItem(3, mobileToGlobalMap[3], Icons.bookmark, Icons.bookmark_outline, 'Watchlist'),
               _buildMobileNavItem(4, mobileToGlobalMap[4], Icons.person, Icons.person_outline, 'Profile'),
             ],
