@@ -5,6 +5,16 @@ const crypto = require('crypto');
 // Load environment variables from .env file
 dotenv.config({ path: path.join(__dirname, '../../.env') });
 
+const NODE_ENV = process.env.NODE_ENV || 'development';
+
+if (NODE_ENV !== 'test') {
+  if (!process.env.JWT_SECRET) {
+    throw new Error("FATAL ERROR: JWT_SECRET is not defined.");
+  }
+  if (!process.env.JWT_REFRESH_SECRET) {
+    throw new Error("FATAL ERROR: JWT_REFRESH_SECRET is not defined.");
+  }
+}
 const requireEnv = (key) => {
   if (process.env[key]) return process.env[key];
   if (process.env.NODE_ENV === 'test') {
@@ -14,9 +24,11 @@ const requireEnv = (key) => {
 };
 
 module.exports = {
-  NODE_ENV: process.env.NODE_ENV || 'development',
+  NODE_ENV,
   PORT: process.env.PORT || 5000,
   MONGO_URI: process.env.MONGO_URI || 'mongodb://localhost:27017/vanix',
+  JWT_SECRET: process.env.JWT_SECRET,
+  JWT_REFRESH_SECRET: process.env.JWT_REFRESH_SECRET,
   JWT_SECRET: requireEnv('JWT_SECRET'),
   JWT_REFRESH_SECRET: requireEnv('JWT_REFRESH_SECRET'),
   JWT_EXPIRES_IN: process.env.JWT_EXPIRES_IN || '15m',

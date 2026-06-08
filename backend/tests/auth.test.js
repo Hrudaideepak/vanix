@@ -11,7 +11,7 @@ beforeAll(async () => {
   const baseUri = process.env.MONGO_URI 
     ? process.env.MONGO_URI.replace(/\/[^\/]+$/, '') 
     : 'mongodb://localhost:27017';
-  const MONGO_TEST_URI = `${baseUri}/vanix_test`;
+  const MONGO_TEST_URI = `${baseUri}`;
   await mongoose.connect(MONGO_TEST_URI);
 });
 
