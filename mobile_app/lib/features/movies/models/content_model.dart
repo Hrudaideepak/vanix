@@ -5,6 +5,7 @@ class ContentModel {
   final String thumbnailUrl;
   final String bannerUrl;
   final String videoUrl;
+  final String trailerUrl;
   final String type; // 'movie' or 'series'
   final double rating;
   final int releaseYear;
@@ -22,6 +23,7 @@ class ContentModel {
     required this.thumbnailUrl,
     required this.bannerUrl,
     required this.videoUrl,
+    this.trailerUrl = '',
     required this.type,
     required this.rating,
     required this.releaseYear,
@@ -41,6 +43,7 @@ class ContentModel {
       thumbnailUrl: json['thumbnailUrl'] ?? '',
       bannerUrl: json['bannerUrl'] ?? '',
       videoUrl: json['videoUrl'] ?? '',
+      trailerUrl: json['trailerUrl'] ?? '',
       type: json['type'] ?? 'movie',
       rating: (json['rating'] as num?)?.toDouble() ?? 0.0,
       releaseYear: json['releaseYear'] as int? ?? 2024,
@@ -62,6 +65,7 @@ class ContentModel {
       'thumbnailUrl': thumbnailUrl,
       'bannerUrl': bannerUrl,
       'videoUrl': videoUrl,
+      'trailerUrl': trailerUrl,
       'type': type,
       'rating': rating,
       'releaseYear': releaseYear,
