@@ -5,10 +5,12 @@ let connection = null;
 let transcodingQueue = null;
 let transcodingWorker = null;
 
-if (process.env.NODE_ENV !== 'test') {
+if (process.env.NODE_ENV !== 'test' && process.env.USE_MOCK_REDIS !== 'true') {
   connection = new Redis({
     host: process.env.REDIS_HOST || 'localhost',
     port: parseInt(process.env.REDIS_PORT) || 6379,
+    username: process.env.REDIS_USERNAME || undefined,
+    password: process.env.REDIS_PASSWORD || undefined,
     maxRetriesPerRequest: null,
   });
 

@@ -21,9 +21,20 @@ class AppTheme {
 
   static const LinearGradient backgroundGradient = LinearGradient(
     colors: [
-      Color(0xFF0A0A0A),
       deepBlack,
-      Color(0xFF000000),
+      cardGrey,
+      deepBlack,
+    ],
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+  );
+
+  // Playful dynamic gradient for Kids Mode space (retains cyberpunk contrast)
+  static const LinearGradient kidsBackgroundGradient = LinearGradient(
+    colors: [
+      Color(0xFF0A0714), // Deep indigo-black
+      deepBlack,
+      Color(0xFF050A1A), // Deep navy-black
     ],
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
@@ -63,7 +74,7 @@ class AppTheme {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.zero, // strictly sharp corners (0px)
           side: BorderSide(
-            color: Color(0x1AFF0000), // rgba(255, 0, 0, 0.1)
+            color: Color(0x33FF0000), // rgba(255, 0, 0, 0.2)
             width: 1,
           ),
         ),
@@ -79,7 +90,7 @@ class AppTheme {
         ),
         enabledBorder: const OutlineInputBorder(
           borderRadius: BorderRadius.zero,
-          borderSide: BorderSide(color: Color(0x1AFF0000), width: 1),
+          borderSide: BorderSide(color: Color(0x33FF0000), width: 1),
         ),
         focusedBorder: const OutlineInputBorder(
           borderRadius: BorderRadius.zero,
@@ -154,7 +165,7 @@ class AppTheme {
       color: (color ?? cardGrey).withValues(alpha: opacity),
       borderRadius: BorderRadius.circular(borderRadius),
       border: Border.all(
-        color: const Color(0x1AFF0000), // rgba(255, 0, 0, 0.1)
+        color: const Color(0x33FF0000), // rgba(255, 0, 0, 0.2)
         width: 1.0,
       ),
       boxShadow: [

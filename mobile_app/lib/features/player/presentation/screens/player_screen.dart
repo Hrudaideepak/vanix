@@ -287,6 +287,19 @@ class _PlayerScreenState extends State<PlayerScreen> {
     });
   }
 
+  void _showSeekIndicator(String text) {
+    setState(() {
+      _gestureIndicator = text;
+    });
+    Future.delayed(const Duration(milliseconds: 800), () {
+      if (mounted && _gestureIndicator == text) {
+        setState(() {
+          _gestureIndicator = null;
+        });
+      }
+    });
+  }
+
   void _showSettingsBottomSheet() {
     showModalBottomSheet(
       context: context,
@@ -297,6 +310,7 @@ class _PlayerScreenState extends State<PlayerScreen> {
       builder: (context) {
         return StatefulBuilder(
           builder: (context, setModalState) {
+            final double currentSpeed = _videoPlayerController.value.playbackSpeed;
             return SingleChildScrollView(
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
               child: Column(
@@ -307,6 +321,41 @@ class _PlayerScreenState extends State<PlayerScreen> {
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppTheme.softWhite),
                   ),
                   const SizedBox(height: 20),
+
+                  // Playback Speed Selector
+                  const Text('Playback Speed', style: TextStyle(color: AppTheme.silverAccent, fontSize: 13, fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 8),
+                  Wrap(
+                    spacing: 8,
+                    children: [
+                      _buildSettingsChip('0.5x', currentSpeed == 0.5, () {
+                        _videoPlayerController.setPlaybackSpeed(0.5);
+                        setModalState(() {});
+                        Navigator.pop(context);
+                      }),
+                      _buildSettingsChip('1.0x (Normal)', currentSpeed == 1.0, () {
+                        _videoPlayerController.setPlaybackSpeed(1.0);
+                        setModalState(() {});
+                        Navigator.pop(context);
+                      }),
+                      _buildSettingsChip('1.25x', currentSpeed == 1.25, () {
+                        _videoPlayerController.setPlaybackSpeed(1.25);
+                        setModalState(() {});
+                        Navigator.pop(context);
+                      }),
+                      _buildSettingsChip('1.5x', currentSpeed == 1.5, () {
+                        _videoPlayerController.setPlaybackSpeed(1.5);
+                        setModalState(() {});
+                        Navigator.pop(context);
+                      }),
+                      _buildSettingsChip('2.0x', currentSpeed == 2.0, () {
+                        _videoPlayerController.setPlaybackSpeed(2.0);
+                        setModalState(() {});
+                        Navigator.pop(context);
+                      }),
+                    ],
+                  ),
+                  const Divider(color: Colors.white10, height: 24),
 
                   // Quality switcher
                   const Text('Video Quality', style: TextStyle(color: AppTheme.silverAccent, fontSize: 13, fontWeight: FontWeight.bold)),
@@ -410,9 +459,26 @@ class _PlayerScreenState extends State<PlayerScreen> {
               ? const Center(child: CircularProgressIndicator(color: AppTheme.royalPurple))
               : Stack(
                   children: [
-                    // Swipe handler + Player
+                    // Swipe handler + Player + Double-tap to seek
                     GestureDetector(
                       onVerticalDragUpdate: (details) => _handleVerticalSwipe(details, size.width),
+                      onDoubleTapDown: (details) {
+                        final x = details.localPosition.dx;
+                        final isRightSide = x > (size.width / 2);
+                        final currentPos = _videoPlayerController.value.position;
+                        final duration = _videoPlayerController.value.duration;
+                        if (isRightSide) {
+                          final newPos = currentPos + const Duration(seconds: 10);
+                          final clampedPos = newPos > duration ? duration : newPos;
+                          _videoPlayerController.seekTo(clampedPos);
+                          _showSeekIndicator('Skip +10s ⏩');
+                        } else {
+                          final newPos = currentPos - const Duration(seconds: 10);
+                          final clampedPos = newPos < Duration.zero ? Duration.zero : newPos;
+                          _videoPlayerController.seekTo(clampedPos);
+                          _showSeekIndicator('Rewind -10s ⏪');
+                        }
+                      },
                       child: Center(
                         child: AspectRatio(
                           aspectRatio: _videoPlayerController.value.aspectRatio,
