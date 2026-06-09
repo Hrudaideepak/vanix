@@ -63,47 +63,55 @@ class _SplashScreenState extends State<SplashScreen> {
             ),
 
             // Logo Content
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  'VANIX',
-                  style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                        fontSize: 62,
-                        fontWeight: FontWeight.w900,
-                        letterSpacing: 8.0,
-                        foreground: Paint()
-                          ..shader = AppTheme.premiumGradient.createShader(
-                            const Rect.fromLTWH(0.0, 0.0, 300.0, 70.0),
+            Center(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text(
+                      'VANIX',
+                      textAlign: TextAlign.center,
+                      style: Theme.of(context).textTheme.displayLarge?.copyWith(
+                            fontSize: 62,
+                            fontWeight: FontWeight.w900,
+                            letterSpacing: 8.0,
+                            foreground: Paint()
+                              ..shader = AppTheme.premiumGradient.createShader(
+                                const Rect.fromLTWH(0.0, 0.0, 300.0, 70.0),
+                              ),
                           ),
-                      ),
-                )
-                    .animate()
-                    .fadeIn(duration: 1000.ms)
-                    .scaleXY(
-                        begin: 0.8,
-                        end: 1.0,
-                        curve: Curves.easeOutBack,
-                        duration: 1000.ms)
-                    .shimmer(
-                        delay: 1100.ms,
-                        duration: 1000.ms,
-                        color: Colors.white30),
-                const SizedBox(height: 14),
-                Text(
-                  'Unlimited Entertainment. One Universe.',
-                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                        color: AppTheme.silverAccent.withValues(alpha: 0.7),
-                        fontSize: 14,
-                        letterSpacing: 2.0,
-                        fontWeight: FontWeight.w500,
-                      ),
-                ).animate().fadeIn(delay: 800.ms, duration: 800.ms).slideY(
-                    begin: 0.2,
-                    end: 0.0,
-                    curve: Curves.easeOut,
-                    duration: 800.ms),
-              ],
+                    )
+                        .animate()
+                        .fadeIn(duration: 1000.ms)
+                        .scaleXY(
+                            begin: 0.8,
+                            end: 1.0,
+                            curve: Curves.easeOutBack,
+                            duration: 1000.ms)
+                        .shimmer(
+                            delay: 1100.ms,
+                            duration: 1000.ms,
+                            color: Colors.white30),
+                    const SizedBox(height: 14),
+                    Text(
+                      'Unlimited Entertainment. One Universe.',
+                      textAlign: TextAlign.center,
+                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                            color: AppTheme.silverAccent.withValues(alpha: 0.7),
+                            fontSize: 14,
+                            letterSpacing: 2.0,
+                            fontWeight: FontWeight.w500,
+                          ),
+                    ).animate().fadeIn(delay: 800.ms, duration: 800.ms).slideY(
+                        begin: 0.2,
+                        end: 0.0,
+                        curve: Curves.easeOut,
+                        duration: 800.ms),
+                  ],
+                ),
+              ),
             ),
 
             // Sleek cinematic progress indicator
