@@ -41,3 +41,18 @@ admin_panel/dist/
 # Android APK builds
 *.apk
 !/apk/vanix.apk
+
+# Miscellaneous / Mobile Specifics
+*.class
+*.pyc
+*.swp
+.atom/
+.build/
+.buildlog/
+.history
+.svn/
+.swiftpm/
+migrate_working_dir/
+**/doc/api/
+app.*.symbols
+app.*.map.json
