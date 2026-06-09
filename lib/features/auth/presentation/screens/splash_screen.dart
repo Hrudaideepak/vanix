@@ -62,55 +62,65 @@ class _SplashScreenState extends State<SplashScreen> {
               ),
             ),
 
-            // Logo Content
+            // Logo Content (Netflix-style Round Logo Zoom)
             Center(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Text(
-                      'VANIX',
-                      textAlign: TextAlign.center,
-                      style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                            fontSize: 62,
-                            fontWeight: FontWeight.w900,
-                            letterSpacing: 8.0,
-                            foreground: Paint()
-                              ..shader = AppTheme.premiumGradient.createShader(
-                                const Rect.fromLTWH(0.0, 0.0, 300.0, 70.0),
-                              ),
-                          ),
-                    )
-                        .animate()
-                        .fadeIn(duration: 1000.ms)
-                        .scaleXY(
-                            begin: 0.8,
-                            end: 1.0,
-                            curve: Curves.easeOutBack,
-                            duration: 1000.ms)
-                        .shimmer(
-                            delay: 1100.ms,
-                            duration: 1000.ms,
-                            color: Colors.white30),
-                    const SizedBox(height: 14),
-                    Text(
-                      'Unlimited Entertainment. One Universe.',
-                      textAlign: TextAlign.center,
-                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                            color: AppTheme.silverAccent.withValues(alpha: 0.7),
-                            fontSize: 14,
-                            letterSpacing: 2.0,
-                            fontWeight: FontWeight.w500,
-                          ),
-                    ).animate().fadeIn(delay: 800.ms, duration: 800.ms).slideY(
-                        begin: 0.2,
-                        end: 0.0,
-                        curve: Curves.easeOut,
-                        duration: 800.ms),
-                  ],
-                ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Container(
+                    width: 100,
+                    height: 100,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppTheme.royalPurple.withValues(alpha: 0.5),
+                          blurRadius: 40,
+                          spreadRadius: 8,
+                        ),
+                      ],
+                      image: const DecorationImage(
+                        image: AssetImage('assets/icon/app_icon.png'),
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  )
+                      .animate()
+                      .fadeIn(duration: 800.ms)
+                      .scale(
+                        begin: const Offset(0.4, 0.4),
+                        end: const Offset(3.5, 3.5),
+                        duration: 2000.ms,
+                        curve: Curves.easeInOutQuart,
+                      )
+                      .shimmer(
+                        delay: 800.ms,
+                        duration: 1000.ms,
+                        color: Colors.white30,
+                      )
+                      .then()
+                      .fadeOut(duration: 300.ms),
+                  const SizedBox(height: 24),
+                  // Fade in "VANIX" subtitle, then fade it out before transition
+                  Text(
+                    'VANIX',
+                    style: Theme.of(context).textTheme.displayLarge?.copyWith(
+                          fontSize: 32,
+                          fontWeight: FontWeight.w900,
+                          letterSpacing: 6.0,
+                          foreground: Paint()
+                            ..shader = AppTheme.premiumGradient.createShader(
+                              const Rect.fromLTWH(0.0, 0.0, 200.0, 45.0),
+                            ),
+                        ),
+                  )
+                      .animate()
+                      .fadeIn(delay: 400.ms, duration: 800.ms)
+                      .shimmer(delay: 1200.ms, duration: 800.ms)
+                      .then(delay: 200.ms)
+                      .fadeOut(duration: 300.ms),
+                ],
               ),
             ),
 

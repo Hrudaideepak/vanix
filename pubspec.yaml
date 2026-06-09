@@ -41,10 +41,8 @@ flutter_launcher_icons:
 
 flutter:
   uses-material-design: true
-#  assets:
-#    - assets/images/
-#    - assets/icons/
-#    - assets/videos/
+  assets:
+    - assets/icon/
 #  fonts:
 #    - family: Outfit
 #      fonts:
