@@ -7,12 +7,10 @@ const Profile = require('../src/models/profile.model');
 const Movie = require('../src/models/movie.model');
 
 beforeAll(async () => {
-  const baseUri = process.env.MONGO_URI
-    ? process.env.MONGO_URI.replace(/\/[^\/]+$/, '')
-  const baseUri = process.env.MONGO_URI 
-    ? process.env.MONGO_URI.replace(/\/[^\/]+$/, '') 
-    : 'mongodb://localhost:27017';
-  const MONGO_TEST_URI = `${baseUri}`;
+  const baseUri = process.env.MONGO_URI || 'mongodb://localhost:27017';
+  const url = new URL(baseUri);
+  url.pathname = '/test-enterprise';
+  const MONGO_TEST_URI = url.toString();
   await mongoose.connect(MONGO_TEST_URI);
 });
 

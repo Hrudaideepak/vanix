@@ -105,6 +105,23 @@ describe('Device Controller', () => {
       });
     });
 
+    test('should call next with error if saving fails', async () => {
+      const error = new Error('Save error');
+      const mockUser = {
+        devices: [
+          { deviceId: 'device456' }
+        ],
+        save: jest.fn().mockRejectedValue(error)
+      };
+      User.findById.mockResolvedValue(mockUser);
+
+      await remoteLogout(req, res, next);
+
+      expect(User.findById).toHaveBeenCalledWith('user123');
+      expect(mockUser.save).toHaveBeenCalled();
+      expect(next).toHaveBeenCalledWith(error);
+    });
+
     test('should call next with error if something goes wrong', async () => {
       const error = new Error('Database error');
       User.findById.mockRejectedValue(error);
@@ -146,58 +163,6 @@ describe('Device Controller', () => {
       User.findById.mockResolvedValue(mockUser);
 
       await updateFCMToken(req, res, next);
-
-  test('should return 404 if device array does not contain the device', async () => {
-    const mockUser = {
-      devices: [
-        { deviceId: 'device888' }
-      ],
-      save: jest.fn()
-    };
-    User.findById.mockResolvedValue(mockUser);
-
-    await remoteLogout(req, res, next);
-
-    expect(User.findById).toHaveBeenCalledWith('user123');
-    expect(mockUser.save).not.toHaveBeenCalled();
-    expect(res.status).toHaveBeenCalledWith(404);
-    expect(res.json).toHaveBeenCalledWith({
-      success: false,
-      message: 'Device registration not found'
-    });
-  });
-
-
-  test('should return 404 if devices list is empty', async () => {
-    const mockUser = {
-      devices: [],
-      save: jest.fn()
-  test('should call next with error if saving fails', async () => {
-    const error = new Error('Save error');
-    const mockUser = {
-      devices: [
-        { deviceId: 'device456' }
-      ],
-      save: jest.fn().mockRejectedValue(error)
-    };
-    User.findById.mockResolvedValue(mockUser);
-
-    await remoteLogout(req, res, next);
-
-    expect(User.findById).toHaveBeenCalledWith('user123');
-    expect(res.status).toHaveBeenCalledWith(404);
-    expect(res.json).toHaveBeenCalledWith({
-      success: false,
-      message: 'Device registration not found'
-    });
-  });
-
-    expect(mockUser.save).toHaveBeenCalled();
-    expect(next).toHaveBeenCalledWith(error);
-  });
-  test('should call next with error if something goes wrong', async () => {
-    const error = new Error('Database error');
-    User.findById.mockRejectedValue(error);
 
       expect(User.findById).toHaveBeenCalledWith('user123');
       expect(res.status).toHaveBeenCalledWith(404);

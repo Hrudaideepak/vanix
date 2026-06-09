@@ -7,12 +7,6 @@ const videoSchema = new mongoose.Schema({
     trim: true,
   },
   description: {
-  title: { 
-    type: String, 
-    required: [true, 'Please provide a title'],
-    trim: true,
-  },
-  description: { 
     type: String,
     default: '',
   },

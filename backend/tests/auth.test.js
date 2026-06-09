@@ -4,14 +4,11 @@ const app = require('../src/app');
 const User = require('../src/models/user.model');
 const Profile = require('../src/models/profile.model');
 
-// Mock Mongo connection for local test run if mongo isnt active
 beforeAll(async () => {
-  const baseUri = process.env.MONGO_URI
-    ? process.env.MONGO_URI.replace(/\/[^\/]+$/, '')
-  const baseUri = process.env.MONGO_URI 
-    ? process.env.MONGO_URI.replace(/\/[^\/]+$/, '') 
-    : 'mongodb://localhost:27017';
-  const MONGO_TEST_URI = `${baseUri}`;
+  const baseUri = process.env.MONGO_URI || 'mongodb://localhost:27017';
+  const url = new URL(baseUri);
+  url.pathname = '/test-auth';
+  const MONGO_TEST_URI = url.toString();
   await mongoose.connect(MONGO_TEST_URI);
 });
 
