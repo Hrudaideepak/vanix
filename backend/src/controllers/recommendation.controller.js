@@ -34,14 +34,16 @@ exports.getHomeRecommendations = async (req, res, next) => {
         _id: { $ne: lastMovie._id },
       });
 
-      const movies = await Movie.find(matchQuery).limit(limit);
+      // ⚡ Bolt: Use .lean() to return plain JS objects, bypassing Mongoose document instantiation overhead
+      const movies = await Movie.find(matchQuery).limit(limit).lean();
       becauseYouWatched = {
         title: `Because you watched ${lastMovie.title}`,
         data: movies,
       };
     } else {
       const matchQuery = getSafetyQuery(req.profile, { genres: 'Sci-Fi' });
-      const movies = await Movie.find(matchQuery).sort({ rating: -1 }).limit(limit);
+      // ⚡ Bolt: Use .lean() for faster read-only queries
+      const movies = await Movie.find(matchQuery).sort({ rating: -1 }).limit(limit).lean();
       becauseYouWatched = {
         title: 'Popular in Sci-Fi',
         data: movies,
@@ -67,23 +69,28 @@ exports.getHomeRecommendations = async (req, res, next) => {
     const watchedIds = history.map(h => h.movie?._id).filter(Boolean);
     recommendedQuery._id = { $nin: watchedIds };
 
-    let recommendedForYou = await Movie.find(recommendedQuery).sort({ rating: -1 }).limit(limit);
+    // ⚡ Bolt: Bypassing hydration on multiple sections saves significant memory
+    let recommendedForYou = await Movie.find(recommendedQuery).sort({ rating: -1 }).limit(limit).lean();
     if (recommendedForYou.length < limit) {
       const fillLimit = limit - recommendedForYou.length;
       const fillQuery = getSafetyQuery(req.profile, {
         _id: { $nin: [...watchedIds, ...recommendedForYou.map(r => r._id)] }
       });
-      const fillMovies = await Movie.find(fillQuery).sort({ rating: -1 }).limit(fillLimit);
+      // ⚡ Bolt: Faster queries for fallbacks using .lean()
+      const fillMovies = await Movie.find(fillQuery).sort({ rating: -1 }).limit(fillLimit).lean();
       recommendedForYou = [...recommendedForYou, ...fillMovies];
     }
 
     const trendingQuery = getSafetyQuery(req.profile, {});
-    const trendingNearYou = await Movie.find(trendingQuery).sort({ rating: -1, releaseYear: -1 }).limit(limit);
+    // ⚡ Bolt: Faster queries for trending using .lean()
+    const trendingNearYou = await Movie.find(trendingQuery).sort({ rating: -1, releaseYear: -1 }).limit(limit).lean();
 
     const featuredQuery = getSafetyQuery(req.profile, { isFeatured: true });
-    let featured = await Movie.find(featuredQuery).limit(5);
+    // ⚡ Bolt: Faster queries for featured using .lean()
+    let featured = await Movie.find(featuredQuery).limit(5).lean();
     if (featured.length === 0) {
-      featured = await Movie.find(getSafetyQuery(req.profile, {})).sort({ rating: -1 }).limit(5);
+      // ⚡ Bolt: Faster queries for featured fallback using .lean()
+      featured = await Movie.find(getSafetyQuery(req.profile, {})).sort({ rating: -1 }).limit(5).lean();
     }
 
     res.status(200).json({
@@ -126,7 +133,8 @@ exports.getSimilarContent = async (req, res, next) => {
       _id: { $ne: movie._id },
     });
 
-    const similar = await Movie.find(safetyQuery).sort({ rating: -1 }).limit(6);
+    // ⚡ Bolt: Optimize similar content lookup with .lean() to prevent document hydration
+    const similar = await Movie.find(safetyQuery).sort({ rating: -1 }).limit(6).lean();
 
     res.status(200).json({
       success: true,
