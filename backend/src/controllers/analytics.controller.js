@@ -52,12 +52,17 @@ exports.getAdminAnalytics = async (req, res, next) => {
       );
     }
 
-    const users = await User.find({ subscriptionPlan: { $ne: 'free' } });
+    // ⚡ Bolt: Optimize monthly revenue calculation using MongoDB aggregation instead of fetching all users into memory
+    const revenueAgg = await User.aggregate([
+      { $match: { subscriptionPlan: { $ne: 'free' } } },
+      { $group: { _id: '$subscriptionPlan', count: { $sum: 1 } } }
+    ]);
+
     let monthlyRevenue = 0;
-    users.forEach(u => {
-      if (u.subscriptionPlan === 'silver') monthlyRevenue += 4.99;
-      if (u.subscriptionPlan === 'gold') monthlyRevenue += 9.99;
-      if (u.subscriptionPlan === 'premium') monthlyRevenue += 14.99;
+    revenueAgg.forEach(plan => {
+      if (plan._id === 'silver') monthlyRevenue += plan.count * 4.99;
+      if (plan._id === 'gold') monthlyRevenue += plan.count * 9.99;
+      if (plan._id === 'premium') monthlyRevenue += plan.count * 14.99;
     });
 
     res.status(200).json({
