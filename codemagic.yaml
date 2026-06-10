@@ -20,6 +20,10 @@ workflows:
       - name: Build iOS IPA (Unsigned)
         script: |
           flutter build ipa --release --no-codesign
+          mkdir -p build/ios/ipa/Payload
+          cp -r build/ios/archive/Runner.xcarchive/Products/Applications/Runner.app build/ios/ipa/Payload/
+          cd build/ios/ipa && zip -r Runner.ipa Payload
+          rm -rf build/ios/ipa/Payload
     artifacts:
       - build/ios/ipa/*.ipa
       - /tmp/xcodebuild_logs/*.log
