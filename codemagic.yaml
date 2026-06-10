@@ -1,7 +1,7 @@
 # Codemagic CI/CD configuration for VANIX
 workflows:
-  vanix-build:
-    name: VANIX Build Pipeline
+  vanix-ios-build:
+    name: VANIX iOS Build Pipeline
     max_build_duration: 60
     instance_type: mac_mini_m2
     environment:
@@ -11,20 +11,19 @@ workflows:
       events:
         - push
       branch_patterns:
-        - pattern: main
+        - pattern: ios
           include: true
     scripts:
       - name: Install dependencies
         script: |
           flutter pub get
-      - name: Build Android APK
-        script: |
-          flutter build apk --release
       - name: Build iOS IPA (Unsigned)
         script: |
           flutter build ipa --release --no-codesign
+          mkdir -p build/ios/ipa/Payload
+          cp -r build/ios/archive/Runner.xcarchive/Products/Applications/Runner.app build/ios/ipa/Payload/
+          cd build/ios/ipa && zip -r Runner.ipa Payload
+          rm -rf build/ios/ipa/Payload
     artifacts:
-      - build/app/outputs/flutter-apk/*.apk
-      - build/ios/ipa/*.ipa
       - build/ios/ipa/*.ipa
       - /tmp/xcodebuild_logs/*.log
