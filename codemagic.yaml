@@ -1,5 +1,29 @@
 # Codemagic CI/CD configuration for VANIX
 workflows:
+  vanix-android-build:
+    name: VANIX Android Build Pipeline
+    max_build_duration: 60
+    instance_type: mac_mini_m2
+    environment:
+      flutter: stable
+    triggering:
+      events:
+        - push
+      branch_patterns:
+        - pattern: main
+          include: true
+        - pattern: ios
+          include: true
+    scripts:
+      - name: Install dependencies
+        script: |
+          flutter pub get
+      - name: Build Android APK (Release)
+        script: |
+          flutter build apk --release
+    artifacts:
+      - build/app/outputs/flutter-apk/*.apk
+
   vanix-ios-build:
     name: VANIX iOS Build Pipeline
     max_build_duration: 60
@@ -11,6 +35,8 @@ workflows:
       events:
         - push
       branch_patterns:
+        - pattern: main
+          include: true
         - pattern: ios
           include: true
     scripts:
