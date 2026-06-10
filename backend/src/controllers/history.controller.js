@@ -11,13 +11,16 @@ exports.getHistory = async (req, res, next) => {
     
     if (req.query.movieId) {
       query.movie = req.query.movieId;
-      const singleItem = await History.findOne(query).sort({ lastWatchedDate: -1 });
+      // ⚡ Bolt: Optimize history lookup with .lean() to prevent document hydration
+      const singleItem = await History.findOne(query).sort({ lastWatchedDate: -1 }).lean();
       return res.status(200).json({ success: true, data: singleItem });
     }
 
+    // ⚡ Bolt: Optimize history list with .lean() to prevent document hydration
     const list = await History.find(query)
       .populate('movie')
-      .sort({ lastWatchedDate: -1 });
+      .sort({ lastWatchedDate: -1 })
+      .lean();
 
     res.status(200).json({
       success: true,

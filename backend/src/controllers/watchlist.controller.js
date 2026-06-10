@@ -7,7 +7,8 @@ exports.getWatchlist = async (req, res, next) => {
       return res.status(400).json({ success: false, message: 'Profile context is required. Attach x-profile-id header.' });
     }
 
-    const list = await Watchlist.find({ profile: req.profile._id }).populate('movie');
+    // ⚡ Bolt: Optimize watchlist fetch with .lean() to prevent document hydration
+    const list = await Watchlist.find({ profile: req.profile._id }).populate('movie').lean();
     const movies = list.map(item => item.movie).filter(Boolean);
 
     res.status(200).json({
