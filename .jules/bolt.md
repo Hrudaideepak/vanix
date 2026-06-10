@@ -5522,3 +5522,6 @@
     }
   }
 }
+## 2024-05-18 - Aggregation Over Memory
+**Learning:** For calculating statistics, sums, or counts over large Mongoose collections (e.g., analytics dashboards), fetching and iterating complete documents in application memory using `.find()` can cause memory bloat and network bottlenecks as the dataset grows.
+**Action:** Prefer using MongoDB aggregations (`.aggregate()`) with stages like `$match` and `$group` to shift the computation to the database and retrieve only the required results, thereby reducing the Node.js memory footprint to O(1) for aggregated statistics.
