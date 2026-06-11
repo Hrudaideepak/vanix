@@ -309,7 +309,8 @@ exports.getProfile = async (req, res, next) => {
 // @access  Private/Admin
 exports.getAllUsers = async (req, res, next) => {
   try {
-    const users = await User.find({}).select('-password');
+    // ⚡ Bolt: Optimize user list query by using .lean() to prevent Mongoose document hydration
+    const users = await User.find({}).select('-password').lean();
     res.status(200).json({
       success: true,
       count: users.length,

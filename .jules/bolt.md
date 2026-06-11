@@ -5525,3 +5525,6 @@
 ## 2024-05-18 - Aggregation Over Memory
 **Learning:** For calculating statistics, sums, or counts over large Mongoose collections (e.g., analytics dashboards), fetching and iterating complete documents in application memory using `.find()` can cause memory bloat and network bottlenecks as the dataset grows.
 **Action:** Prefer using MongoDB aggregations (`.aggregate()`) with stages like `$match` and `$group` to shift the computation to the database and retrieve only the required results, thereby reducing the Node.js memory footprint to O(1) for aggregated statistics.
+## 2024-05-18 - Document Hydration Overhead
+**Learning:** For read-heavy Mongoose queries, fetching and hydrating full document instances in application memory using `.find()` without `.lean()` can cause significant memory bloat and execution overhead.
+**Action:** Prefer using `.lean()` for read-only endpoints (e.g. `getAllUsers`, `getHistory`, `getWatchlist`) to return plain JavaScript objects, reducing the Node.js memory footprint and improving execution time.
