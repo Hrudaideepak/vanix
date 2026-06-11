@@ -145,8 +145,21 @@ exports.clearRecentSearches = async (req, res, next) => {
   }
 };
 
+let cachedTrending = null;
+let lastTrendingCacheTime = null;
+const TRENDING_CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+
 exports.getTrendingSearches = async (req, res, next) => {
   try {
+    const now = Date.now();
+    // ⚡ Bolt: Return cached trending searches if valid (O(1) memory lookup instead of O(N) database aggregation)
+    if (cachedTrending && lastTrendingCacheTime && (now - lastTrendingCacheTime < TRENDING_CACHE_TTL)) {
+      return res.status(200).json({
+        success: true,
+        data: cachedTrending,
+      });
+    }
+
     const aggregates = await SearchHistory.aggregate([
       { $group: { _id: '$query', count: { $sum: 1 } } },
       { $sort: { count: -1 } },
@@ -158,6 +171,9 @@ exports.getTrendingSearches = async (req, res, next) => {
     if (trending.length < 3) {
       trending = ['Nebula Genesis', 'Cyberpunk', 'Space Odyssey', 'Ragnarok Rising', 'Chronicles of Chronos'];
     }
+
+    cachedTrending = trending;
+    lastTrendingCacheTime = now;
 
     res.status(200).json({
       success: true,
