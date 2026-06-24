@@ -5,9 +5,12 @@ const SearchHistory = require('../models/searchHistory.model');
 
 exports.getAdminAnalytics = async (req, res, next) => {
   try {
-    const totalUsers = await User.countDocuments();
-    const activeUsers = await User.countDocuments({ 'devices.0': { $exists: true } });
-    const moviesUploaded = await Movie.countDocuments();
+    // ⚡ Bolt: Batch independent Mongoose database queries using Promise.all() to execute them concurrently and prevent cumulative I/O blocking.
+    const [totalUsers, activeUsers, moviesUploaded] = await Promise.all([
+      User.countDocuments(),
+      User.countDocuments({ 'devices.0': { $exists: true } }),
+      Movie.countDocuments()
+    ]);
 
     const watchedAgg = await History.aggregate([
       { $group: { _id: '$movie', count: { $sum: 1 } } },
