@@ -5531,3 +5531,6 @@
 ## 2026-06-11 - Expensive O(N) Group By and Database Scans
 **Learning:** Running aggregation queries like `$group` and `$sort` on high-throughput, read-heavy endpoints (like trending search history) causes unnecessary database CPU load and O(N) query times on every request.
 **Action:** Implement simple in-memory caching for trending data with a reasonable TTL (e.g., 5 minutes) to convert O(N) database operations into O(1) memory lookups.
+## 2024-07-02 - Batched Independent Database Queries
+**Learning:** Sequential, independent database queries inside a single API endpoint (e.g., fetching multiple unrelated aggregates) block execution and artificially inflate the response time by adding cumulative I/O latency.
+**Action:** Always hoist independent queries and execute them concurrently using `Promise.all()` to ensure the total query time is bounded by the slowest query, not the sum of all queries.
