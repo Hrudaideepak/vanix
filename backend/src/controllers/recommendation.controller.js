@@ -24,32 +24,27 @@ exports.getHomeRecommendations = async (req, res, next) => {
       .sort({ lastWatchedDate: -1 })
       .limit(5);
 
-    let becauseYouWatched = { title: '', data: [] };
+    // Build Because You Watched Query
+    let becauseYouWatchedQuery;
+    let becauseYouWatchedTitle = '';
+    let becauseYouWatchedSort = null;
+
     if (history.length > 0 && history[0].movie) {
       const lastMovie = history[0].movie;
       const genresToMatch = lastMovie.genres.slice(0, 2);
       
-      const matchQuery = getSafetyQuery(req.profile, {
+      becauseYouWatchedQuery = getSafetyQuery(req.profile, {
         genres: { $in: genresToMatch },
         _id: { $ne: lastMovie._id },
       });
-
-      // ⚡ Bolt: Use .lean() to return plain JS objects, bypassing Mongoose document instantiation overhead
-      const movies = await Movie.find(matchQuery).limit(limit).lean();
-      becauseYouWatched = {
-        title: `Because you watched ${lastMovie.title}`,
-        data: movies,
-      };
+      becauseYouWatchedTitle = `Because you watched ${lastMovie.title}`;
     } else {
-      const matchQuery = getSafetyQuery(req.profile, { genres: 'Sci-Fi' });
-      // ⚡ Bolt: Use .lean() for faster read-only queries
-      const movies = await Movie.find(matchQuery).sort({ rating: -1 }).limit(limit).lean();
-      becauseYouWatched = {
-        title: 'Popular in Sci-Fi',
-        data: movies,
-      };
+      becauseYouWatchedQuery = getSafetyQuery(req.profile, { genres: 'Sci-Fi' });
+      becauseYouWatchedTitle = 'Popular in Sci-Fi';
+      becauseYouWatchedSort = { rating: -1 };
     }
 
+    // Build Recommended For You Query
     let recommendedQuery = getSafetyQuery(req.profile, {});
     if (history.length > 0) {
       const genreCounts = {};
@@ -69,8 +64,34 @@ exports.getHomeRecommendations = async (req, res, next) => {
     const watchedIds = history.map(h => h.movie?._id).filter(Boolean);
     recommendedQuery._id = { $nin: watchedIds };
 
-    // ⚡ Bolt: Bypassing hydration on multiple sections saves significant memory
-    let recommendedForYou = await Movie.find(recommendedQuery).sort({ rating: -1 }).limit(limit).lean();
+    // Build Trending Near You Query
+    const trendingQuery = getSafetyQuery(req.profile, {});
+
+    // Build Featured Query
+    const featuredQuery = getSafetyQuery(req.profile, { isFeatured: true });
+
+    // ⚡ Bolt: Execute independent queries concurrently using Promise.all to reduce I/O blocking
+    const [
+      becauseYouWatchedMovies,
+      recommendedForYouInitial,
+      trendingNearYou,
+      featuredInitial
+    ] = await Promise.all([
+      becauseYouWatchedSort
+        ? Movie.find(becauseYouWatchedQuery).sort(becauseYouWatchedSort).limit(limit).lean()
+        : Movie.find(becauseYouWatchedQuery).limit(limit).lean(),
+      Movie.find(recommendedQuery).sort({ rating: -1 }).limit(limit).lean(),
+      Movie.find(trendingQuery).sort({ rating: -1, releaseYear: -1 }).limit(limit).lean(),
+      Movie.find(featuredQuery).limit(5).lean()
+    ]);
+
+    const becauseYouWatched = {
+      title: becauseYouWatchedTitle,
+      data: becauseYouWatchedMovies,
+    };
+
+    // ⚡ Bolt: Handle fallbacks sequentially only when necessary
+    let recommendedForYou = recommendedForYouInitial;
     if (recommendedForYou.length < limit) {
       const fillLimit = limit - recommendedForYou.length;
       const fillQuery = getSafetyQuery(req.profile, {
@@ -81,13 +102,7 @@ exports.getHomeRecommendations = async (req, res, next) => {
       recommendedForYou = [...recommendedForYou, ...fillMovies];
     }
 
-    const trendingQuery = getSafetyQuery(req.profile, {});
-    // ⚡ Bolt: Faster queries for trending using .lean()
-    const trendingNearYou = await Movie.find(trendingQuery).sort({ rating: -1, releaseYear: -1 }).limit(limit).lean();
-
-    const featuredQuery = getSafetyQuery(req.profile, { isFeatured: true });
-    // ⚡ Bolt: Faster queries for featured using .lean()
-    let featured = await Movie.find(featuredQuery).limit(5).lean();
+    let featured = featuredInitial;
     if (featured.length === 0) {
       // ⚡ Bolt: Faster queries for featured fallback using .lean()
       featured = await Movie.find(getSafetyQuery(req.profile, {})).sort({ rating: -1 }).limit(5).lean();
