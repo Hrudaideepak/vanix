@@ -5531,3 +5531,6 @@
 ## 2026-06-11 - Expensive O(N) Group By and Database Scans
 **Learning:** Running aggregation queries like `$group` and `$sort` on high-throughput, read-heavy endpoints (like trending search history) causes unnecessary database CPU load and O(N) query times on every request.
 **Action:** Implement simple in-memory caching for trending data with a reasonable TTL (e.g., 5 minutes) to convert O(N) database operations into O(1) memory lookups.
+## 2024-07-20 - Sequential I/O Blocking in Controllers
+**Learning:** Sequential independent database queries inside a single controller function block execution unnecessarily, leading to cumulative I/O wait times and slow API responses.
+**Action:** When executing multiple independent database queries (e.g., fetching disparate stats for an analytics dashboard), batch them concurrently using `Promise.all()` to ensure execution time is bound by the slowest query, rather than the sum of all queries.
