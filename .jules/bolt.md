@@ -5531,3 +5531,6 @@
 ## 2026-06-11 - Expensive O(N) Group By and Database Scans
 **Learning:** Running aggregation queries like `$group` and `$sort` on high-throughput, read-heavy endpoints (like trending search history) causes unnecessary database CPU load and O(N) query times on every request.
 **Action:** Implement simple in-memory caching for trending data with a reasonable TTL (e.g., 5 minutes) to convert O(N) database operations into O(1) memory lookups.
+## 2026-07-24 - Sequential Mongoose Database Queries
+**Learning:** Running independent Mongoose database queries sequentially causes cumulative I/O blocking, resulting in slower execution times.
+**Action:** Use `Promise.all()` to batch independent Mongoose queries (e.g., `countDocuments`, `aggregate`, `find`) to execute them concurrently, reducing overall execution time.

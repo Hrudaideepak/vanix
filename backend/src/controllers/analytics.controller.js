@@ -5,14 +5,32 @@ const SearchHistory = require('../models/searchHistory.model');
 
 exports.getAdminAnalytics = async (req, res, next) => {
   try {
-    const totalUsers = await User.countDocuments();
-    const activeUsers = await User.countDocuments({ 'devices.0': { $exists: true } });
-    const moviesUploaded = await Movie.countDocuments();
-
-    const watchedAgg = await History.aggregate([
-      { $group: { _id: '$movie', count: { $sum: 1 } } },
-      { $sort: { count: -1 } },
-      { $limit: 5 }
+    // ⚡ Bolt: Batch independent Mongoose queries to execute concurrently
+    const [
+      totalUsers,
+      activeUsers,
+      moviesUploaded,
+      watchedAgg,
+      searchAgg,
+      revenueAgg
+    ] = await Promise.all([
+      User.countDocuments(),
+      User.countDocuments({ 'devices.0': { $exists: true } }),
+      Movie.countDocuments(),
+      History.aggregate([
+        { $group: { _id: '$movie', count: { $sum: 1 } } },
+        { $sort: { count: -1 } },
+        { $limit: 5 }
+      ]),
+      SearchHistory.aggregate([
+        { $group: { _id: '$query', count: { $sum: 1 } } },
+        { $sort: { count: -1 } },
+        { $limit: 5 }
+      ]),
+      User.aggregate([
+        { $match: { subscriptionPlan: { $ne: 'free' } } },
+        { $group: { _id: '$subscriptionPlan', count: { $sum: 1 } } }
+      ])
     ]);
     
     const populatedWatched = await Movie.populate(watchedAgg, { path: '_id' });
@@ -34,11 +52,6 @@ exports.getAdminAnalytics = async (req, res, next) => {
       });
     }
 
-    const searchAgg = await SearchHistory.aggregate([
-      { $group: { _id: '$query', count: { $sum: 1 } } },
-      { $sort: { count: -1 } },
-      { $limit: 5 }
-    ]);
     const mostSearched = searchAgg.map(s => ({
       query: s._id,
       count: s.count,
@@ -51,12 +64,6 @@ exports.getAdminAnalytics = async (req, res, next) => {
         { query: 'Cyberpunk', count: 19 }
       );
     }
-
-    // ⚡ Bolt: Optimize monthly revenue calculation using MongoDB aggregation instead of fetching all users into memory
-    const revenueAgg = await User.aggregate([
-      { $match: { subscriptionPlan: { $ne: 'free' } } },
-      { $group: { _id: '$subscriptionPlan', count: { $sum: 1 } } }
-    ]);
 
     let monthlyRevenue = 0;
     revenueAgg.forEach(plan => {
